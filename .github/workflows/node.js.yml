@@ -25,9 +25,9 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: 'frontend/package-lock.json'
     - run: npm ci
+      working-directory: ./frontend # (temporary!) unless main project is moved to the root directory
     - run: npm run dev
+      working-directory: ./frontend
     #- run: npm run build --if-present (no build scripts rn)
     #- run: npm test (no test scripts rn)
