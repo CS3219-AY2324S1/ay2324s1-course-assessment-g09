@@ -13,5 +13,5 @@ jobs:
       - name: Pull Request Telegram
         uses: F2had/pr-telegram-action@v1.0.0
         with: 
-          bot_token: '${{ secrets.TELE_TOKEN }}'
-          chat_id: '${{ secrets.TELE_CHATID }}'
+          bot-token: '${{ secrets.TELE_TOKEN }}'
+          chat-id: '${{ secrets.TELE_CHATID }}'
