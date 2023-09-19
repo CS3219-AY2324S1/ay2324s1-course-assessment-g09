@@ -22,7 +22,6 @@ const Question = () => {
     complexity,
   }) => {
     await axios.delete(`http://localhost:3000/question/${id}`);
-
     fetchQuestions();
   };
 
