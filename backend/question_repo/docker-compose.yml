@@ -1,0 +1,19 @@
+version: "3"
+services:
+  question-repo:
+    container_name: question-repo
+    image: question-repo-img
+    restart: always
+    build: .
+    ports:
+      - "3000:3000"
+    links:
+      - mongo
+  mongo: # Not needed now, since we are using the cloud-hosted Mongo Atlas
+    container_name: mongo
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db

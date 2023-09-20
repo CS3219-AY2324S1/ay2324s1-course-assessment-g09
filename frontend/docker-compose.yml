@@ -1,0 +1,10 @@
+version: "3"
+services:
+  frontend:
+      container_name: frontend
+      image: frontend-img
+      restart: always
+      build: .
+      ports:
+        - "3000:3000"
+  # Add backend services here soon.
