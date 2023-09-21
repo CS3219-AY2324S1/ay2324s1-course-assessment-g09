@@ -8,12 +8,12 @@ const InputField = () => {
   const [question, setQuestions] = useState(null);
 
   const fetchQuestions = async () => {
-    const res = await axios.get("http://localhost:3000/questions");
+    const res = await axios.get("http://localhost:3001/questions");
     setQuestions(res.data.questions);
   };
 
   const handleSubmit = async () => {
-    const res = await axios.post("http://localhost:3000/question", inputValues);
+    const res = await axios.post("http://localhost:3001/question", inputValues);
     console.log(res);
     setInputValues({
       id: "",

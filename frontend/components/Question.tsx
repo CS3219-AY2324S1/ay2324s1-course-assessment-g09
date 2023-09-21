@@ -6,7 +6,7 @@ const Question = () => {
   const [questions, setQuestions] = useState(null);
 
   const fetchQuestions = async () => {
-    const res = await axios.get("http://localhost:3000/questions");
+    const res = await axios.get("http://localhost:3001/questions");
     setQuestions(res.data.questions);
   };
 
@@ -21,7 +21,7 @@ const Question = () => {
     category,
     complexity,
   }) => {
-    await axios.delete(`http://localhost:3000/question/${id}`);
+    await axios.delete(`http://localhost:3001/question/${id}`);
     fetchQuestions();
   };
 

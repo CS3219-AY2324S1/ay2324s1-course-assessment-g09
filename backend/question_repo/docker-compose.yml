@@ -6,7 +6,7 @@ services:
     restart: always
     build: .
     ports:
-      - "3000:3000"
+      - "3001:3001"
     links:
       - mongo
   mongo: # Not needed now, since we are using the cloud-hosted Mongo Atlas
