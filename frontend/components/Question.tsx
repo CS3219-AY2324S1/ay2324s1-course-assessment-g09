@@ -6,8 +6,12 @@ const Question = ({ inputValues, setInputValues, isCreate, setIsCreate }) => {
   const [questions, setQuestions] = useState(null);
 
   const fetchQuestions = async () => {
-    const res = await axios.get("http://localhost:3000/questions");
-    setQuestions(res.data.questions);
+    try {
+      const res = await axios.get("http://localhost:3000/questions");
+      setQuestions(res.data.questions);
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
   };
 
   useEffect(() => {
