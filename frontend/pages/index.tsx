@@ -1,8 +1,20 @@
 import { Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import InputField from "../components/InputField";
 import Questions from "../components/Questions";
+import { useState } from "react";
 
 const IndexPage = () => {
+  const [inputValues, setInputValues] = useState({
+    edit_id: "",
+    question_id: "",
+    title: "",
+    description: "",
+    category: "",
+    complexity: "",
+  });
+
+  const [isCreate, setIsCreate] = useState(true);
+
   return (
     <Flex height="100vh" justifyContent="center" alignItems="center">
       <Flex
@@ -14,7 +26,12 @@ const IndexPage = () => {
         height="80%"
         marginX={16}
       >
-        <InputField />
+        <InputField
+          inputValues={inputValues}
+          setInputValues={setInputValues}
+          isCreate={isCreate}
+          setIsCreate={setIsCreate}
+        />
 
         <Grid
           templateColumns="repeat(6, 1fr)"
@@ -55,7 +72,12 @@ const IndexPage = () => {
         </Grid>
 
         <Flex width="100%" alignItems="center" justify="center">
-          <Questions />
+          <Questions
+            inputValues={inputValues}
+            setInputValues={setInputValues}
+            isCreate={isCreate}
+            setIsCreate={setIsCreate}
+          />
         </Flex>
       </Flex>
     </Flex>
