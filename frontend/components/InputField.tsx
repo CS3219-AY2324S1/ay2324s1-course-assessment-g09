@@ -1,10 +1,17 @@
 import { Button, Flex, Grid, Icon, Input, Text } from "@chakra-ui/react";
 import { IoMdAdd } from "react-icons/io";
+import { AiTwotoneEdit } from "react-icons/ai";
 
 import React, { useState } from "react";
 import axios from "axios";
 
-const InputField = ({ inputValues, setInputValues, isCreate, setIsCreate }) => {
+const InputField = ({
+  inputValues,
+  setInputValues,
+  isCreate,
+  setIsCreate,
+  colorMode,
+}) => {
   const [question, setQuestions] = useState(null);
 
   const fetchQuestions = async () => {
@@ -110,7 +117,7 @@ const InputField = ({ inputValues, setInputValues, isCreate, setIsCreate }) => {
       {isCreate ? (
         <Button
           mb={3}
-          colorScheme="green"
+          colorScheme={colorMode === "light" ? "green" : "teal"}
           isDisabled={!isButtonValid()}
           type="submit"
           onClick={handleSubmit}
@@ -121,8 +128,13 @@ const InputField = ({ inputValues, setInputValues, isCreate, setIsCreate }) => {
           </Flex>
         </Button>
       ) : (
-        <Button mb={3} colorScheme="pink" onClick={handleUpdate}>
+        <Button
+          mb={3}
+          colorScheme={colorMode === "light" ? "pink" : "purple"}
+          onClick={handleUpdate}
+        >
           <Flex align="center">
+            <Icon as={AiTwotoneEdit} mr={1} />
             <Text>Update</Text>
           </Flex>
         </Button>

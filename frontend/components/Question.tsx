@@ -2,7 +2,13 @@ import { Button, Flex, Grid, GridItem, StepNumber } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const Question = ({ inputValues, setInputValues, isCreate, setIsCreate }) => {
+const Question = ({
+  inputValues,
+  setInputValues,
+  isCreate,
+  setIsCreate,
+  colorMode,
+}) => {
   const [questions, setQuestions] = useState(null);
 
   const fetchQuestions = async () => {
@@ -128,7 +134,8 @@ const Question = ({ inputValues, setInputValues, isCreate, setIsCreate }) => {
                 <Button
                   size="sm"
                   my={1}
-                  bgColor="yellow.200"
+                  bgColor={colorMode === "light" ? "yellow.400" : "yellow.300"}
+                  color="black"
                   mx={1}
                   onClick={() => handleEdit(question)}
                 >
@@ -137,7 +144,8 @@ const Question = ({ inputValues, setInputValues, isCreate, setIsCreate }) => {
                 <Button
                   size="sm"
                   my={1}
-                  bgColor="orange.200"
+                  bgColor={colorMode === "light" ? "orange.400" : "orange.300"}
+                  color="black"
                   mx={1}
                   onClick={() => deleteQuestion(question)}
                 >
