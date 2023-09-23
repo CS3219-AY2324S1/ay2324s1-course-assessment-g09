@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const questionSchema = new mongoose.Schema({
-    id: { //"Primary Key"
+    question_id: { //"Primary Key"
         type: String,
         unique: true, // Enforce uniqueness for customId
         required: true, // Ensure it's required, NOT NULL
