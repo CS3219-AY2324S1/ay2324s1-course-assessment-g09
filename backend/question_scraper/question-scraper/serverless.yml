@@ -1,0 +1,10 @@
+service: question-scraper
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+
+functions:
+  get-questions:
+    handler: handler.getQuestions
