@@ -1,5 +1,5 @@
 {
-  "name": "user-manager",
+  "name": "user-service",
   "version": "1.0.0",
   "description": "Manage User Accounts in PeerPrep",
   "main": "./src/server.js",

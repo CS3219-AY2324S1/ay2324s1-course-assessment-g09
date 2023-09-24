@@ -17,9 +17,9 @@ services:
       timeout: 5s
       retries: 5
 
-  user-manager:
-    container_name: user-manager
-    image: user-manager-img
+  user-service:
+    container_name: user-service
+    image: user-service-img
     restart: always
     build: .   
     ports:
