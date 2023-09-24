@@ -1,30 +1,31 @@
 version: "3"
 services:
-  user-manager:
-      container_name: user-manager
-      image: user-manager-img
-      restart: always
-      build: .
-      environment: # Can replace .env file with this
-        DB_SCHEMA: postgres
-        DB_USER: postgres
-        DB_PASSWORD: postgres
-        DB_HOST: postgres      
-      ports:
-        - "3002:3002" # Will clash with other services, be advised!
-      depends_on:
-        - postgres
   postgres:
-        container_name: postgres
-        image: postgres:latest
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
-        volumes:
-          - postgres-db:/var/lib/postgresql/data
-        ports:
-          - '5432:5432'
+    container_name: postgres
+    image: postgres:latest
+    environment: # To hide
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    #volumes: #Impermanent data for now.
+    #  - postgres-db:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-volumes:
-  postgres-db:
+  user-manager:
+    container_name: user-manager
+    image: user-manager-img
+    restart: always
+    build: .   
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+
+#volumes:
+#  postgres-db:

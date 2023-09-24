@@ -1,12 +1,12 @@
 {
-  "name": "user_manager",
+  "name": "user-manager",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "Manage User Accounts in PeerPrep",
+  "main": "./src/server.js",
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "nodemon ./src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node ./src/server.js"
   },
   "author": "",
   "license": "ISC",
