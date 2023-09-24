@@ -1,8 +1,8 @@
 version: "3"
 services:
-  question-repo:
-    container_name: question-repo
-    image: question-repo-img
+  question-service:
+    container_name: question-service
+    image: question-service-img
     restart: always
     build: .
     ports:
