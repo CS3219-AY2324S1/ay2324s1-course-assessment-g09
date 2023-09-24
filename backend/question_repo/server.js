@@ -21,8 +21,8 @@ connectToDatabase();
 
 app.post('/question', questionController.createQuestion);
 app.get("/questions", questionController.fetchQuestions);
-app.delete("/question/:id", questionController.deleteQuestion);
-app.put("/question/:id", questionController.updateQuestion);
+app.delete("/question/:_id", questionController.deleteQuestion);
+app.put("/question/:_id", questionController.updateQuestion);
 
 app.listen(process.env.PORT);
 

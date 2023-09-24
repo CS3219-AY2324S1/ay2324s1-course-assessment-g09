@@ -2,26 +2,56 @@ import { Button, Flex, Grid, GridItem, StepNumber } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const Question = () => {
+const Question = ({
+  inputValues,
+  setInputValues,
+  isCreate,
+  setIsCreate,
+  colorMode,
+}) => {
   const [questions, setQuestions] = useState(null);
 
   const fetchQuestions = async () => {
-    const res = await axios.get("http://localhost:3001/questions");
-    setQuestions(res.data.questions);
+    try {
+      const res = await axios.get("http://localhost:3000/questions");
+      setQuestions(res.data.questions);
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
   };
 
   useEffect(() => {
     fetchQuestions();
   });
 
-  const deleteQuestion = async ({
-    id,
+  const handleEdit = async ({
+    _id,
+    question_id,
     title,
     description,
     category,
     complexity,
   }) => {
-    await axios.delete(`http://localhost:3001/question/${id}`);
+    setInputValues({
+      _id,
+      question_id,
+      title,
+      description,
+      category,
+      complexity,
+    });
+    setIsCreate(false);
+  };
+
+  const deleteQuestion = async ({
+    _id,
+    question_id,
+    title,
+    description,
+    category,
+    complexity,
+  }) => {
+    await axios.delete(`http://localhost:3000/question/${_id}`);
     fetchQuestions();
   };
 
@@ -30,15 +60,21 @@ const Question = () => {
       {/* <GridItem>{questions}</GridItem> */}
       {questions &&
         questions.map((question) => (
-          <Grid templateColumns="repeat(6, 1fr)" key={`grid_${question.id}`}>
-            <GridItem border="1px solid" key={`grid_item_id_${question.id}`}>
+          <Grid
+            templateColumns="repeat(6, 1fr)"
+            key={`grid_${question.question_id}`}
+          >
+            <GridItem
+              border="1px solid"
+              key={`grid_item_id_${question.question_id}`}
+            >
               <Flex
                 justifyContent="center"
                 alignItems="center"
                 height="100%"
-                key={`flex_id_${question.id}`}
+                key={`flex_id_${question.question_id}`}
               >
-                {question.id}
+                {question.question_id}
               </Flex>
             </GridItem>
             <GridItem
@@ -95,13 +131,21 @@ const Question = () => {
             </GridItem>
             <GridItem border="1px solid">
               <Flex justifyContent="center" alignItems="center" height="100%">
-                <Button size="sm" my={1} bgColor="yellow.200" mx={1}>
+                <Button
+                  size="sm"
+                  my={1}
+                  bgColor={colorMode === "light" ? "yellow.400" : "yellow.300"}
+                  color="black"
+                  mx={1}
+                  onClick={() => handleEdit(question)}
+                >
                   Edit
                 </Button>
                 <Button
                   size="sm"
                   my={1}
-                  bgColor="orange.200"
+                  bgColor={colorMode === "light" ? "orange.400" : "orange.300"}
+                  color="black"
                   mx={1}
                   onClick={() => deleteQuestion(question)}
                 >

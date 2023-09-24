@@ -9,11 +9,11 @@ const fetchQuestions = async (req, res) => {
 
 const createQuestion = async (req, res) => {
     //Create a new question in the database.
-    const {id, title, description, category, complexity} = req.body; //Extract attribs from request.
+    const {question_id, title, description, category, complexity} = req.body; //Extract attribs from request.
 
     try {
         const question = await Qns.create({
-            id,
+            question_id,
             title,
             description,
             category,
@@ -26,26 +26,31 @@ const createQuestion = async (req, res) => {
 };
 
 const updateQuestion = async (req, res) => {
-    const questionId = req.params.id; //ID of question to update.
-    const {id, title, description, category, complexity} = req.body; //Attribs from request,
+    // console.log(req.params._id);
 
-    await Qns.findByIdAndUpdate(questionId, {
-        id,
+    const _id = req.params._id;
+    const {question_id, title, description, category, complexity} = req.body;
+
+    await Qns.findByIdAndUpdate({_id}, {
+        question_id,
         title,
         description,
         category,
         complexity
-    });
+    }, {new:true});
+    
+ 
 
-    const question = await Qns.findById(questionId);
+    const question = await Qns.find({});
 
     res.json({question});
 }
 
 const deleteQuestion = async (req, res) => {
     //Delete a question from the database.
-    const questionId = req.params.id; //Retrieve the question ID from the request.
-    await Qns.deleteOne({id: questionId}); //Delete the question from the database by ID.
+    const _id = req.params._id;
+    // console.log(_id);
+    await Qns.deleteOne({_id});
     res.json({success: "Record deleted"}); //Create Response with success message.
 }
 
