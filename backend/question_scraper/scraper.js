@@ -37,11 +37,45 @@ const webScrapper = async () => {
         return arr;
     }
 
+    const getQnUrlsMain = async () => {
+        // Backup, if interested. Returns ALOT of questions.
+        const page = await browser.newPage();
+
+        const url = "https://leetcode.com/problemset/all/";
+        await page.goto(url);
+
+        // waits for the list of problems to load
+        // h.5 - All the mini elements, including questions.
+        await page.waitForSelector('.h-5');
+
+        // returns the list of questions 
+        const getProblemsArray = await page.evaluate(() => {
+
+            const getLinks = arr => (arr
+                    .map(element => element.getAttribute('href')) // Get all hyperlinks
+                    .filter(element => element.startsWith('/problems/')) // Filter those that are questions
+            );
+            const getProblemLinks = arr => {
+                const qnSlugs = arr.map(element => element.split('/')[2]); // Get question slug
+                const uniqueQnSlugs = Array.from(new Set(qnSlugs));
+                return uniqueQnSlugs.map(element => "https://leetcode.com/problems/".concat(element)); // Construct qn URL
+            };
+            
+            const elements = document.querySelectorAll('a[href]');
+            const elementArray = Array.from(elements);
+            const qnhyperlinks = getLinks(elementArray);
+            const problemLinks = getProblemLinks(qnhyperlinks);
+            return problemLinks;
+        });
+        return getProblemsArray;        
+    }
+
     const getQnData = async (qnUrls) => {
-        const problemsArray = []
+        const problemsArray = [];
+        const newPage = await browser.newPage();    
+
         for (const problemUrl of qnUrls) {
-            const newPage = await browser.newPage()    
-            await newPage.goto(problemUrl)
+            await newPage.goto(problemUrl);
 
             // wait for the clickable dropdown to load
             await newPage.waitForSelector('.cursor-pointer .text-sm')
@@ -82,15 +116,17 @@ const webScrapper = async () => {
     }
 
     try {
-        const qnUrls = await getQnUrls();
-        const qnDatas = await getQnData(qnUrls.slice(1,5));
-        return qnDatas;
+        const qnUrls = await getQnUrlsMain();
+        console.log(qnUrls);
+        const qnDatas = await getQnData(qnUrls.slice(1,2));
+        console.log(qnDatas);
+        return JSON.stringify(qnDatas);
     } catch (error) {
         console.log("An error occurred", error);
     }
 }
-//webScrapper();
+webScrapper();
 
-module.exports = {
-    webScrapper,
-};
+//module.exports = {
+//    webScrapper,
+//};
