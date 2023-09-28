@@ -7,8 +7,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
-    #volumes: #Impermanent data for now.
-    #  - postgres-db:/var/lib/postgresql/data
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
     ports:
       - '5432:5432'
     healthcheck:
@@ -27,5 +27,5 @@ services:
     depends_on:
       - postgres
 
-#volumes:
-#  postgres-db:
+volumes: # Persistent data
+  postgres-db:
