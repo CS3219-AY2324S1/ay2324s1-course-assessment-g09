@@ -27,5 +27,5 @@ services:
     depends_on:
       - postgres
 
-volumes: # Persistent data
+volumes: # Disable persistent data, to fit AWS Lightsail. That means data will die when container is stopped.
   postgres-db:

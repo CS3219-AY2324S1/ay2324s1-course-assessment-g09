@@ -32,7 +32,7 @@ const initialiseDB = () => {
 
         DROP TABLE IF EXISTS users;
 
-        CREATE TABLE users (
+        CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL
             );
