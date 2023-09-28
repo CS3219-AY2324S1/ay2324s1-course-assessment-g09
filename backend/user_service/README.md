@@ -10,8 +10,6 @@ Step 1. Install docker.
 
 Step 2. Type 'docker-compose up --build'.
 
-Step 3. To push to AWS Lightsail, type 'aws lightsail push-container-image --region ap-southeast-1 --service-name peerprep --label user-service --image user-service-img:latest'
-
 ## Available APIs
 
 **Note: \<variable> indicates fill-in-the-blank.**
