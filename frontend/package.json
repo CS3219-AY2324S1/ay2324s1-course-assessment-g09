@@ -11,12 +11,16 @@
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@monaco-editor/react": "^4.5.2",
     "axios": "^1.5.0",
     "framer-motion": "^10.16.4",
     "next": "latest",
+    "peerjs": "^1.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.11.0"
+    "react-icons": "^4.11.0",
+    "react-webcam": "^7.1.1",
+    "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
     "@types/node": "^12.12.21",
