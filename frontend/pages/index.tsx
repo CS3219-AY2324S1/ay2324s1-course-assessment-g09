@@ -9,13 +9,18 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { BsFillMoonFill, BsFillSunFill } from "react-icons/bs";
-import InputField from "../components/InputField";
+import QuestionInputField from "../components/QuestionsInputField";
 import Questions from "../components/Questions";
+import ToggleMode from "../components/ToggleMode";
+import QuestionsHeader from "../components/QuestionsHeader";
+import UserInputField from "../components/UserInputField";
+import UserHeader from "../components/UserHeader";
+import Users from "../components/Users";
 
 const IndexPage = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const [inputValues, setInputValues] = useState({
+  const [questionInputValues, setQuestionInputValues] = useState({
     edit_id: "",
     question_id: "",
     title: "",
@@ -24,31 +29,27 @@ const IndexPage = () => {
     complexity: "",
   });
 
-  const [isCreate, setIsCreate] = useState(true);
+  const [userInputValues, setUserInputValues] = useState({
+    user_id: "",
+    name: "",
+  });
 
+  const [isCreate, setIsCreate] = useState(true);
+  const [displayDB, setDisplayDB] = useState("questions");
+
+  const toggleDisplayDB = () => {
+    displayDB == "questions"
+      ? setDisplayDB("users")
+      : setDisplayDB("questions");
+  };
   return (
     <Box height="100vh" display="flex" flexDirection="column">
-      <Flex ml="auto" pr={2} pt={2}>
-        {colorMode === "light" ? (
-          <Icon
-            as={BsFillSunFill}
-            color="orange"
-            boxSize={8}
-            onClick={toggleColorMode}
-            marginX={2}
-            marginTop={1}
-          />
-        ) : (
-          <Icon
-            as={BsFillMoonFill}
-            color="yellow"
-            boxSize={8}
-            onClick={toggleColorMode}
-            marginX={2}
-            marginTop={1}
-          />
-        )}
-      </Flex>
+      <ToggleMode
+        colorMode={colorMode}
+        toggleColorMode={toggleColorMode}
+        toggleDisplayDB={toggleDisplayDB}
+        displayDB={displayDB}
+      />
       <Flex
         justifyContent="center"
         alignItems="center"
@@ -65,61 +66,45 @@ const IndexPage = () => {
             height="80%"
             marginX={16}
           >
-            <InputField
-              inputValues={inputValues}
-              setInputValues={setInputValues}
-              isCreate={isCreate}
-              setIsCreate={setIsCreate}
-              colorMode={colorMode}
-            />
-
-            <Grid
-              templateColumns="repeat(6, 1fr)"
-              width="100%"
-              marginTop={8}
-              paddingX={12}
-            >
-              <GridItem border="2px solid" borderRight="1px solid">
-                <Flex justifyContent="center">
-                  <Text fontWeight="bold">Question ID</Text>
+            {displayDB == "questions" ? (
+              <>
+                <QuestionInputField
+                  inputValues={questionInputValues}
+                  setInputValues={setQuestionInputValues}
+                  isCreate={isCreate}
+                  setIsCreate={setIsCreate}
+                  colorMode={colorMode}
+                />
+                <Flex width="100%" alignItems="center" justify="center">
+                  <Questions
+                    inputValues={questionInputValues}
+                    setInputValues={setQuestionInputValues}
+                    isCreate={isCreate}
+                    setIsCreate={setIsCreate}
+                    colorMode={colorMode}
+                  />
                 </Flex>
-              </GridItem>
-              <GridItem border="2px solid" borderRight="1px solid">
-                <Flex justifyContent="center">
-                  <Text fontWeight="bold">Question Title</Text>
+              </>
+            ) : (
+              <>
+                <UserInputField
+                  userInputValues={userInputValues}
+                  setUserInputValues={setUserInputValues}
+                  colorMode={colorMode}
+                  isCreate={isCreate}
+                  setIsCreate={setIsCreate}
+                />
+                <Flex width="100%" alignItems="center" justify="center">
+                  <Users
+                    userInputValues={userInputValues}
+                    setUserInputValues={setUserInputValues}
+                    isCreate={isCreate}
+                    setIsCreate={setIsCreate}
+                    colorMode={colorMode}
+                  />
                 </Flex>
-              </GridItem>
-              <GridItem border="2px solid" borderRight="1px solid">
-                <Flex justifyContent="center">
-                  <Text fontWeight="bold">Question Description</Text>
-                </Flex>
-              </GridItem>
-              <GridItem border="2px solid" borderRight="1px solid">
-                <Flex justifyContent="center">
-                  <Text fontWeight="bold">Question Category</Text>
-                </Flex>
-              </GridItem>
-              <GridItem border="2px solid" borderRight="1px solid">
-                <Flex justifyContent="center">
-                  <Text fontWeight="bold">Question Complexity</Text>
-                </Flex>
-              </GridItem>
-              <GridItem border="2px solid">
-                <Flex justifyContent="center">
-                  <Text fontWeight="bold">Action</Text>
-                </Flex>
-              </GridItem>
-            </Grid>
-
-            <Flex width="100%" alignItems="center" justify="center">
-              <Questions
-                inputValues={inputValues}
-                setInputValues={setInputValues}
-                isCreate={isCreate}
-                setIsCreate={setIsCreate}
-                colorMode={colorMode}
-              />
-            </Flex>
+              </>
+            )}
           </Flex>
         </Flex>
       </Flex>

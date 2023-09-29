@@ -2,6 +2,7 @@ import React from "react";
 import Question from "./Question";
 import questionStr from "../stores/questionsStore";
 import { Box } from "@chakra-ui/react";
+import QuestionsHeader from "./QuestionsHeader";
 
 const Questions = ({
   inputValues,
@@ -12,6 +13,7 @@ const Questions = ({
 }) => {
   return (
     <Box width="100%" marginX={12}>
+      <QuestionsHeader />
       <Question
         inputValues={inputValues}
         setInputValues={setInputValues}
