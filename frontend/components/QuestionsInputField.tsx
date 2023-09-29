@@ -79,7 +79,7 @@ const QuestionInputField = ({
   };
 
   return (
-    <Grid templateColumns="repeat(6, 1fr)" gap={6} marginX={5}>
+    <Grid templateColumns="repeat(6, 1fr)" gap={6}>
       <Input
         placeholder="ID"
         variant="filled"

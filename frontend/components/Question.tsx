@@ -56,7 +56,7 @@ const Question = ({
   };
 
   return (
-    <>
+    <div style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}>
       {/* <GridItem>{questions}</GridItem> */}
       {questions &&
         questions.map((question) => (
@@ -155,7 +155,7 @@ const Question = ({
             </GridItem>
           </Grid>
         ))}
-    </>
+    </div>
   );
 };
 
