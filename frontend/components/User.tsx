@@ -13,28 +13,32 @@ const User = ({
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:3002/users");
-      setUsers(res.data.questions);
+      const res = await axios.get("http://localhost:3002/users/getall");
+      setUsers(res.data.users);
     } catch (error) {
       console.log("ERROR: ", error);
     }
-
-    useEffect(() => {
-      fetchUsers();
-    });
   };
 
-  const handleEdit = async ({ _id, user_id, name }) => {
+  useEffect(() => {
+    fetchUsers();
+  });
+
+  const handleEdit = async ({ _id, id, name }) => {
     setUserInputValues({
       _id,
-      user_id,
+      user_id: id,
       name,
     });
     setIsCreate(false);
   };
 
-  const deleteQuestion = async ({ _id, user_id, name }) => {
-    await axios.delete(`http://localhost:3002/users/${_id}`);
+  const handleDelete = async ({ id, name }) => {
+    // console.log(id);
+    await axios.post(`http://localhost:3002/users/delete/${id}`, {
+      id,
+      name,
+    });
     fetchUsers();
   };
 
@@ -42,15 +46,15 @@ const User = ({
     <>
       {users &&
         users.map((user) => (
-          <Grid templateColumns="repeat(3, 1fr)" key={`grid_${user.user_id}`}>
-            <GridItem border="1px solid" key={`grid_item_id_${user.user_id}`}>
+          <Grid templateColumns="repeat(3, 1fr)" key={`grid_${user.id}`}>
+            <GridItem border="1px solid" key={`grid_item_id_${user.id}`}>
               <Flex
                 justifyContent="center"
                 alignItems="center"
                 height="100%"
-                key={`flex_id_${user.user_id}`}
+                key={`flex_id_${user.id}`}
               >
-                {user.user_id}
+                {user.id}
               </Flex>
             </GridItem>
             <GridItem border="1px solid" key={`grid_item_title${user.name}`}>
@@ -82,7 +86,7 @@ const User = ({
                   bgColor={colorMode === "light" ? "orange.400" : "orange.300"}
                   color="black"
                   mx={1}
-                  onClick={() => deleteQuestion(user)}
+                  onClick={() => handleDelete(user)}
                 >
                   Delete
                 </Button>

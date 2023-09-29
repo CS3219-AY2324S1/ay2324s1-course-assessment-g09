@@ -14,8 +14,9 @@ const UserInputField = ({
   const [users, setUsers] = useState(null);
 
   const fetchUsers = async () => {
-    const res = await axios.get("http://localhost:3002/users");
-    setUsers(res.data.questions);
+    const res = await axios.get("http://localhost:3002/users/getall");
+    console.log(res);
+    setUsers(res.data.users);
   };
 
   const handleInputChange = (event) => {
@@ -35,7 +36,10 @@ const UserInputField = ({
 
   const handleUpdate = async () => {
     const { _id } = userInputValues;
-    await axios.put(`http://localhost:3002/users/${_id}`, userInputValues);
+    await axios.post(
+      `http://localhost:3002/users/update/${userInputValues.user_id}`,
+      userInputValues
+    );
 
     setUserInputValues({
       user_id: "",
@@ -43,18 +47,15 @@ const UserInputField = ({
     });
 
     setIsCreate(true);
-
     fetchUsers();
   };
 
   const handleSubmit = async () => {
-    console.log(userInputValues);
-    const res = await axios.post("http://localhost:3002/users", {
+    const res = await axios.post("http://localhost:3002/users/create", {
       user_id: userInputValues.user_id,
       name: userInputValues.name,
     });
 
-    console.log(res);
     setUserInputValues({
       user_id: "",
       name: "",
