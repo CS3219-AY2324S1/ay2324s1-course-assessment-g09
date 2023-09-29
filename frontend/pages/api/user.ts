@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.json({ username: username, message: "User registered" });
         } catch (error) {
-            return res.status(200).json({ message: "something went wrong..." });
+            return res.status(500).json({ message: "something went wrong..." });
         }
     }
 }
