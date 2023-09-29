@@ -1,8 +1,8 @@
-# User Management
+# User Service
 
 This service manages User Accounts for PeerPrep. CRUD operations are supported. For now, User Accounts only has information on Name, nothing else.
 
-HTTP Status 200 means the operation completed successfully. Or else, HTTP Status 500 means the operation faced some error.
+HTTP Status 200 means the operation completed successfully. Or else, other HTTP Statuses mean the operation faced some error.
 
 ## How to start?
 
