@@ -1,0 +1,31 @@
+version: "3"
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment: # To hide
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  user-service:
+    container_name: user-service
+    image: user-service-img
+    restart: always
+    build: .   
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+
+volumes: # Persistent data
+  postgres-db:
