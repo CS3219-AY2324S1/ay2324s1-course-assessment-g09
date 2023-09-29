@@ -30,7 +30,7 @@ const initialiseDB = () => {
     const query = `
         BEGIN; 
 
-        DROP TABLE IF EXISTS users; --Support Data Persistence
+        -- DROP TABLE IF EXISTS users; --Support Data Persistence
 
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
