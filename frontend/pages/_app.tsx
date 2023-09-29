@@ -5,7 +5,7 @@ import IndexPage from ".";
 function MyApp({ Component, pageProps }) {
   return (
     <ChakraProvider>
-      <IndexPage />
+      <Component {...pageProps} />
     </ChakraProvider>
   );
 }
