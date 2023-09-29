@@ -15,7 +15,7 @@ const UserInputField = ({
 
   const fetchUsers = async () => {
     const res = await axios.get("http://localhost:3002/users/getall");
-    console.log(res);
+    console.log(res.data);
     setUsers(res.data.users);
   };
 
@@ -37,7 +37,7 @@ const UserInputField = ({
   const handleUpdate = async () => {
     const { _id } = userInputValues;
     await axios.post(
-      `http://localhost:3002/users/update/${userInputValues.user_id}`,
+      `http://localhost:3002/users/update/${userInputValues.id}`,
       userInputValues
     );
 

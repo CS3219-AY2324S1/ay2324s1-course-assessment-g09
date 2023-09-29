@@ -34,12 +34,19 @@ const User = ({
   };
 
   const handleDelete = async ({ id, name }) => {
-    // console.log(id);
-    await axios.post(`http://localhost:3002/users/delete/${id}`, {
-      id,
-      name,
-    });
-    fetchUsers();
+    console.log(id, name);
+    try {
+      await axios.post(`http://localhost:3002/users/delete/${id}`, {
+        id,
+        name,
+      });
+      if (users.LENGTH > 0) {
+        fetchUsers();
+      }
+      // console.log("LENGTH", users.LENGTH);
+    } catch (error) {
+      console.log("Error", error);
+    }
   };
 
   return (
