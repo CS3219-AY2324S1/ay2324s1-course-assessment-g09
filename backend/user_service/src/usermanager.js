@@ -92,10 +92,6 @@ const getUsers = (request, response) => {
         }
         const allUsers = results.rows;
         const numUsers = allUsers.length;
-        if (numUsers < 0) {
-            const msg = {'msg': `No users found.`, 'users': null};
-            return response.status(404).json(msg);
-        }
 
         const msg = {'msg': `${numUsers} users retrieved.`, 'users': allUsers};
         return response.status(200).json(msg);
