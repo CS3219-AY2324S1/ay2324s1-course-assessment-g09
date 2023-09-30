@@ -9,12 +9,17 @@ import {
   Text,
   useColorMode,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsFillMoonFill, BsFillSunFill } from "react-icons/bs";
 import InputField from "../components/InputField";
 import Questions from "../components/Questions";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const IndexPage = () => {
+
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const { colorMode, toggleColorMode } = useColorMode();
 
   const [inputValues, setInputValues] = useState({
@@ -27,6 +32,17 @@ const IndexPage = () => {
   });
 
   const [isCreate, setIsCreate] = useState(true);
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (status === "unauthenticated") {
+    return router.push('/api/auth/signin');
+  }
+
+
+
 
   return (
     <Box height="100vh" display="flex" flexDirection="column">
