@@ -114,7 +114,7 @@ const getUserById = (request, response) => {
     pool.query(query, (error, results) => {
         if (error) {
             const msg = {'msg': error.message, 'user': null};
-            return response.status(500).json(msg);``
+            return response.status(500).json(msg);
         }
         const allUsers = results.rows;
         const numUsers = allUsers.length;
