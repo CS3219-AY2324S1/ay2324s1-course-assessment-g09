@@ -11,8 +11,8 @@ const ToggleMode = ({
   displayDB,
 }) => {
   return (
-    <HStack my={2} mx={2}>
-      {displayDB === "questions" ? (
+    <HStack my={2} mr={5}>
+      {/* {displayDB === "questions" ? (
         <IconButton
           variant="outline"
           colorScheme="blue"
@@ -30,7 +30,7 @@ const ToggleMode = ({
           boxSize={10}
           onClick={toggleDisplayDB}
         />
-      )}
+      )} */}
 
       {colorMode === "light" ? (
         <IconButton
