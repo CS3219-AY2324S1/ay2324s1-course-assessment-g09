@@ -30,11 +30,12 @@ const initialiseDB = () => {
     const query = `
         BEGIN; 
 
-        DROP TABLE IF EXISTS users;
+        -- DROP TABLE IF EXISTS users; --Support Data Persistence
 
-        CREATE TABLE users (
+        CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
-            name VARCHAR(255) NOT NULL
+            name VARCHAR(255) NOT NULL,
+            token TEXT
             );
         
         COMMIT;
@@ -50,8 +51,8 @@ const initialiseDB = () => {
 };
 
 const createUser = (request, response) => {
-    const name = request.body.name;
-    const query = `INSERT INTO users VALUES (DEFAULT, $1) RETURNING id`;
+    const {name, token} = request.body;
+    const query = `INSERT INTO users VALUES (DEFAULT, $1, $2) RETURNING id`;
 
     if (!request.body || !name || name.length == 0) {
         // Reject if 'name' is empty;
@@ -64,7 +65,7 @@ const createUser = (request, response) => {
         return response.status(400).json(msg);
     }
 
-    pool.query(query, [name], (error, results) => {
+    pool.query(query, [name, token], (error, results) => {
         if (error) {
             const msg = {'msg': error.message, 'id': null};
             return response.status(500).json(msg);
@@ -83,7 +84,7 @@ const createUser = (request, response) => {
     })};
 
 const getUsers = (request, response) => {
-    const query = 'SELECT * FROM users ORDER BY id ASC';
+    const query = 'SELECT id, name FROM users ORDER BY id ASC';
 
     pool.query(query, (error, results) => {
         if (error) {
@@ -99,7 +100,7 @@ const getUsers = (request, response) => {
 
 const getUserById = (request, response) => {
     const userId = parseInt(request.params.id);
-    const query = `SELECT * FROM users WHERE id = ${userId}`;
+    const query = `SELECT id, name FROM users WHERE id = ${userId}`;
 
     if (!request.params || !request.params.id || userId == NaN) {
         // Reject if 'userId' is empt or invalid.
@@ -125,27 +126,43 @@ const getUserById = (request, response) => {
     })};
 
 const updateUser = (request, response) => {
-    const name = request.body.name;
-    const userId = parseInt(request.params.id);
-    const query = `UPDATE users SET name = $1 WHERE id = $2 RETURNING id`;
 
-    if (!request.body || !name || name.length == 0) {
-        // Reject if 'name' is empty;
-        const msg = {'msg': `Name cannot be empty.`, 'id': null};
+    const {name, token} = request.body;
+    const userId = parseInt(request.params.id);
+    if (!request.body || (!name || name.length == 0) && (!token || token.length == 0)) {
+        // Reject if all fields are empty;
+        const msg = {'msg': `At least one field must be filled.`};
         return response.status(400).json(msg);
     }
-    if (name.length > 255) {
+    if (name && name.length > 255) {
         // Reject if 'name' is too long.
-        const msg = {'msg': `Name cannot be longer than 255 characters.`, 'id': null};
+        const msg = {'msg': `Name cannot be longer than 255 characters.`};
         return response.status(400).json(msg);
     }
     if (!request.params || !request.params.id || userId == NaN) {
         // Reject if 'userId' is empt or invalid.
-        const msg = {'msg': `ID cannot be empty nor invalid.`, 'id': null};
+        const msg = {'msg': `ID cannot be empty nor invalid.`};
         return response.status(400).json(msg);
     }
 
-    pool.query(query, [name, userId], (error, results) => {
+    //Get old data
+    const get_query = `SELECT id, name FROM users WHERE id = ${userId}`;
+    const user = pool.query(get_query, (error, results) => {
+        if (error) {
+            const msg = {'msg': error.message};
+            return response.status(500).json(msg);
+        }
+        return results.rows[0]; //In theory, if id is a PK, users should only have 1 row.
+    });
+    if (!name) {
+        name = user.name;
+    }
+    if (!token) {
+        token = user.token;
+    }
+
+    const query = `UPDATE users SET name = $1, token = $2 WHERE id = $3 RETURNING id`;
+    pool.query(query, [name, token, userId], (error, results) => {
         if (error) {
             const msg = {'msg': error.message};
             return response.status(500).json(msg);
@@ -157,10 +174,10 @@ const updateUser = (request, response) => {
             const msg = {'msg': 'Error updating user to DB. Check your User ID.'};
             return response.status(500).json(msg);
         }
-
         const msg = {'msg': `User modified with ID ${userId}.`};
         return response.status(200).json(msg);
-    })};
+    })
+};
 
 const deleteUser = (request, response) => {
     const userId = parseInt(request.params.id);

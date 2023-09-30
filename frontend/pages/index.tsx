@@ -1,32 +1,44 @@
 import {
   Box,
+  Button,
   Flex,
   Grid,
   GridItem,
   Icon,
+
   Tab,
   TabIndicator,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Link,
   Text,
   useColorMode,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsFillMoonFill, BsFillSunFill } from "react-icons/bs";
 import QuestionInputField from "../components/QuestionsInputField";
 import Questions from "../components/Questions";
+
 import ToggleMode from "../components/ToggleMode";
 import QuestionsHeader from "../components/QuestionsHeader";
 import UserInputField from "../components/UserInputField";
 import UserHeader from "../components/UserHeader";
 import Users from "../components/Users";
+
 import { MdQuestionAnswer } from "react-icons/md";
 import { AiOutlineUser } from "react-icons/ai";
 import { FaHandshake } from "react-icons/fa";
 
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+
+
 const IndexPage = () => {
+
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const { colorMode, toggleColorMode } = useColorMode();
 
   const [questionInputValues, setQuestionInputValues] = useState({
@@ -46,15 +58,25 @@ const IndexPage = () => {
   const [isCreate, setIsCreate] = useState(true);
   const [displayDB, setDisplayDB] = useState("questions");
 
-  const toggleDisplayDB = () => {
+
+      const toggleDisplayDB = () => {
     displayDB == "questions"
       ? setDisplayDB("users")
       : setDisplayDB("questions");
   };
 
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (status === "unauthenticated") {
+    return router.push('/api/auth/signin');
+  };
+        
   return (
     <Box height="100vh" display="flex" flexDirection="column">
       <Tabs position="relative" variant="unstyled">
+        <Link href="/collaboration"> collaboration </Link>
         <TabList>
           <Tab
             _selected={{
@@ -91,6 +113,7 @@ const IndexPage = () => {
               color: colorMode == "light" ? "purple.500" : "purple.300",
               fontWeight: "bold",
             }}
+
           >
             <Icon as={FaHandshake} boxSize={5} marginRight={2} />
             Collaboration Service
