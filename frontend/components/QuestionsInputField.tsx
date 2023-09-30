@@ -5,7 +5,7 @@ import { AiTwotoneEdit } from "react-icons/ai";
 import React, { useState } from "react";
 import axios from "axios";
 
-const InputField = ({
+const QuestionInputField = ({
   inputValues,
   setInputValues,
   isCreate,
@@ -15,22 +15,22 @@ const InputField = ({
   const [question, setQuestions] = useState(null);
 
   const fetchQuestions = async () => {
-    const res = await axios.get("http://localhost:3000/questions");
+    const res = await axios.get("http://localhost:3001/questions");
     setQuestions(res.data.questions);
   };
 
   const handleSubmit = async () => {
     console.log(inputValues);
-    const res = await axios.post("http://localhost:3000/question", {
+    const res = await axios.post("http://localhost:3001/question", {
       question_id: inputValues.question_id,
       title: inputValues.title,
       description: inputValues.description,
       category: inputValues.category,
       complexity: inputValues.complexity,
     });
+
     console.log(res);
     setInputValues({
-      edit_id: "",
       question_id: "",
       title: "",
       description: "",
@@ -43,7 +43,7 @@ const InputField = ({
 
   const handleUpdate = async () => {
     const { _id } = inputValues;
-    await axios.put(`http://localhost:3000/question/${_id}`, inputValues);
+    await axios.put(`http://localhost:3001/question/${_id}`, inputValues);
 
     setInputValues({
       edit_id: "",
@@ -68,6 +68,7 @@ const InputField = ({
   };
 
   const isButtonValid = () => {
+    console.log(inputValues);
     return (
       inputValues.question_id.trim() !== "" &&
       inputValues.title.trim() !== "" &&
@@ -78,7 +79,7 @@ const InputField = ({
   };
 
   return (
-    <Grid templateColumns="repeat(6, 1fr)" gap={6} marginX={5}>
+    <Grid templateColumns="repeat(6, 1fr)" gap={6}>
       <Input
         placeholder="ID"
         variant="filled"
@@ -143,4 +144,4 @@ const InputField = ({
   );
 };
 
-export default InputField;
+export default QuestionInputField;

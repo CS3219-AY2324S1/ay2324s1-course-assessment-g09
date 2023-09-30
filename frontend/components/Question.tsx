@@ -13,7 +13,7 @@ const Question = ({
 
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/questions");
+      const res = await axios.get("http://localhost:3001/questions");
       setQuestions(res.data.questions);
     } catch (error) {
       console.log("ERROR: ", error);
@@ -51,12 +51,12 @@ const Question = ({
     category,
     complexity,
   }) => {
-    await axios.delete(`http://localhost:3000/question/${_id}`);
+    await axios.delete(`http://localhost:3001/question/${_id}`);
     fetchQuestions();
   };
 
   return (
-    <>
+    <div style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}>
       {/* <GridItem>{questions}</GridItem> */}
       {questions &&
         questions.map((question) => (
@@ -155,7 +155,7 @@ const Question = ({
             </GridItem>
           </Grid>
         ))}
-    </>
+    </div>
   );
 };
 

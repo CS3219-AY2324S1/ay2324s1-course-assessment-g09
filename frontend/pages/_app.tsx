@@ -2,14 +2,17 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { SessionProvider } from "next-auth/react";
 import IndexPage from ".";
+import Collaboration from "./collaboration";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
 
     <ChakraProvider>
-      <SessionProvider session={session}>
+   {/*<SessionProvider session={session}>
         <Component {...pageProps} />
-      </SessionProvider>
+      </SessionProvider>*/}
+      <IndexPage />
+      {/* <Collaboration /> */}
     </ChakraProvider>
   );
 }
