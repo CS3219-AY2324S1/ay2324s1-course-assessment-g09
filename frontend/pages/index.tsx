@@ -1,9 +1,11 @@
 import {
   Box,
+  Button,
   Flex,
   Grid,
   GridItem,
   Icon,
+  Link,
   Text,
   useColorMode,
 } from "@chakra-ui/react";
@@ -28,6 +30,7 @@ const IndexPage = () => {
 
   return (
     <Box height="100vh" display="flex" flexDirection="column">
+      <Link href="/collaboration"> collaboration </Link>
       <Flex ml="auto" pr={2} pt={2}>
         {colorMode === "light" ? (
           <Icon
