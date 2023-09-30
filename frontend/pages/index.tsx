@@ -1,23 +1,31 @@
 import {
   Box,
+  Button,
   Flex,
   Grid,
   GridItem,
   Icon,
+  Link,
   Text,
   useColorMode,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsFillMoonFill, BsFillSunFill } from "react-icons/bs";
 import QuestionInputField from "../components/QuestionsInputField";
 import Questions from "../components/Questions";
+
 import ToggleMode from "../components/ToggleMode";
 import QuestionsHeader from "../components/QuestionsHeader";
 import UserInputField from "../components/UserInputField";
 import UserHeader from "../components/UserHeader";
 import Users from "../components/Users";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const IndexPage = () => {
+
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const { colorMode, toggleColorMode } = useColorMode();
 
   const [questionInputValues, setQuestionInputValues] = useState({
@@ -37,19 +45,53 @@ const IndexPage = () => {
   const [isCreate, setIsCreate] = useState(true);
   const [displayDB, setDisplayDB] = useState("questions");
 
-  const toggleDisplayDB = () => {
+
+      const toggleDisplayDB = () => {
     displayDB == "questions"
       ? setDisplayDB("users")
       : setDisplayDB("questions");
   };
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (status === "unauthenticated") {
+    return router.push('/api/auth/signin');
+  }
+
+
+
+
   return (
     <Box height="100vh" display="flex" flexDirection="column">
-      <ToggleMode
+       <ToggleMode
         colorMode={colorMode}
         toggleColorMode={toggleColorMode}
         toggleDisplayDB={toggleDisplayDB}
         displayDB={displayDB}
       />
+      <Link href="/collaboration"> collaboration </Link>
+      <Flex ml="auto" pr={2} pt={2}>
+        {colorMode === "light" ? (
+          <Icon
+            as={BsFillSunFill}
+            color="orange"
+            boxSize={8}
+            onClick={toggleColorMode}
+            marginX={2}
+            marginTop={1}
+          />
+        ) : (
+          <Icon
+            as={BsFillMoonFill}
+            color="yellow"
+            boxSize={8}
+            onClick={toggleColorMode}
+            marginX={2}
+            marginTop={1}
+          />
+        )}
+      </Flex>
       <Flex
         justifyContent="center"
         alignItems="center"
