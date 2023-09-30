@@ -93,7 +93,7 @@ const getUsers = (request, response) => {
         }
         const allUsers = results.rows;
         const numUsers = allUsers.length;
-        if (numUsers < 1) {
+        if (numUsers < 0) {
             const msg = {'msg': `No users found.`, 'users': null};
             return response.status(404).json(msg);
         }
@@ -115,7 +115,7 @@ const getUserById = (request, response) => {
     pool.query(query, (error, results) => {
         if (error) {
             const msg = {'msg': error.message, 'user': null};
-            return response.status(500).json(msg);
+            return response.status(500).json(msg);``
         }
         const allUsers = results.rows;
         const numUsers = allUsers.length;
