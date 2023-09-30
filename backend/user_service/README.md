@@ -6,7 +6,7 @@ HTTP Status 200 means the operation completed successfully. Or else, other HTTP 
 
 ## How to start?
 
-Step 1. Install docker.
+Step 1. Install and run docker.
 
 Step 2. Type 'docker-compose up --build'.
 
