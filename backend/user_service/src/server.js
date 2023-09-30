@@ -1,13 +1,13 @@
 // This module initialises the UserManager module, by setting up the Postgresql Server + its associated RESTAPI interface.
 
 // Load Env Variables
-if (process.env.NODE_ENV != 'production') {
-    require('dotenv').config();
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
 }
 // Import dependencies
-const express = require('express');
-const bodyparser = require('body-parser'); // Middleware
-const usermanager = require('./usermanager');
+const express = require("express");
+const bodyparser = require("body-parser"); // Middleware
+const usermanager = require("./usermanager");
 
 // Create an express app
 const app = express();
@@ -16,15 +16,15 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 
 //Setup Routing
-app.post('/users/create', usermanager.createUser); //CREATE
-app.get('/users/getall', usermanager.getUsers); // READ
-app.get('/users/get/:id', usermanager.getUserById);
-app.post('/users/update/:id', usermanager.updateUser); //UPDATE
-app.post('/users/delete/:id', usermanager.deleteUser); //DELETE
+app.post("/users/create", usermanager.createUser); //CREATE
+app.get("/users/getall", usermanager.getUsers); // READ
+app.get("/users/get/:id", usermanager.getUserById);
+app.post("/users/update/:id", usermanager.updateUser); //UPDATE
+app.post("/users/delete/:id", usermanager.deleteUser); //DELETE
 
 // Start Express App
 app.listen(process.env.RESTAPI_PORT, () => {
-    console.log(`UserManager running on port ${process.env.RESTAPI_PORT}.`);
+  console.log(`UserManager running on port ${process.env.RESTAPI_PORT}.`);
 });
 
 // Initialise DB with default parameters.
