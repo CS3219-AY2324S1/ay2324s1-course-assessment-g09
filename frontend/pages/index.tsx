@@ -5,7 +5,6 @@ import {
   Grid,
   GridItem,
   Icon,
-
   Tab,
   TabIndicator,
   TabList,
@@ -33,10 +32,9 @@ import { FaHandshake } from "react-icons/fa";
 
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-
+import Collaboration from "./collaboration";
 
 const IndexPage = () => {
-
   const router = useRouter();
   const { data: session, status } = useSession();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -58,25 +56,23 @@ const IndexPage = () => {
   const [isCreate, setIsCreate] = useState(true);
   const [displayDB, setDisplayDB] = useState("questions");
 
-
-      const toggleDisplayDB = () => {
+  const toggleDisplayDB = () => {
     displayDB == "questions"
       ? setDisplayDB("users")
       : setDisplayDB("questions");
   };
 
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
+  // if (status === "loading") {
+  //   return <p>Loading...</p>;
+  // }
 
-  if (status === "unauthenticated") {
-    return router.push('/api/auth/signin');
-  };
-        
+  // if (status === "unauthenticated") {
+  //   return router.push('/api/auth/signin');
+  // };
+
   return (
     <Box height="100vh" display="flex" flexDirection="column">
       <Tabs position="relative" variant="unstyled">
-        <Link href="/collaboration"> collaboration </Link>
         <TabList>
           <Tab
             _selected={{
@@ -113,7 +109,6 @@ const IndexPage = () => {
               color: colorMode == "light" ? "purple.500" : "purple.300",
               fontWeight: "bold",
             }}
-
           >
             <Icon as={FaHandshake} boxSize={5} marginRight={2} />
             Collaboration Service
@@ -134,17 +129,11 @@ const IndexPage = () => {
           borderRadius="1px"
         />
 
-        <Flex
-          justifyContent="center"
-          alignItems="center"
-          flex="1"
-          // flexDirection="column"
-        >
+        <Flex justifyContent="center" alignItems="center" flex="1">
           <Flex justifyContent="center" alignItems="center">
             <Flex
               flexDirection="column"
               align="center"
-              // background={colorMode == "light" ? "gray.300" : "gray.700"}
               py={6}
               borderRadius="xl"
               marginX={12}
@@ -198,48 +187,10 @@ const IndexPage = () => {
                     />
                   </Flex>
                 </TabPanel>
-                <TabPanel>cde</TabPanel>
+                <TabPanel>
+                  <Collaboration />
+                </TabPanel>
               </TabPanels>
-
-              {/* {displayDB == "questions" ? (
-              <>
-                <QuestionInputField
-                  inputValues={questionInputValues}
-                  setInputValues={setQuestionInputValues}
-                  isCreate={isCreate}
-                  setIsCreate={setIsCreate}
-                  colorMode={colorMode}
-                />
-                <Flex width="100%" alignItems="center" justify="center">
-                  <Questions
-                    inputValues={questionInputValues}
-                    setInputValues={setQuestionInputValues}
-                    isCreate={isCreate}
-                    setIsCreate={setIsCreate}
-                    colorMode={colorMode}
-                  />
-                </Flex>
-              </>
-            ) : (
-              <>
-                <UserInputField
-                  userInputValues={userInputValues}
-                  setUserInputValues={setUserInputValues}
-                  colorMode={colorMode}
-                  isCreate={isCreate}
-                  setIsCreate={setIsCreate}
-                />
-                <Flex width="100%" alignItems="center" justify="center">
-                  <Users
-                    userInputValues={userInputValues}
-                    setUserInputValues={setUserInputValues}
-                    isCreate={isCreate}
-                    setIsCreate={setIsCreate}
-                    colorMode={colorMode}
-                  />
-                </Flex>
-              </>
-            )} */}
             </Flex>
           </Flex>
         </Flex>
