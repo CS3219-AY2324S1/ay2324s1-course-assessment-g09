@@ -6,12 +6,11 @@ import Collaboration from "./collaboration";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
-
     <ChakraProvider>
-   {/*<SessionProvider session={session}>
+      <SessionProvider session={session}>
         <Component {...pageProps} />
-      </SessionProvider>*/}
-      <IndexPage />
+      </SessionProvider>
+      {/* <IndexPage /> */}
       {/* <Collaboration /> */}
     </ChakraProvider>
   );

@@ -12,26 +12,6 @@ const ToggleMode = ({
 }) => {
   return (
     <HStack my={2} mr={5}>
-      {/* {displayDB === "questions" ? (
-        <IconButton
-          variant="outline"
-          colorScheme="blue"
-          icon={<AiOutlineUser />}
-          aria-label="users"
-          boxSize={10}
-          onClick={toggleDisplayDB}
-        />
-      ) : (
-        <IconButton
-          variant="outline"
-          colorScheme="pink"
-          icon={<MdQuestionAnswer />}
-          aria-label="questions"
-          boxSize={10}
-          onClick={toggleDisplayDB}
-        />
-      )} */}
-
       {colorMode === "light" ? (
         <IconButton
           variant="outline"
