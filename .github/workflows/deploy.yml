@@ -25,7 +25,7 @@ jobs:
         ECR_REPOSITORY: user-service
         IMAGE_TAG: user-service-img
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend/user-service
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend/user_service
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
     - name: Build, tag, and push image to Amazon ECR (Question-Service)
@@ -34,5 +34,5 @@ jobs:
         ECR_REPOSITORY: question-service
         IMAGE_TAG: question-service-img
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend/question-service
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend/question_service
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
