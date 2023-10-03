@@ -9,18 +9,22 @@ permissions:
   contents: read    # This is required for actions/checkout
 jobs:
   build:
-    name: Build Image
+    name: Build Images, Push Images to AWS ECR, Deploy Env on AWS EB
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
       uses: actions/checkout@v4
+
+    # AWS Authentication
     - name: Configure AWS credentials
+      id: creds
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::920185736846:role/GitHubAction-AssumeRoleWithAction
         role-session-name: GitHub_to_AWS_via_FederatedOIDC
         aws-region: ${{ env.AWS_REGION }}
-          # Hello from AWS: WhoAmI
+        output-credentials: true
+      # Hello from AWS: WhoAmI
     - name: Sts GetCallerIdentity (Sanity Check)
       run: |
         aws sts get-caller-identity
@@ -28,6 +32,7 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
+    # Building images
     - name: Build, tag, and push image to Amazon ECR (User-Service)
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -45,3 +50,16 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend/question_service
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    # Deployment
+    - name: Deploy to EB
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_session_token: ${{ steps.creds.outputs.aws-session-token }}
+        application_name: PeerPrep
+        environment_name: PeerPrep-env
+        version_label: 3 #To manually iterate
+        region: ap-southeast-1
+        deployment_package: ./aws_deploy/docker-compose.yml
+        wait_for_deployment: true  # Set to false to save Github Actions free hours
+
