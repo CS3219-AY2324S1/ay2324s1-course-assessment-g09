@@ -1,4 +1,4 @@
-name: Build Img, Push to ECR, Deploy on EB
+name: Deployment to AWS Elastic Beanstalk
 on:
   push:
     branches: [ master ]
