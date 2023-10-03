@@ -46,11 +46,6 @@ const createQuestion = (request, response) => {
 
 const getQuestions = (request, response) => {
   Question.find().then(result => {
-    const numQns = result.length;
-    if (numQns < 1) {
-      const msg = {'msg': 'No questions found.', 'qns': null};
-      return response.status(404).json(msg);
-    }
     const msg = {'msg': 'Questions retrieved.', 'qns': result};
     return response.status(200).json(msg);
   }).catch(err => {

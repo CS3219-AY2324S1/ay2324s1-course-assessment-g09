@@ -1,0 +1,83 @@
+version: "3"
+services:
+  postgres:
+    # For User Service
+    container_name: postgres
+    image: postgres:latest
+    ports: 
+      - "5432:5432"
+    restart: always
+    environment: # To hide
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes: 
+      - postgres-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  user-service:
+    # For User Service
+    container_name: user-service
+    image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/user-service:latest
+    ports: 
+      - "3002:3002"
+    restart: always
+    environment: # To hide
+      RESTAPI_PORT: 3002
+      DB_SERVER: postgres # PostgreSQL variables.
+      DB_DATABASE: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_PORT: 5432
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://postgres:3002/users/getall", "||", "exit", "1"]
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
+    depends_on: 
+      - postgres
+
+
+  mongo:
+    # For Question Service
+    container_name: mongo
+    image: mongo:latest
+    ports: 
+      - "27017:27017"
+    restart: always
+    volumes: 
+      - mongo-db:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  question-service:
+    # For Question Service
+    container_name: question-service
+    image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/question-service:latest
+    ports: 
+      - "3001:3001"
+    restart: always
+    environment:
+      RESTAPI_PORT: 3001
+      DB_SERVER: mongodb://mongo:27017
+      DB_PORT: 27017 # Must be the same as the port in DB_SERVER. For logging only.
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/questions/getall", "||", "exit", "1"]
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s 
+    depends_on: 
+      - mongo   
+
+volumes: # Persistent data
+  postgres-db:
+  mongo-db:
