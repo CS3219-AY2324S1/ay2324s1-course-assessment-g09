@@ -1,19 +1,32 @@
 version: "3"
 services:
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo-db:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   question-service:
     container_name: question-service
     image: question-service-img
+    environment:
+      RESTAPI_PORT: 3001
+      DB_SERVER: mongodb://mongo:27017
+      DB_PORT: 27017 # Must be the same as the port in DB_SERVER. For logging only.
     restart: always
     build: .
     ports:
       - "3001:3001"
-    links:
+    depends_on:
       - mongo
-  mongo: # Not needed now, since we are using the cloud-hosted Mongo Atlas
-    container_name: mongo
-    image: mongo
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./data:/data/db
+
+volumes: # Persistent data
+  mongo-db:
