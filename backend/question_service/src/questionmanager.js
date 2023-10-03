@@ -46,7 +46,8 @@ const createQuestion = (request, response) => {
 
 const getQuestions = (request, response) => {
   Question.find().then(result => {
-    const msg = {'msg': 'Questions retrieved.', 'qns': result};
+    const numQns = result.length;
+    const msg = {'msg': `${numQns} questions retrieved.`, 'qns': result};
     return response.status(200).json(msg);
   }).catch(err => {
     const msg = {'msg': err.message, 'qns': null};
