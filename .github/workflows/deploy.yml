@@ -1,4 +1,4 @@
-name: Build Images, Push Images to AWS ECR, Deploy Env on AWS EB
+name: Build Img, Push to ECR, Deploy on EB
 on:
   push:
     branches: [ master ]
