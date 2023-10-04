@@ -54,6 +54,15 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend/question_service
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+    - name: Build, tag, and push image to Amazon ECR (Frontend)
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: frontend
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./frontend
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
     # Deployment
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v21
