@@ -13,8 +13,8 @@ const Question = ({
 
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get("http://localhost:3001/questions");
-      setQuestions(res.data.questions);
+      const res = await axios.get("http://localhost:3001/questions/getall");
+      setQuestions(res.data.qns);
     } catch (error) {
       console.log("ERROR: ", error);
     }
@@ -25,16 +25,14 @@ const Question = ({
   });
 
   const handleEdit = async ({
-    _id,
-    question_id,
+    qn_num,
     title,
     description,
     category,
     complexity,
   }) => {
     setInputValues({
-      _id,
-      question_id,
+      qn_num,
       title,
       description,
       category,
@@ -44,14 +42,13 @@ const Question = ({
   };
 
   const deleteQuestion = async ({
-    _id,
-    question_id,
+    qn_num,
     title,
     description,
     category,
     complexity,
   }) => {
-    await axios.delete(`http://localhost:3001/question/${_id}`);
+    await axios.post(`http://localhost:3001/questions/delete/${qn_num}`);
     fetchQuestions();
   };
 
@@ -62,19 +59,19 @@ const Question = ({
         questions.map((question) => (
           <Grid
             templateColumns="repeat(6, 1fr)"
-            key={`grid_${question.question_id}`}
+            key={`grid_${question.qn_num}`}
           >
             <GridItem
               border="1px solid"
-              key={`grid_item_id_${question.question_id}`}
+              key={`grid_item_id_${question.qn_num}`}
             >
               <Flex
                 justifyContent="center"
                 alignItems="center"
                 height="100%"
-                key={`flex_id_${question.question_id}`}
+                key={`flex_id_${question.qn_num}`}
               >
-                {question.question_id}
+                {question.qn_num}
               </Flex>
             </GridItem>
             <GridItem
