@@ -29,7 +29,7 @@ const connectToDB = () => {
 
 const createQuestion = (request, response) => {
   const {title, description, category, complexity} = request.body; //Extract attribs from request.
-  const qn_num = parseInt(request.body.qn_num);
+  const qn_num = parseInt(request.params.qn_num);
   if (!request.body || !qn_num || !title || !description || !category || !complexity) {
     const msg = {'msg': `All fields must be filled.`, 'qn_num': null};
     return response.status(400).json(msg);
