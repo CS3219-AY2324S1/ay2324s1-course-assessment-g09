@@ -15,14 +15,15 @@ const QuestionInputField = ({
   const [question, setQuestions] = useState(null);
 
   const fetchQuestions = async () => {
-    const res = await axios.get("http://localhost:3001/questions");
-    setQuestions(res.data.questions);
+    const res = await axios.get("http://localhost:3001/questions/getall");
+    setQuestions(res.data.qns);
   };
 
   const handleSubmit = async () => {
     console.log(inputValues);
-    const res = await axios.post("http://localhost:3001/question", {
-      question_id: inputValues.question_id,
+    const res = await axios.post("http://localhost:3001/questions/create", {
+      // question_id: inputValues.question_id,
+      qn_num: inputValues.qn_num,
       title: inputValues.title,
       description: inputValues.description,
       category: inputValues.category,
@@ -31,7 +32,7 @@ const QuestionInputField = ({
 
     console.log(res);
     setInputValues({
-      question_id: "",
+      qn_num: "",
       title: "",
       description: "",
       category: "",
@@ -42,8 +43,11 @@ const QuestionInputField = ({
   };
 
   const handleUpdate = async () => {
-    const { _id } = inputValues;
-    await axios.put(`http://localhost:3001/question/${_id}`, inputValues);
+    const { qn_num } = inputValues;
+    await axios.post(
+      `http://localhost:3001/questions/update/${qn_num}`,
+      inputValues
+    );
 
     setInputValues({
       edit_id: "",
@@ -70,7 +74,7 @@ const QuestionInputField = ({
   const isButtonValid = () => {
     console.log(inputValues);
     return (
-      inputValues.question_id.trim() !== "" &&
+      String(inputValues.qn_num).trim() !== "" &&
       inputValues.title.trim() !== "" &&
       inputValues.description.trim() !== "" &&
       inputValues.category.trim() !== "" &&
@@ -83,8 +87,8 @@ const QuestionInputField = ({
       <Input
         placeholder="ID"
         variant="filled"
-        name="question_id"
-        value={inputValues.question_id}
+        name="qn_num"
+        value={inputValues.qn_num}
         onChange={handleInputChange}
       />
       <Input
