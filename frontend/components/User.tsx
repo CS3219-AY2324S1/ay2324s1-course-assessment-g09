@@ -11,9 +11,11 @@ const User = ({
 }) => {
   const [users, setUsers] = useState(null);
 
+  const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
+
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:3002/users/getall");
+      const res = await axios.get(`${IP_ADDRESS}:3002/users/getall`);
       setUsers(res.data.users);
     } catch (error) {
       console.log("ERROR: ", error);
@@ -36,7 +38,7 @@ const User = ({
   const handleDelete = async ({ id, name }) => {
     console.log(id, name);
     try {
-      await axios.post(`http://localhost:3002/users/delete/${id}`, {
+      await axios.post(`${IP_ADDRESS}:3002/users/delete/${id}`, {
         id,
         name,
       });
