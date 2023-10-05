@@ -4,6 +4,7 @@ import { AiTwotoneEdit } from "react-icons/ai";
 
 import React, { useState } from "react";
 import axios from "axios";
+import { extendTheme } from "@chakra-ui/react";
 
 const QuestionInputField = ({
   inputValues,
@@ -13,41 +14,55 @@ const QuestionInputField = ({
   colorMode,
 }) => {
   const [question, setQuestions] = useState(null);
+  const [error, setError] = useState(false);
 
   const fetchQuestions = async () => {
-    const res = await axios.get("http://localhost:3001/questions");
-    setQuestions(res.data.questions);
+    const res = await axios.get("http://localhost:3001/questions/getall");
+    setQuestions(res.data.qns);
   };
 
   const handleSubmit = async () => {
-    console.log(inputValues);
-    const res = await axios.post("http://localhost:3001/question", {
-      question_id: inputValues.question_id,
-      title: inputValues.title,
-      description: inputValues.description,
-      category: inputValues.category,
-      complexity: inputValues.complexity,
-    });
+    try {
+      const res0 = await axios.get(
+        `http://localhost:3001/questions/get/${inputValues.qn_num}`
+      );
 
-    console.log(res);
-    setInputValues({
-      question_id: "",
-      title: "",
-      description: "",
-      category: "",
-      complexity: "",
-    });
+      setError(true);
+      setInputValues({
+        ...inputValues,
+        qn_num: "",
+      });
+    } catch (error) {
+      const res = await axios.post(
+        "http://localhost:3001/questions/create",
+        inputValues
+      );
 
-    fetchQuestions();
+      console.log(res);
+      setInputValues({
+        qn_num: "",
+        title: "",
+        description: "",
+        category: "",
+        complexity: "",
+      });
+
+      setError(false);
+      fetchQuestions();
+    }
   };
 
   const handleUpdate = async () => {
-    const { _id } = inputValues;
-    await axios.put(`http://localhost:3001/question/${_id}`, inputValues);
+    setError(false);
+    const { qn_num } = inputValues;
+    await axios.post(
+      `http://localhost:3001/questions/update/${qn_num}`,
+      inputValues
+    );
 
     setInputValues({
       edit_id: "",
-      question_id: "",
+      qn_num: "",
       title: "",
       description: "",
       category: "",
@@ -70,7 +85,7 @@ const QuestionInputField = ({
   const isButtonValid = () => {
     console.log(inputValues);
     return (
-      inputValues.question_id.trim() !== "" &&
+      String(inputValues.qn_num).trim() !== "" &&
       inputValues.title.trim() !== "" &&
       inputValues.description.trim() !== "" &&
       inputValues.category.trim() !== "" &&
@@ -80,13 +95,27 @@ const QuestionInputField = ({
 
   return (
     <Grid templateColumns="repeat(6, 1fr)" gap={6}>
-      <Input
-        placeholder="ID"
-        variant="filled"
-        name="question_id"
-        value={inputValues.question_id}
-        onChange={handleInputChange}
-      />
+      {error ? (
+        <Input
+          placeholder="ID already in use."
+          variant="filled"
+          name="qn_num"
+          value={inputValues.qn_num}
+          onChange={handleInputChange}
+          borderColor={error && colorMode == "light" ? "red.500" : "red.300"}
+          _placeholder={{ color: colorMode == "light" ? "red.500" : "red.300" }}
+        />
+      ) : (
+        <Input
+          placeholder="ID"
+          variant="filled"
+          name="qn_num"
+          value={inputValues.qn_num}
+          onChange={handleInputChange}
+          // borderColor={error && colorMode == "light" ? "red.500" : "red.300"}
+        />
+      )}
+
       <Input
         placeholder="Title"
         variant="filled"
@@ -120,7 +149,7 @@ const QuestionInputField = ({
           mb={3}
           colorScheme={colorMode === "light" ? "green" : "teal"}
           isDisabled={!isButtonValid()}
-          type="submit"
+          // type="submit"
           onClick={handleSubmit}
         >
           <Flex align="center">
