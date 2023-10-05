@@ -4,6 +4,7 @@ import { AiTwotoneEdit } from "react-icons/ai";
 
 import React, { useState } from "react";
 import axios from "axios";
+import { extendTheme } from "@chakra-ui/react";
 
 const QuestionInputField = ({
   inputValues,
@@ -13,6 +14,7 @@ const QuestionInputField = ({
   colorMode,
 }) => {
   const [question, setQuestions] = useState(null);
+  const [error, setError] = useState(false);
 
   const fetchQuestions = async () => {
     const res = await axios.get("http://localhost:3001/questions/getall");
@@ -20,29 +22,38 @@ const QuestionInputField = ({
   };
 
   const handleSubmit = async () => {
-    console.log(inputValues);
-    const res = await axios.post("http://localhost:3001/questions/create", {
-      // question_id: inputValues.question_id,
-      qn_num: inputValues.qn_num,
-      title: inputValues.title,
-      description: inputValues.description,
-      category: inputValues.category,
-      complexity: inputValues.complexity,
-    });
+    try {
+      const res0 = await axios.get(
+        `http://localhost:3001/questions/get/${inputValues.qn_num}`
+      );
 
-    console.log(res);
-    setInputValues({
-      qn_num: "",
-      title: "",
-      description: "",
-      category: "",
-      complexity: "",
-    });
+      setError(true);
+      setInputValues({
+        ...inputValues,
+        qn_num: "",
+      });
+    } catch (error) {
+      const res = await axios.post(
+        "http://localhost:3001/questions/create",
+        inputValues
+      );
 
-    fetchQuestions();
+      console.log(res);
+      setInputValues({
+        qn_num: "",
+        title: "",
+        description: "",
+        category: "",
+        complexity: "",
+      });
+
+      setError(false);
+      fetchQuestions();
+    }
   };
 
   const handleUpdate = async () => {
+    setError(false);
     const { qn_num } = inputValues;
     await axios.post(
       `http://localhost:3001/questions/update/${qn_num}`,
@@ -51,7 +62,7 @@ const QuestionInputField = ({
 
     setInputValues({
       edit_id: "",
-      question_id: "",
+      qn_num: "",
       title: "",
       description: "",
       category: "",
@@ -84,13 +95,27 @@ const QuestionInputField = ({
 
   return (
     <Grid templateColumns="repeat(6, 1fr)" gap={6}>
-      <Input
-        placeholder="ID"
-        variant="filled"
-        name="qn_num"
-        value={inputValues.qn_num}
-        onChange={handleInputChange}
-      />
+      {error ? (
+        <Input
+          placeholder="ID already in use."
+          variant="filled"
+          name="qn_num"
+          value={inputValues.qn_num}
+          onChange={handleInputChange}
+          borderColor={error && colorMode == "light" ? "red.500" : "red.300"}
+          _placeholder={{ color: colorMode == "light" ? "red.500" : "red.300" }}
+        />
+      ) : (
+        <Input
+          placeholder="ID"
+          variant="filled"
+          name="qn_num"
+          value={inputValues.qn_num}
+          onChange={handleInputChange}
+          // borderColor={error && colorMode == "light" ? "red.500" : "red.300"}
+        />
+      )}
+
       <Input
         placeholder="Title"
         variant="filled"
@@ -124,7 +149,7 @@ const QuestionInputField = ({
           mb={3}
           colorScheme={colorMode === "light" ? "green" : "teal"}
           isDisabled={!isButtonValid()}
-          type="submit"
+          // type="submit"
           onClick={handleSubmit}
         >
           <Flex align="center">

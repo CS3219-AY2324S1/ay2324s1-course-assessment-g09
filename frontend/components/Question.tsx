@@ -1,6 +1,23 @@
-import { Button, Flex, Grid, GridItem, StepNumber } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  Modal,
+  StepNumber,
+  useDisclosure,
+  Text,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Box,
+  Center,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { isCancel } from "axios";
 
 const Question = ({
   inputValues,
@@ -10,6 +27,10 @@ const Question = ({
   colorMode,
 }) => {
   const [questions, setQuestions] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [openQuestion, setOpenQuestion] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const fetchQuestions = async () => {
     try {
@@ -52,6 +73,21 @@ const Question = ({
     fetchQuestions();
   };
 
+  const handleModal = (question) => {
+    setDescription(question.description);
+    setTitle(question.title);
+    if (openQuestion === question) {
+      if (isOpen) {
+        onClose(); // Close the modal if it's open
+      }
+    } else {
+      setOpenQuestion(question);
+      onOpen(); // Open the modal if it's closed
+    }
+  };
+
+  const htmlContent = { __html: description };
+
   return (
     <div style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}>
       {/* <GridItem>{questions}</GridItem> */}
@@ -91,14 +127,37 @@ const Question = ({
               border="1px solid"
               key={`grid_item_desc_${question.description}`}
             >
-              <Flex
-                justifyContent="center"
-                alignItems="center"
-                height="100%"
-                key={`flex_desc_${question.description}`}
-              >
-                {question.description}
-              </Flex>
+              <Center>
+                <Button
+                  onClick={() => handleModal(question)}
+                  my={2}
+                  colorScheme="cyan"
+                >
+                  See More
+                </Button>
+              </Center>
+
+              <Modal isOpen={isOpen} onClose={onClose} size="6xl">
+                <ModalOverlay />
+                <ModalContent maxWidth="80vw" overflowX="auto">
+                  <ModalHeader>{title}</ModalHeader>
+                  <ModalBody>
+                    <div
+                      dangerouslySetInnerHTML={htmlContent}
+                      style={{
+                        overflowWrap: "break-word",
+                        wordWrap: "break-word",
+                      }}
+                    />
+                  </ModalBody>
+
+                  <ModalFooter>
+                    <Button colorScheme="blue" mr={3} onClick={onClose}>
+                      Close
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
             </GridItem>
             <GridItem
               border="1px solid"
