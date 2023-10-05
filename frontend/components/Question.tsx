@@ -19,6 +19,8 @@ import {
 import React, { useEffect, useState } from "react";
 import axios, { isCancel } from "axios";
 
+const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
+
 const Question = ({
   inputValues,
   setInputValues,
@@ -34,7 +36,8 @@ const Question = ({
 
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get("http://localhost:3001/questions/getall");
+      const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
+
       setQuestions(res.data.qns);
     } catch (error) {
       console.log("ERROR: ", error);
@@ -69,7 +72,7 @@ const Question = ({
     category,
     complexity,
   }) => {
-    await axios.post(`http://localhost:3001/questions/delete/${qn_num}`);
+    await axios.post(`${IP_ADDRESS}:3001/questions/delete/${qn_num}`);
     fetchQuestions();
   };
 
@@ -136,28 +139,6 @@ const Question = ({
                   See More
                 </Button>
               </Center>
-
-              <Modal isOpen={isOpen} onClose={onClose} size="6xl">
-                <ModalOverlay />
-                <ModalContent maxWidth="80vw" overflowX="auto">
-                  <ModalHeader>{title}</ModalHeader>
-                  <ModalBody>
-                    <div
-                      dangerouslySetInnerHTML={htmlContent}
-                      style={{
-                        overflowWrap: "break-word",
-                        wordWrap: "break-word",
-                      }}
-                    />
-                  </ModalBody>
-
-                  <ModalFooter>
-                    <Button colorScheme="blue" mr={3} onClick={onClose}>
-                      Close
-                    </Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
             </GridItem>
             <GridItem
               border="1px solid"
@@ -211,6 +192,41 @@ const Question = ({
             </GridItem>
           </Grid>
         ))}
+
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        size="5xl"
+        motionPreset="slideInBottom"
+      >
+        <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(5px)" />
+        <ModalContent>
+          <ModalHeader>{title}</ModalHeader>
+          <ModalBody
+            maxHeight="60vh"
+            overflowY="auto"
+            css={{
+              "&::-webkit-scrollbar": {
+                width: "0.5em",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "transparent",
+              },
+            }}
+          >
+            <div
+              dangerouslySetInnerHTML={htmlContent}
+              style={{ overflowWrap: "anywhere" }}
+            />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
