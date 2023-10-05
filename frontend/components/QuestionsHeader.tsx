@@ -3,7 +3,7 @@ import React from "react";
 
 const QuestionsHeader = () => {
   return (
-    <Grid templateColumns="repeat(6, 1fr)" width="100%" marginTop={8}>
+    <Grid templateColumns="repeat(5, 1fr)" width="100%" marginTop={8}>
       <GridItem border="2px solid" borderRight="1px solid">
         <Flex justifyContent="center">
           <Text fontWeight="bold">Question ID</Text>
@@ -12,11 +12,6 @@ const QuestionsHeader = () => {
       <GridItem border="2px solid" borderRight="1px solid">
         <Flex justifyContent="center">
           <Text fontWeight="bold">Question Title</Text>
-        </Flex>
-      </GridItem>
-      <GridItem border="2px solid" borderRight="1px solid">
-        <Flex justifyContent="center">
-          <Text fontWeight="bold">Question Description</Text>
         </Flex>
       </GridItem>
       <GridItem border="2px solid" borderRight="1px solid">

@@ -97,7 +97,7 @@ const Question = ({
       {questions &&
         questions.map((question) => (
           <Grid
-            templateColumns="repeat(6, 1fr)"
+            templateColumns="repeat(5, 1fr)"
             key={`grid_${question.qn_num}`}
           >
             <GridItem
@@ -116,6 +116,7 @@ const Question = ({
             <GridItem
               border="1px solid"
               key={`grid_item_title${question.title}`}
+              onClick={() => handleModal(question)}
             >
               <Flex
                 justifyContent="center"
@@ -123,22 +124,16 @@ const Question = ({
                 height="100%"
                 key={`flex_title_${question.title}`}
               >
-                {question.title}
-              </Flex>
-            </GridItem>
-            <GridItem
-              border="1px solid"
-              key={`grid_item_desc_${question.description}`}
-            >
-              <Center>
-                <Button
-                  onClick={() => handleModal(question)}
-                  my={2}
-                  colorScheme="cyan"
+                <Text
+                  _hover={{
+                    color: colorMode == "light" ? "teal.500" : "teal.300",
+                    fontWeight: "semibold",
+                    cursor: "pointer",
+                  }}
                 >
-                  See More
-                </Button>
-              </Center>
+                  {question.title}
+                </Text>
+              </Flex>
             </GridItem>
             <GridItem
               border="1px solid"
