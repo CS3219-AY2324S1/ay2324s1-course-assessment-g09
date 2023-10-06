@@ -8,6 +8,7 @@ if (process.env.NODE_ENV != "production") {
 const express = require("express");
 const bodyparser = require("body-parser"); // Middleware
 const usermanager = require("./usermanager");
+const authRouter = require('./controllers/authentication');
 
 // Create an express app
 const app = express();
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
 
 
 //Setup Routing
+app.use('/auth', authRouter);
 // app.post("/users/create", usermanager.createUser); //CREATE
 // app.get("/users/getall", usermanager.getUsers); // READ
 // app.get("/users/get/:id", usermanager.getUserById);
