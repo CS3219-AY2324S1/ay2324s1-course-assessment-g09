@@ -58,31 +58,6 @@ const SignUp = () => {
             } catch (error) {
                 console.log("err", error);
             }
-            // const response = await fetch('localhost:3002/auth/signup', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify({
-            //         username: formData.get("username"),
-            //         email: formData.get("email"),
-            //         password: formData.get("password"),
-            //         role: formData.get("role")
-            //     })
-            // });
-
-            // if (response.ok) {
-            //     toast({
-            //         position: 'bottom-left', render: () => (
-            //             <Box color='white' bg='green.300' textAlign="center" padding="10px" rounded="md">
-            //                 Account created
-            //             </Box>
-            //         )
-            //     })
-            //     router.push('/');
-            // } else {
-            //     console.error('Error');
-            // }
         } else {
 
             toast({
@@ -140,29 +115,7 @@ const SignUp = () => {
         </VStack >
     );
 }
-{/* <FormLabel>Email</FormLabel>
-<FormLabel>Username</FormLabel>
-<FormLabel>Password</FormLabel>
-<FormLabel>Confirm Password</FormLabel>
-<Input name="email" type="email" />
-<Input name="username" type="text" />
-<Input name="password" type="password" />
-<Input name="confirm_password" type="password" /> */}
+
 
 export default SignUp;
 
-{/* <form method="post" onSubmit={handleSubmit}>
-<label>Email:
-    <input name="email" type="email" />
-</label>
-<label>Username:
-    <input name="username" type="text" />
-</label>
-<label>Password:
-    <input name="password" type="password" />
-</label>
-<label>Confirm Password:
-    <input name="confirm_password" type="password" />
-</label>
-<input type="submit" />
-</form> */}
