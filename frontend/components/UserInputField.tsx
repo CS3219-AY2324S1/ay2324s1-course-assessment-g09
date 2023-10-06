@@ -13,8 +13,10 @@ const UserInputField = ({
 }) => {
   const [users, setUsers] = useState(null);
 
+  const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
+
   const fetchUsers = async () => {
-    const res = await axios.get("http://localhost:3002/users/getall");
+    const res = await axios.get(`${IP_ADDRESS}:3002/users/getall`);
     console.log(res.data);
     setUsers(res.data.users);
   };
@@ -37,7 +39,7 @@ const UserInputField = ({
   const handleUpdate = async () => {
     const { _id } = userInputValues;
     await axios.post(
-      `http://localhost:3002/users/update/${userInputValues.id}`,
+      `${IP_ADDRESS}:3002/users/update/${userInputValues.id}`,
       userInputValues
     );
 
@@ -51,7 +53,7 @@ const UserInputField = ({
   };
 
   const handleSubmit = async () => {
-    const res = await axios.post("http://localhost:3002/users/create", {
+    const res = await axios.post(`${IP_ADDRESS}:3002/users/create`, {
       user_id: userInputValues.user_id,
       name: userInputValues.name,
     });

@@ -1,6 +1,25 @@
-import { Button, Flex, Grid, GridItem, StepNumber } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  Modal,
+  StepNumber,
+  useDisclosure,
+  Text,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Box,
+  Center,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { isCancel } from "axios";
+
+const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
 const Question = ({
   inputValues,
@@ -10,11 +29,16 @@ const Question = ({
   colorMode,
 }) => {
   const [questions, setQuestions] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [openQuestion, setOpenQuestion] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get("http://localhost:3001/questions");
-      setQuestions(res.data.questions);
+      const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
+
+      setQuestions(res.data.qns);
     } catch (error) {
       console.log("ERROR: ", error);
     }
@@ -25,16 +49,14 @@ const Question = ({
   });
 
   const handleEdit = async ({
-    _id,
-    question_id,
+    qn_num,
     title,
     description,
     category,
     complexity,
   }) => {
     setInputValues({
-      _id,
-      question_id,
+      qn_num,
       title,
       description,
       category,
@@ -44,16 +66,30 @@ const Question = ({
   };
 
   const deleteQuestion = async ({
-    _id,
-    question_id,
+    qn_num,
     title,
     description,
     category,
     complexity,
   }) => {
-    await axios.delete(`http://localhost:3001/question/${_id}`);
+    await axios.post(`${IP_ADDRESS}:3001/questions/delete/${qn_num}`);
     fetchQuestions();
   };
+
+  const handleModal = (question) => {
+    setDescription(question.description);
+    setTitle(question.title);
+    if (openQuestion === question) {
+      if (isOpen) {
+        onClose(); // Close the modal if it's open
+      }
+    } else {
+      setOpenQuestion(question);
+      onOpen(); // Open the modal if it's closed
+    }
+  };
+
+  const htmlContent = { __html: description };
 
   return (
     <div style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}>
@@ -62,19 +98,19 @@ const Question = ({
         questions.map((question) => (
           <Grid
             templateColumns="repeat(6, 1fr)"
-            key={`grid_${question.question_id}`}
+            key={`grid_${question.qn_num}`}
           >
             <GridItem
               border="1px solid"
-              key={`grid_item_id_${question.question_id}`}
+              key={`grid_item_id_${question.qn_num}`}
             >
               <Flex
                 justifyContent="center"
                 alignItems="center"
                 height="100%"
-                key={`flex_id_${question.question_id}`}
+                key={`flex_id_${question.qn_num}`}
               >
-                {question.question_id}
+                {question.qn_num}
               </Flex>
             </GridItem>
             <GridItem
@@ -94,14 +130,15 @@ const Question = ({
               border="1px solid"
               key={`grid_item_desc_${question.description}`}
             >
-              <Flex
-                justifyContent="center"
-                alignItems="center"
-                height="100%"
-                key={`flex_desc_${question.description}`}
-              >
-                {question.description}
-              </Flex>
+              <Center>
+                <Button
+                  onClick={() => handleModal(question)}
+                  my={2}
+                  colorScheme="cyan"
+                >
+                  See More
+                </Button>
+              </Center>
             </GridItem>
             <GridItem
               border="1px solid"
@@ -155,6 +192,41 @@ const Question = ({
             </GridItem>
           </Grid>
         ))}
+
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        size="5xl"
+        motionPreset="slideInBottom"
+      >
+        <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(5px)" />
+        <ModalContent>
+          <ModalHeader>{title}</ModalHeader>
+          <ModalBody
+            maxHeight="60vh"
+            overflowY="auto"
+            css={{
+              "&::-webkit-scrollbar": {
+                width: "0.5em",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "transparent",
+              },
+            }}
+          >
+            <div
+              dangerouslySetInnerHTML={htmlContent}
+              style={{ overflowWrap: "anywhere" }}
+            />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
