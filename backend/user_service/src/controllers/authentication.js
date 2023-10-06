@@ -64,15 +64,21 @@ authRouter.post('/signup', async (request, response) => {
 
 authRouter.post('/signin', async (request, response) => {
     // if already have token then don't return token
-    const key = process.env.SECRET_KEY;
-    const expire = '1h';
+    if (request.headers.authorization) {
+        jwt.verify(request.headers.authorization, tokenDetails.secret, (error, user) => {
+            if (!error) {
+                console.log("already logged in");
+                return response.status(200);
+            }
+        })
+    }
 
     try {
         const { email, password } = request.body;
         if (!email && !password) {
             return response.status(400).json({ message: "Login requires email and password" });
         }
-        const myUser = await db.myuser.findUnique({
+        const myUser = await db.user_account.findUnique({
             where: { email: email }
         });
         if (!myUser) {
@@ -83,9 +89,10 @@ authRouter.post('/signin', async (request, response) => {
         if (!passwordCheck) {
             return response.status(400).json({ message: "incorrect email or password" });
         }
-        const token = jwt.sign(myUser.email, tokenDetails.secret, { expiresIn: tokenDetails.duration });
-        return response.status(200).json(token);
+        const token = jwt.sign({ email: myUser.email, role: myUser.role }, tokenDetails.secret, { expiresIn: tokenDetails.duration });
+        return response.status(200).json({ token: token, role: myUser.role });
     } catch (error) {
+        console.log("Error:", error.message);
         return response.status(500).json({ message: "something went wrong..." });
     }
 

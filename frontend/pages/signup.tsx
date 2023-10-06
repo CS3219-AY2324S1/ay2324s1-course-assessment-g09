@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/router';
-import { FormControl, FormLabel, Button, Flex, Input, VStack, Box, Heading, Highlight, Select } from '@chakra-ui/react';
+import { FormControl, FormLabel, Button, Input, VStack, Box, Heading, Highlight, Select } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react';
 
 const SignUp = () => {
@@ -13,12 +13,6 @@ const SignUp = () => {
         const form = event.target;
         const formData = new FormData(form);
         if (formData.get("password") === formData.get("confirm_password")) {
-
-            console.log("Email", formData.get("email"));
-            console.log("Username", formData.get("username"));
-            console.log("password", formData.get("password"));
-            console.log("role", formData.get("role"));
-
             try {
                 const response = await fetch('http://localhost:3002/auth/signup', {
                     method: 'POST',
@@ -41,7 +35,7 @@ const SignUp = () => {
                             </Box>
                         )
                     })
-                    // router.push('/signin');
+                    router.push('/signin');
                 } else {
                     const result = await response.json();
                     result.message.map(err => {
@@ -53,7 +47,6 @@ const SignUp = () => {
                             )
                         })
                     });
-                    console.log("Typeasdasd", result.message);
                 }
             } catch (error) {
                 console.log("err", error);
@@ -112,6 +105,7 @@ const SignUp = () => {
                 </VStack>
 
             </form >
+
         </VStack >
     );
 }

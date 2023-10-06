@@ -31,12 +31,11 @@ import { AiOutlineUser } from "react-icons/ai";
 import { FaHandshake } from "react-icons/fa";
 
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 import Collaboration from "./collaboration";
 
 const IndexPage = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
+
   const { colorMode, toggleColorMode } = useColorMode();
 
   const [questionInputValues, setQuestionInputValues] = useState({
@@ -56,19 +55,31 @@ const IndexPage = () => {
   const [isCreate, setIsCreate] = useState(true);
   const [displayDB, setDisplayDB] = useState("questions");
 
+  const [session, setSession] = useState();
+  const [role, setRole] = useState("user");
+
+  useEffect(() => {
+    const login = JSON.parse(window.sessionStorage.getItem("login"));
+
+    if (login && login.userLogin) {
+      setSession(login.token);
+    } else {
+      router.push("/signin");
+    }
+  }, []);
+
+
   const toggleDisplayDB = () => {
     displayDB == "questions"
       ? setDisplayDB("users")
       : setDisplayDB("questions");
   };
 
-  // if (status === "loading") {
-  //   return <p>Loading...</p>;
-  // }
 
-  // if (status === "unauthenticated") {
-  //   return router.push('/api/auth/signin');
-  // };
+  const handleSignOut = () => {
+    window.sessionStorage.removeItem("login");
+    router.push("/signin");
+  }
 
   return (
     <Box height="100vh" display="flex" flexDirection="column">
@@ -120,6 +131,11 @@ const IndexPage = () => {
               toggleDisplayDB={toggleDisplayDB}
               displayDB={displayDB}
             />
+          </div>
+          <div>
+            <Button onClick={handleSignOut} bgColor="red.100">
+              signout
+            </Button>
           </div>
         </TabList>
         <TabIndicator
