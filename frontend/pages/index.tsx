@@ -188,7 +188,15 @@ const IndexPage = () => {
                   </Flex>
                 </TabPanel>
                 <TabPanel>
-                  <Collaboration />
+                  <Flex
+                    width="100%"
+                    alignItems="center"
+                    justify="center"
+                    flexDirection="column"
+                    flex="1"
+                  >
+                    <Collaboration />
+                  </Flex>
                 </TabPanel>
               </TabPanels>
             </Flex>

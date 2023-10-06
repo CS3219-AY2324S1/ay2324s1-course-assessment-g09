@@ -1,8 +1,9 @@
 "use client";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Flex, Grid, GridItem, HStack, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import CodeEditor from "../components/CodeEditor";
 import VideoCall from "../components/VideoCall";
+import TestPrettier from "./TestPrettier";
 
 export default function Collaboration() {
   const [questions, setQuestions] = useState([]);
@@ -15,20 +16,21 @@ export default function Collaboration() {
   };
 
   return (
-    <div>
-      <Box display="flex" height="100vh">
+    <Grid templateColumns="repeat(2, 1fr)" gap={5}>
+      <GridItem display="flex" flex="1">
         <Box flexDirection="column">
           {selectedItem && (
-            <Box flex={1} alignSelf="top" m="30px">
+            <Box flex={1} alignSelf="top">
               <Text>{selectedItem.content}</Text>
             </Box>
           )}
           <VideoCall />
         </Box>
-        <Box flex={1} m="30px">
-          <CodeEditor />
-        </Box>
-      </Box>
-    </div>
+      </GridItem>
+
+      <GridItem display="flex" flex="1">
+        <CodeEditor />
+      </GridItem>
+    </Grid>
   );
 }
