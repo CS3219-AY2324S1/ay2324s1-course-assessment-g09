@@ -4,8 +4,10 @@ const userSchema = require('../utility/ZSchema').userSchema;
 const db = new PrismaClient();
 const bcrypt = require('bcrypt');
 const { ZodError } = require('zod');
+const jwt = require('jsonwebtoken');
 
 const authRouter = express.Router();
+
 
 // const userSchema = z.object({
 //     username: z.string().min(1, 'Username required').max(100),
@@ -13,6 +15,11 @@ const authRouter = express.Router();
 //     password: z.string().min(1, 'Password required').min(8, 'Password is at least 8 characters'),
 //     role: z.string().min(1, 'Role required')
 // })
+
+const tokenDetails = {
+    secret: process.env.SECRET_KEY,
+    duration: '1800s',
+};
 
 authRouter.post('/signup', async (request, response) => {
     try {
@@ -57,9 +64,34 @@ authRouter.post('/signup', async (request, response) => {
 
 authRouter.post('/signin', async (request, response) => {
     // if already have token then don't return token
+    const key = process.env.SECRET_KEY;
+    const expire = '1h';
 
+    try {
+        const { email, password } = request.body;
+        if (!email && !password) {
+            return response.status(400).json({ message: "Login requires email and password" });
+        }
+        const myUser = await db.myuser.findUnique({
+            where: { email: email }
+        });
+        if (!myUser) {
+            return response.status(400).json({ message: "incorrect email or password" });
+        }
+
+        const passwordCheck = await bcrypt.compare(password, myUser.password);
+        if (!passwordCheck) {
+            return response.status(400).json({ message: "incorrect email or password" });
+        }
+        const token = jwt.sign(myUser.email, tokenDetails.secret, { expiresIn: tokenDetails.duration });
+        return response.status(200).json(token);
+    } catch (error) {
+        return response.status(500).json({ message: "something went wrong..." });
+    }
 
 });
+
+
 
 module.exports = authRouter;
 
