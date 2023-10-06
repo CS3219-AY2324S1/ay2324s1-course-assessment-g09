@@ -30,14 +30,14 @@ authRouter.post('/signup', async (request, response) => {
             where: { email: email }
         });
         if (existingUserByEmail) {
-            return response.status(409).json({ user: null, message: "User already exists" });
+            return response.status(409).json({ user: null, message: ["User already exists"] });
         }
 
         const existingUserByUsername = await db.user_account.findUnique({
             where: { username: username }
         });
         if (existingUserByUsername) {
-            return response.status(409).json({ user: null, message: "User already exists" });
+            return response.status(409).json({ user: null, message: ["User already exists"] });
         }
 
         const pwHash = await bcrypt.hash(password, 17);
@@ -50,14 +50,14 @@ authRouter.post('/signup', async (request, response) => {
             }
         });
 
-        return response.json({ message: `User:${username} has been created` });
+        return response.json({ message: [`User:${username} has been created`] });
     } catch (error) {
         if (error instanceof ZodError) {
             const allMsg = error.issues.map(issue => issue.message);
             return response.status(400).json({ message: allMsg });
         }
 
-        return response.status(500).json({ message: "something went wrong..." });
+        return response.status(500).json({ message: ["something went wrong..."] });
     }
 });
 
