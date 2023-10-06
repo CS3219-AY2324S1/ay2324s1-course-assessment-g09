@@ -1,0 +1,8 @@
+
+strong {
+overflow-wrap: break-word;
+}
+pre {
+overflow-wrap: break-word;
+white-space: pre-wrap; /* Preserve whitespace within <pre> tags */
+}

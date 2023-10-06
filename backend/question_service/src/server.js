@@ -8,6 +8,7 @@ if (process.env.NODE_ENV != 'production') {
 // Import Dependencies
 const express = require('express');
 const bodyparser = require('body-parser'); // Middleware
+const cors = require('cors'); // Middleware
 const questionmanager = require('./questionmanager');
 
 // Create an express app
@@ -16,6 +17,10 @@ const app = express();
 // Configure express app
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
+
+app.use(cors({
+    methods: ['GET', 'POST']
+})); // WARN: Accepts any source origin!
 
 app.post('/questions/create', questionmanager.createQuestion); //CREATE
 app.get('/questions/getall', questionmanager.getQuestions); // READ

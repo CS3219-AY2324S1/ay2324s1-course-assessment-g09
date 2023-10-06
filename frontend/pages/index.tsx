@@ -40,7 +40,7 @@ const IndexPage = () => {
 
   const [questionInputValues, setQuestionInputValues] = useState({
     edit_id: "",
-    question_id: "",
+    qn_num: "",
     title: "",
     description: "",
     category: "",

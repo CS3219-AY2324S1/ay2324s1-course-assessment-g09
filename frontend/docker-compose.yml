@@ -7,4 +7,3 @@ services:
       build: .
       ports:
         - "3000:3000"
-  # Add backend services here soon.

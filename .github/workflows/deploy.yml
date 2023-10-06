@@ -1,0 +1,79 @@
+name: Deployment to AWS Elastic Beanstalk
+on:
+  push:
+    branches: [ master ]
+env:
+  AWS_REGION : ap-southeast-1
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+jobs:
+  deploy:  
+    runs-on: ubuntu-latest
+    steps:
+    # Initialisation
+
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    ## AWS Authentication
+    - name: Configure AWS credentials
+      id: creds
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::920185736846:role/GitHubAction-AssumeRoleWithAction
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+        aws-region: ${{ env.AWS_REGION }}
+        output-credentials: true
+        
+    ### Hello from AWS: WhoAmI
+    - name: Sts GetCallerIdentity (Sanity Check)
+      run: |
+        aws sts get-caller-identity
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    # Building images
+    - name: Build, tag, and push image to Amazon ECR (User-Service)
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: user-service
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend/user_service
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    - name: Build, tag, and push image to Amazon ECR (Question-Service)
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: question-service
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend/question_service
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    - name: Build, tag, and push image to Amazon ECR (Frontend)
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: frontend
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./frontend
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    # Deployment
+    - name: Deploy to EB
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{ env.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        aws_session_token: ${{ steps.creds.outputs.aws-session-token }}
+        application_name: PeerPrep
+        environment_name: PeerPrep-env
+        version_label: 4 #To manually iterate
+        region: ap-southeast-1
+        #deployment_package: ./aws_deploy/docker-compose.yml # No change to yaml file for now
+        wait_for_deployment: false  # Set to false to save Github Actions free hours
+
