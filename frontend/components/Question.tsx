@@ -15,6 +15,7 @@ import {
   ModalOverlay,
   Box,
   Center,
+  Badge,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import axios, { isCancel } from "axios";
@@ -30,6 +31,8 @@ const Question = ({
 }) => {
   const [questions, setQuestions] = useState(null);
   const [description, setDescription] = useState(null);
+  const [difficulty, setDifficulty] = useState(null);
+
   const [title, setTitle] = useState(null);
   const [openQuestion, setOpenQuestion] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -79,6 +82,8 @@ const Question = ({
   const handleModal = (question) => {
     setDescription(question.description);
     setTitle(question.title);
+    setDifficulty(question.complexity);
+
     if (openQuestion === question) {
       if (isOpen) {
         onClose(); // Close the modal if it's open
@@ -97,7 +102,7 @@ const Question = ({
       {questions &&
         questions.map((question) => (
           <Grid
-            templateColumns="repeat(6, 1fr)"
+            templateColumns="repeat(5, 1fr)"
             key={`grid_${question.qn_num}`}
           >
             <GridItem
@@ -116,6 +121,7 @@ const Question = ({
             <GridItem
               border="1px solid"
               key={`grid_item_title${question.title}`}
+              onClick={() => handleModal(question)}
             >
               <Flex
                 justifyContent="center"
@@ -123,22 +129,16 @@ const Question = ({
                 height="100%"
                 key={`flex_title_${question.title}`}
               >
-                {question.title}
-              </Flex>
-            </GridItem>
-            <GridItem
-              border="1px solid"
-              key={`grid_item_desc_${question.description}`}
-            >
-              <Center>
-                <Button
-                  onClick={() => handleModal(question)}
-                  my={2}
-                  colorScheme="cyan"
+                <Text
+                  _hover={{
+                    color: colorMode == "light" ? "teal.500" : "teal.300",
+                    fontWeight: "semibold",
+                    cursor: "pointer",
+                  }}
                 >
-                  See More
-                </Button>
-              </Center>
+                  {question.title}
+                </Text>
+              </Flex>
             </GridItem>
             <GridItem
               border="1px solid"
@@ -201,7 +201,22 @@ const Question = ({
       >
         <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(5px)" />
         <ModalContent>
-          <ModalHeader>{title}</ModalHeader>
+          <ModalHeader>
+            {title}
+            <Badge
+              ml={3}
+              colorScheme={
+                String(difficulty).toLowerCase() == "easy"
+                  ? "green"
+                  : String(difficulty).toLowerCase() == "medium"
+                  ? "orange"
+                  : "red"
+              }
+            >
+              {difficulty}
+            </Badge>
+          </ModalHeader>
+
           <ModalBody
             maxHeight="60vh"
             overflowY="auto"
