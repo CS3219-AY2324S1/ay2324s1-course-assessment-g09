@@ -5,7 +5,7 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # Install dependencies
-COPY package*.json /usr/src/app/
+COPY package*.json /usr/src/app
 RUN npm ci # Install dependencies of CONSISTENT version to ensure reliability
 
 # Copy all source code

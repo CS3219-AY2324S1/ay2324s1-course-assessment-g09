@@ -75,5 +75,5 @@ jobs:
         version_label: 4 #To manually iterate
         region: ap-southeast-1
         #deployment_package: ./aws_deploy/docker-compose.yml # No change to yaml file for now
-        #wait_for_deployment: true  # Set to false to save Github Actions free hours
+        wait_for_deployment: false  # Set to false to save Github Actions free hours
 
