@@ -5,6 +5,10 @@ import {
   GridItem,
   Icon,
   Input,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Text,
   Textarea,
 } from "@chakra-ui/react";
@@ -27,6 +31,8 @@ const QuestionInputField = ({
 }) => {
   const [question, setQuestions] = useState(null);
   const [error, setError] = useState(false);
+
+  const [selectedComplexity, setSelectedComplexity] = useState("");
 
   const fetchQuestions = async () => {
     const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
@@ -58,6 +64,8 @@ const QuestionInputField = ({
         category: "",
         complexity: "",
       });
+
+      setSelectedComplexity("");
 
       setError(false);
       fetchQuestions();
@@ -101,6 +109,7 @@ const QuestionInputField = ({
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    console.log(name, value);
     setInputValues({
       ...inputValues,
       [name]: value,
@@ -116,6 +125,13 @@ const QuestionInputField = ({
       inputValues.category.trim() !== "" &&
       inputValues.complexity.trim() !== ""
     );
+  };
+
+  const handleComplexityOption = (complexity) => {
+    console.log(complexity);
+    setSelectedComplexity(complexity);
+    console.log(selectedComplexity);
+    setInputValues({ ...inputValues, complexity: selectedComplexity });
   };
 
   return (
@@ -140,7 +156,6 @@ const QuestionInputField = ({
             name="qn_num"
             value={inputValues.qn_num}
             onChange={handleInputChange}
-            // borderColor={error && colorMode == "light" ? "red.500" : "red.300"}
           />
         )}
       </GridItem>
@@ -182,13 +197,50 @@ const QuestionInputField = ({
         />
       </GridItem>
       <GridItem rowStart={2}>
-        <Input
+        <Menu>
+          <MenuButton
+            as={Button}
+            width="100%"
+            colorScheme={
+              selectedComplexity == "Easy"
+                ? "green"
+                : selectedComplexity == "Medium"
+                ? "orange"
+                : selectedComplexity == "Hard"
+                ? "red"
+                : "gray"
+            }
+          >
+            {selectedComplexity || "Select Complexity"}
+          </MenuButton>
+          <MenuList>
+            <MenuItem
+              onClick={() => handleComplexityOption("Easy")}
+              // onChange={() => handleMenuChange("Easy")}
+            >
+              Easy
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleComplexityOption("Medium")}
+              // onChange={() => handleMenuChange("Medium")}
+            >
+              Medium
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleComplexityOption("Hard")}
+              // onChange={() => handleMenuChange("Hard")}
+            >
+              Hard
+            </MenuItem>
+          </MenuList>
+        </Menu>
+        {/* <Input
           placeholder="Complexity"
           variant="filled"
           name="complexity"
           value={inputValues.complexity}
           onChange={handleInputChange}
-        />
+        /> */}
       </GridItem>
 
       {isCreate ? (
