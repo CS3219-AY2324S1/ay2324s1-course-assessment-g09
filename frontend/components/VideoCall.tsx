@@ -1,4 +1,5 @@
 "use client";
+import { Box } from "@chakra-ui/react";
 import React, { useEffect, useRef } from "react";
 import Webcam from "react-webcam";
 // import Peer from "peerjs";
@@ -18,10 +19,10 @@ function VideoCall() {
   }, []);
 
   return (
-    <div>
+    <Box>
       <h1>Video call temp</h1>
       <Webcam ref={webcamRef} />
-    </div>
+    </Box>
   );
 }
 
