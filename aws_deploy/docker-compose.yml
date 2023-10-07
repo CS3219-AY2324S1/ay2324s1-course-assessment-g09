@@ -78,6 +78,7 @@ services:
     depends_on: 
       - mongo
 
+
   frontend:
     # For Frontend
     container_name: frontend
