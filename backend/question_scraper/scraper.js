@@ -1,6 +1,6 @@
 const axios = require("axios");
-const puppeteer = require("puppeteer");
-//const puppeteer = require("puppeteer-core");
+//const puppeteer = require("puppeteer"); local use
+const puppeteer = require("puppeteer-core");
 const chromium = require("@sparticuz/chromium");
 
 const getBasicData = async (questionId) => {
@@ -32,7 +32,7 @@ const getBasicData = async (questionId) => {
 
 const getMoreData = async (question) => {
     // Extract and Append Category Tags and Description.
-    /*
+    
     const browser = await puppeteer.launch({
         args: chromium.args,
         defaultViewport: chromium.defaultViewport,
@@ -40,11 +40,12 @@ const getMoreData = async (question) => {
         headless: "new",
         ignoreHTTPSErrors: true,
     });
-    */
+    /* Local use
     const browser = await puppeteer.launch({
         headless: "new",
         ignoreHTTPSErrors: true,
     });
+    */
     const page = await browser.newPage();
     await page.goto(question.url);
 
