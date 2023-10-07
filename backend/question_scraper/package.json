@@ -1,19 +1,13 @@
 {
-  "name": "question_scraper",
+  "name": "question-scraper",
   "version": "1.0.0",
   "description": "",
-  "main": "handler.js",
-  "scripts": {
-    "dev": "nodemon handler.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node handler.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
+    "@sparticuz/chromium": "^117.0.0",
     "axios": "^1.5.1",
+    "express": "^4.18.2",
     "nodemon": "^3.0.1",
-    "puppeteer": "^21.3.4"
+    "puppeteer": "^21.3.7",
+    "puppeteer-core": "^21.3.7"
   }
 }
