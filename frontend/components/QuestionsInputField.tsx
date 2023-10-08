@@ -65,8 +65,6 @@ const QuestionInputField = ({
         complexity: "",
       });
 
-      setSelectedComplexity("");
-
       setError(false);
       fetchQuestions();
     }
@@ -109,7 +107,6 @@ const QuestionInputField = ({
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    console.log(name, value);
     setInputValues({
       ...inputValues,
       [name]: value,
@@ -117,7 +114,6 @@ const QuestionInputField = ({
   };
 
   const isButtonValid = () => {
-    console.log(inputValues);
     return (
       String(inputValues.qn_num).trim() !== "" &&
       inputValues.title.trim() !== "" &&
@@ -128,10 +124,9 @@ const QuestionInputField = ({
   };
 
   const handleComplexityOption = (complexity) => {
-    console.log(complexity);
+    // console.log(complexity);
+    setInputValues({ ...inputValues, complexity: complexity });
     setSelectedComplexity(complexity);
-    console.log(selectedComplexity);
-    setInputValues({ ...inputValues, complexity: selectedComplexity });
   };
 
   return (
@@ -214,33 +209,17 @@ const QuestionInputField = ({
             {selectedComplexity || "Select Complexity"}
           </MenuButton>
           <MenuList>
-            <MenuItem
-              onClick={() => handleComplexityOption("Easy")}
-              // onChange={() => handleMenuChange("Easy")}
-            >
+            <MenuItem onClick={() => handleComplexityOption("Easy")}>
               Easy
             </MenuItem>
-            <MenuItem
-              onClick={() => handleComplexityOption("Medium")}
-              // onChange={() => handleMenuChange("Medium")}
-            >
+            <MenuItem onClick={() => handleComplexityOption("Medium")}>
               Medium
             </MenuItem>
-            <MenuItem
-              onClick={() => handleComplexityOption("Hard")}
-              // onChange={() => handleMenuChange("Hard")}
-            >
+            <MenuItem onClick={() => handleComplexityOption("Hard")}>
               Hard
             </MenuItem>
           </MenuList>
         </Menu>
-        {/* <Input
-          placeholder="Complexity"
-          variant="filled"
-          name="complexity"
-          value={inputValues.complexity}
-          onChange={handleInputChange}
-        /> */}
       </GridItem>
 
       {isCreate ? (

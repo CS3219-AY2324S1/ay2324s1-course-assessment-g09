@@ -48,15 +48,15 @@ const IndexPage = () => {
   const [session, setSession] = useState();
   const [role, setRole] = useState("user");
 
-  useEffect(() => {
-    const login = JSON.parse(window.sessionStorage.getItem("login"));
+  // useEffect(() => {
+  //   const login = JSON.parse(window.sessionStorage.getItem("login"));
 
-    if (login && login.userLogin) {
-      setSession(login.token);
-    } else {
-      router.push("/signin");
-    }
-  }, []);
+  //   if (login && login.userLogin) {
+  //     setSession(login.token);
+  //   } else {
+  //     router.push("/signin");
+  //   }
+  // }, []);
 
   const toggleDisplayDB = () => {
     displayDB == "questions"
@@ -121,7 +121,7 @@ const IndexPage = () => {
             />
           </div>
           <div>
-            <Button onClick={handleSignOut} bgColor="red.100">
+            <Button onClick={handleSignOut} colorScheme="red" my={2} mr={5}>
               signout
             </Button>
           </div>
