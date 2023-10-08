@@ -1,6 +1,10 @@
 const Sequelize = require("sequelize");
 
-const sequelize = new Sequelize("sqlite::memory:");
+const sequelize = new Sequelize({
+    dialect: "sqlite",
+    Storage:":memory:"
+});
+
 const checkConnection = async () => {
     try {
         await sequelize.authenticate();

@@ -16,20 +16,18 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  socket.join("room1");
+  socket.join(socket.id);
   console.log("a user connected:", socket.id);
-
-  socket.on("codeChange", (data) => {
-    // console.log(data);
-    socket.to("room1").emit("codeChange", data);
-  });
-  socket.on("message", (data) => {
-    console.log(data);
-    socket.broadcast.emit("receive", data);
-  });
-  socket.on("languageChange", (data) => {
-    // console.log(data);
-    socket.to("room1").emit("languageChange", data);
+  socket.on("joinRoom", (room) => {
+    socket.join(room);
+    socket.on("codeChange", (data) => {
+      console.log(data);
+      socket.to(room).emit("codeChange", data);
+    });
+    socket.on("languageChange", (data) => {
+      // console.log(data);
+      socket.to(room).emit("languageChange", data);
+    });
   });
 });
 
