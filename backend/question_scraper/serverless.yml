@@ -11,11 +11,12 @@ provider:
   region: ap-southeast-1
   environment:
     SERVER: peerprep-g091.ap-southeast-1.elasticbeanstalk.com
+    isDeployment: "true"
+  timeout: 30
 
 functions:
   scrapeQuestion:
-    handler: serverless.handler
-    timeout: 30
+    handler: src/serverless.handler
     events: # Http invocatiom
       - httpApi:
           method: get
