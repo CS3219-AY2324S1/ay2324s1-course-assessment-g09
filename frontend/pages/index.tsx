@@ -68,18 +68,16 @@ const IndexPage = () => {
     }
   }, []);
 
-
   const toggleDisplayDB = () => {
     displayDB == "questions"
       ? setDisplayDB("users")
       : setDisplayDB("questions");
   };
 
-
   const handleSignOut = () => {
     window.sessionStorage.removeItem("login");
     router.push("/signin");
-  }
+  };
 
   return (
     <Box height="100vh" display="flex" flexDirection="column">

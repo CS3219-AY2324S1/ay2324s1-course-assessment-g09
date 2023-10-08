@@ -16,12 +16,13 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 
-export default function CodeEditor() {
+export default function CodeEditor({ socketRoom }) {
   const editorRef = useRef(null);
   const [socket, setSocket] = useState(null);
   const isIncomingCode = useRef(false);
   const selectRef = useRef(null);
   const colorRef = useRef(null);
+
   const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
   };
@@ -56,6 +57,7 @@ export default function CodeEditor() {
   useEffect(() => {
     const socket = io("http://localhost:8080");
     setSocket(socket);
+    socket?.emit("joinRoom", socketRoom);
     socket.on("codeChange", (event) => {
       isIncomingCode.current = true;
       console.log("received", event);
