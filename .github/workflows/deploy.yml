@@ -72,7 +72,7 @@ jobs:
         aws_session_token: ${{ steps.creds.outputs.aws-session-token }}
         application_name: PeerPrep
         environment_name: PeerPrep-env
-        version_label: 4 #To manually iterate
+        version_label: 15-1 #To manually iterate
         region: ap-southeast-1
         #deployment_package: ./aws_deploy/docker-compose.yml # No change to yaml file for now
         wait_for_deployment: false  # Set to false to save Github Actions free hours
