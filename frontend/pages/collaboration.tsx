@@ -3,10 +3,11 @@ import { Box, Flex, Grid, GridItem, HStack, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import CodeEditor from "../components/CodeEditor";
 import VideoCall from "../components/VideoCall";
-import TestPrettier from "./TestPrettier";
+import MatchButton from "../components/MatchButton";
 
 export default function Collaboration() {
   const [questions, setQuestions] = useState([]);
+  const [matchedSocket, setMatchedSocket] = useState(null);
   const selectedItem = {
     name: "Two Sum",
     content:
@@ -14,23 +15,35 @@ export default function Collaboration() {
     createdAt: "2022-10-22 20:19:50.236312+00:00",
     updatedAt: "2022-10-22 20:19:50.236312+00:00",
   };
+  const receiveMatchedSocket = (socket) => {
+    {
+      setMatchedSocket(socket);
+    }
+  };
 
   return (
-    <Grid templateColumns="repeat(2, 1fr)" gap={5}>
-      <GridItem display="flex" flex="1">
-        <Box flexDirection="column">
-          {selectedItem && (
-            <Box flex={1} alignSelf="top">
-              <Text>{selectedItem.content}</Text>
-            </Box>
-          )}
-          <VideoCall />
+    <Box>
+      {matchedSocket ? (
+        <Box>
+          <Grid templateColumns="repeat(2, 1fr)" gap={5}>
+            <GridItem display="flex" flex="1">
+              <Box flexDirection="column">
+                {selectedItem && (
+                  <Box flex={1} alignSelf="top">
+                    <Text>{selectedItem.content}</Text>
+                  </Box>
+                )}
+                {/* <VideoCall /> */}
+              </Box>
+            </GridItem>
+            <GridItem display="flex" flex="1">
+              <CodeEditor socketRoom={matchedSocket} />
+            </GridItem>
+          </Grid>
         </Box>
-      </GridItem>
-
-      <GridItem display="flex" flex="1">
-        <CodeEditor />
-      </GridItem>
-    </Grid>
+      ) : (
+        <MatchButton sendMatchedSocket={receiveMatchedSocket} />
+      )}
+    </Box>
   );
 }

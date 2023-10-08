@@ -1,34 +1,32 @@
 "use client";
-import Editor from "@monaco-editor/react";
-import { editor } from "monaco-editor";
-import { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
 import {
   Box,
-  Flex,
-  Select,
   Button,
   Grid,
   GridItem,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
+  MenuList,
+  Select,
 } from "@chakra-ui/react";
+import Editor from "@monaco-editor/react";
+import { editor } from "monaco-editor";
+import { useEffect, useRef, useState } from "react";
+import { io } from "socket.io-client";
 
-export default function CodeEditor() {
+export default function CodeEditor({ socketRoom }) {
   const editorRef = useRef(null);
   const [socket, setSocket] = useState(null);
   const isIncomingCode = useRef(false);
-  const selectRef = useRef(null);
   const colorRef = useRef(null);
+  const [language, setLanguage] = useState("javascript");
+
   const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
   };
 
-  const [language, setLangauge] = useState("javascript");
-
-  const handleChange = (
+  const handleCodeChange = (
     value = "",
     event: editor.IModelContentChangedEvent
   ) => {
@@ -49,25 +47,29 @@ export default function CodeEditor() {
       editorRef.current?.getModel(),
       e.target.value
     );
-    setLangauge(e.target.value);
+    setLanguage(e.target.value);
     socket?.emit("languageChange", e.target.value);
   };
 
   useEffect(() => {
     const socket = io("http://localhost:8080");
     setSocket(socket);
+
+    socket?.emit("joinRoom", socketRoom);
+
     socket.on("codeChange", (event) => {
       isIncomingCode.current = true;
       console.log("received", event);
       editorRef.current.getModel()?.applyEdits(event.changes);
     });
+
     socket.on("languageChange", (event) => {
       console.log("received", event);
       window.monaco.editor.setModelLanguage(
         editorRef.current?.getModel(),
         event
       );
-      selectRef.current.value = event;
+      setLanguage(event);
     });
     return () => {
       socket.disconnect();
@@ -143,7 +145,7 @@ export default function CodeEditor() {
         </GridItem>
         <GridItem colSpan={4}>
           <Editor
-            onChange={handleChange}
+            onChange={handleCodeChange}
             theme="vc"
             onMount={handleEditorDidMount}
             defaultLanguage="javascript"

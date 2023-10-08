@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const { checkRoom } = require("./modelController");
 
 const app = express();
 app.use(cors());
@@ -17,19 +18,15 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   socket.join(socket.id);
   console.log("a user connected:", socket.id);
-  socket.on("joinRoom", (room) => {
-    socket.join(room);
-    socket.on("codeChange", (data) => {
-      // console.log(data);
-      socket.to(room).emit("codeChange", data);
-    });
-    socket.on("languageChange", (data) => {
-      // console.log(data);
-      socket.to(room).emit("languageChange", data);
-    });
+  socket.on("match", (data) => {
+    checkRoom(socket, data);
+  });
+  socket.on("matched", (data) => {
+    console.log("matched");
+    socket.emit("matched", data);
   });
 });
 
-server.listen(8080, () => {
-  console.log("listening on PORT 8080");
+server.listen(6927, () => {
+  console.log("listening on PORT 6927");
 });

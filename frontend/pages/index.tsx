@@ -2,8 +2,6 @@ import {
   Box,
   Button,
   Flex,
-  Grid,
-  GridItem,
   Icon,
   Tab,
   TabIndicator,
@@ -11,25 +9,17 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Link,
-  Text,
   useColorMode,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { BsFillMoonFill, BsFillSunFill } from "react-icons/bs";
-import QuestionInputField from "../components/QuestionsInputField";
 import Questions from "../components/Questions";
-
+import QuestionInputField from "../components/QuestionsInputField";
 import ToggleMode from "../components/ToggleMode";
-import QuestionsHeader from "../components/QuestionsHeader";
 import UserInputField from "../components/UserInputField";
-import UserHeader from "../components/UserHeader";
 import Users from "../components/Users";
-
-import { MdQuestionAnswer } from "react-icons/md";
 import { AiOutlineUser } from "react-icons/ai";
 import { FaHandshake } from "react-icons/fa";
-
+import { MdQuestionAnswer } from "react-icons/md";
 import { useRouter } from "next/router";
 import Collaboration from "./collaboration";
 
@@ -68,18 +58,16 @@ const IndexPage = () => {
     }
   }, []);
 
-
   const toggleDisplayDB = () => {
     displayDB == "questions"
       ? setDisplayDB("users")
       : setDisplayDB("questions");
   };
 
-
   const handleSignOut = () => {
     window.sessionStorage.removeItem("login");
     router.push("/signin");
-  }
+  };
 
   return (
     <Box height="100vh" display="flex" flexDirection="column">
