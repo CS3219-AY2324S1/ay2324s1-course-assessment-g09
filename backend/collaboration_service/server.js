@@ -1,11 +1,10 @@
 const express = require("express");
-const app = express();
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+
+const app = express();
 app.use(cors());
-const fs = require("fs");
-let jsonData;
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -21,7 +20,7 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", (room) => {
     socket.join(room);
     socket.on("codeChange", (data) => {
-      console.log(data);
+      // console.log(data);
       socket.to(room).emit("codeChange", data);
     });
     socket.on("languageChange", (data) => {

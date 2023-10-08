@@ -21,4 +21,3 @@ const roomModel = sequelize.define("room", {
   console.log("All models were synchronized successfully.");
 })();
 exports.roomModel = roomModel;
-exports.userModel = userModel;
