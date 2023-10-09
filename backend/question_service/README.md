@@ -45,7 +45,7 @@ GET http://<domain>:3001/questions/getall
 
 => Return Value: {
     "msg": "Questions retrieved.",
-    "qns": [{}, {}, ...]}
+    "qns": [{..}, {..}, ...]}
 ```
 
 3. Read a Question

@@ -2,7 +2,7 @@ const scraper = require('./scraper');
 
 module.exports.handler = async (event) => {
   try {
-    const questionId = 1;//parseInt(event.pathParameters.id);
+    const questionId = parseInt(event.pathParameters.id); //1; local use
     const questionTitle = await scraper.scrape(questionId);
     return {
       statusCode: 200,
