@@ -48,15 +48,15 @@ const IndexPage = () => {
   const [session, setSession] = useState();
   const [role, setRole] = useState("user");
 
-  // useEffect(() => {
-  //   const login = JSON.parse(window.sessionStorage.getItem("login"));
+  useEffect(() => {
+    const login = JSON.parse(window.sessionStorage.getItem("login"));
 
-  //   if (login && login.userLogin) {
-  //     setSession(login.token);
-  //   } else {
-  //     router.push("/signin");
-  //   }
-  // }, []);
+    if (login && login.userLogin) {
+      setSession(login.token);
+    } else {
+      router.push("/signin");
+    }
+  }, []);
 
   const toggleDisplayDB = () => {
     displayDB == "questions"
@@ -116,8 +116,6 @@ const IndexPage = () => {
             <ToggleMode
               colorMode={colorMode}
               toggleColorMode={toggleColorMode}
-              toggleDisplayDB={toggleDisplayDB}
-              displayDB={displayDB}
             />
           </div>
           <div>
