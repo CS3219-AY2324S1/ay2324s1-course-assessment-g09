@@ -49,7 +49,7 @@ const Question = ({
 
   useEffect(() => {
     fetchQuestions();
-  });
+  }, [questions]);
 
   const handleEdit = async ({
     qn_num,

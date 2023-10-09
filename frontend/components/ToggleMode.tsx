@@ -4,12 +4,7 @@ import { AiOutlineUser } from "react-icons/ai";
 import { MdQuestionAnswer } from "react-icons/md";
 import { BsFillMoonFill, BsFillSunFill } from "react-icons/bs";
 
-const ToggleMode = ({
-  colorMode,
-  toggleColorMode,
-  toggleDisplayDB,
-  displayDB,
-}) => {
+const ToggleMode = ({ colorMode, toggleColorMode }) => {
   return (
     <HStack my={2} mr={5}>
       {colorMode === "light" ? (

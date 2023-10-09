@@ -116,12 +116,10 @@ const IndexPage = () => {
             <ToggleMode
               colorMode={colorMode}
               toggleColorMode={toggleColorMode}
-              toggleDisplayDB={toggleDisplayDB}
-              displayDB={displayDB}
             />
           </div>
           <div>
-            <Button onClick={handleSignOut} bgColor="red.100">
+            <Button onClick={handleSignOut} colorScheme="red" my={2} mr={5}>
               signout
             </Button>
           </div>

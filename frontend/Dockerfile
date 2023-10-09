@@ -12,4 +12,4 @@ RUN npm ci # Install dependencies of CONSISTENT version to ensure reliability
 COPY . /usr/src/app
 
 EXPOSE 3000
-CMD [ "npm", "run", "start"]
+CMD [ "npm", "run", "dev"]
