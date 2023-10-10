@@ -27,6 +27,8 @@ import ToggleMode from "../components/ToggleMode";
 import { AiFillEye, AiFillEyeInvisible, AiOutlineMail } from "react-icons/ai";
 import { MdPassword } from "react-icons/md";
 
+const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
+
 const SignUp = () => {
   const router = useRouter();
   const toast = useToast();
@@ -55,7 +57,7 @@ const SignUp = () => {
       if (sessionStorage.getItem("login")) {
         eToken = JSON.parse(sessionStorage.getItem("login")).token;
       }
-      const response = await fetch("http://localhost:3002/auth/signin", {
+      const response = await fetch(`${IP_ADDRESS}:3002/auth/signin`, {
         method: "POST",
         headers: {
           Authorization: eToken,
@@ -88,7 +90,7 @@ const SignUp = () => {
               padding="10px"
               rounded="md"
             >
-              Welcome to PeerPrep, {}
+              Welcome to PeerPrep
             </Box>
           ),
         });
