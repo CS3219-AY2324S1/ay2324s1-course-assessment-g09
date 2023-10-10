@@ -4,6 +4,8 @@ services:
     container_name: postgres
     image: postgres:latest
     environment: # To hide
+    environment:
+      # To hide
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
@@ -13,6 +15,7 @@ services:
       - '5432:5432'
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -21,16 +24,20 @@ services:
     container_name: user-service
     image: user-service-img
     environment: # To hide
+    environment:
+      # To hide
       RESTAPI_PORT: 3002
       DB_SERVER: postgres # PostgreSQL variables.
       DB_DATABASE: postgres
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
       DB_PORT: 5432
+      SECRET_KEY: J7kPq2xRtVzLwY9fX6eG1sA4iB3oDmC8nU5hW0lZ
     restart: always
     build:
       context: ./
       dockerfile: ./docker/Dockerfile
+    build: .
     ports:
       - "3002:3002"
     depends_on:
@@ -43,4 +50,6 @@ services:
       timeout: 10s
 
 volumes: # Persistent data
+  postgres-db:volumes:
+  # Persistent data
   postgres-db:
