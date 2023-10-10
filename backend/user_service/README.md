@@ -34,7 +34,7 @@ GET http://<domain>:3002/users/getall
 
 => Return Value: {
     "msg": "<#Number of Users> users retrieved.",
-    "users": [{}, {},...]}
+    "users": [{..}, {..},...]}
 ```
 
 3. Read a User

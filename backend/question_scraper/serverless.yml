@@ -10,12 +10,13 @@ provider:
     cors: true
   region: ap-southeast-1
   environment:
-    SERVER: "13.215.150.132"
+    SERVER: peerprep-g091.ap-southeast-1.elasticbeanstalk.com
+    isDeployment: "true"
+  timeout: 30
 
 functions:
   scrapeQuestion:
-    handler: serverless.handler
-    timeout: 20 
+    handler: src/serverless.handler
     events: # Http invocatiom
       - httpApi:
           method: get
