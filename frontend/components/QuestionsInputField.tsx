@@ -143,6 +143,7 @@ const QuestionInputField = ({
             _placeholder={{
               color: colorMode == "light" ? "red.500" : "red.300",
             }}
+            fontSize={{ lg: "sm", xl: "sm", "2xl": "lg" }}
           />
         ) : (
           <Input
@@ -151,6 +152,7 @@ const QuestionInputField = ({
             name="qn_num"
             value={inputValues.qn_num}
             onChange={handleInputChange}
+            fontSize={{ lg: "sm", xl: "sm", "2xl": "lg" }}
           />
         )}
       </GridItem>
@@ -161,6 +163,7 @@ const QuestionInputField = ({
           name="title"
           value={inputValues.title}
           onChange={handleInputChange}
+          fontSize={{ lg: "sm", xl: "sm", "2xl": "lg" }}
         />
       </GridItem>
       <GridItem
@@ -180,6 +183,7 @@ const QuestionInputField = ({
           height="100%"
           // maxHeight="1.5rem"
           resize="none"
+          fontSize={{ lg: "sm", xl: "sm", "2xl": "lg" }}
         />
       </GridItem>
       <GridItem rowStart={2}>
@@ -189,6 +193,7 @@ const QuestionInputField = ({
           name="category"
           value={inputValues.category}
           onChange={handleInputChange}
+          fontSize={{ lg: "sm", xl: "sm", "2xl": "lg" }}
         />
       </GridItem>
       <GridItem rowStart={2}>
