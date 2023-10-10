@@ -9,24 +9,24 @@ app.use(cors());
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
+	cors: {
+		origin: "http://localhost:3000",
+		methods: ["GET", "POST"],
+	},
 });
 
 io.on("connection", (socket) => {
-  socket.join(socket.id);
-  console.log("a user connected:", socket.id);
-  socket.on("match", (data) => {
-    checkRoom(socket, data);
-  });
-  socket.on("matched", (data) => {
-    console.log("matched");
-    socket.emit("matched", data);
-  });
+	socket.join(socket.id);
+	console.log("a user connected:", socket.id);
+	socket.on("match", (data) => {
+		checkRoom(socket, data);
+	});
+	socket.on("matched", (data) => {
+		socket.to(data).emit("matched", socket.id);
+		console.log("matched");
+	});
 });
 
 server.listen(6927, () => {
-  console.log("listening on PORT 6927");
+	console.log("listening on PORT 6927");
 });
