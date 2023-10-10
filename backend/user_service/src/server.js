@@ -23,11 +23,11 @@ app.use(cors({
 
 //Setup Routing
 app.use('/auth', authRouter);
-// app.post("/users/create", usermanager.createUser); //CREATE
-// app.get("/users/getall", usermanager.getUsers); // READ
-// app.get("/users/get/:id", usermanager.getUserById);
-// app.post("/users/update/:id", usermanager.updateUser); //UPDATE
-// app.post("/users/delete/:id", usermanager.deleteUser); //DELETE
+app.post("/users/create", usermanager.createUser); //CREATE
+app.get("/users/getall", usermanager.getUsers); // READ
+app.get("/users/get/:id", usermanager.getUserById);
+app.post("/users/update/:id", usermanager.updateUser); //UPDATE
+app.post("/users/delete/:id", usermanager.deleteUser); //DELETE
 
 // Start Express App
 app.listen(process.env.RESTAPI_PORT, () => {
