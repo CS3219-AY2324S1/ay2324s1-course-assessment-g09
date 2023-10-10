@@ -3,7 +3,6 @@ services:
   postgres:
     container_name: postgres
     image: postgres:latest
-    environment: # To hide
     environment:
       # To hide
       POSTGRES_USER: postgres
@@ -14,7 +13,6 @@ services:
     ports:
       - '5432:5432'
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 5s
       timeout: 5s
@@ -23,7 +21,6 @@ services:
   user-service:
     container_name: user-service
     image: user-service-img
-    environment: # To hide
     environment:
       # To hide
       RESTAPI_PORT: 3002
@@ -34,22 +31,29 @@ services:
       DB_PORT: 5432
       SECRET_KEY: J7kPq2xRtVzLwY9fX6eG1sA4iB3oDmC8nU5hW0lZ
     restart: always
-    build:
-      context: ./
-      dockerfile: ./docker/Dockerfile
     build: .
     ports:
       - "3002:3002"
     depends_on:
       - postgres
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3002/users/getall", "||", "exit", "1"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3002/users/getall",
+          "||",
+          "exit",
+          "1"
+        ]
       interval: 60s
       retries: 5
       start_period: 20s
       timeout: 10s
 
-volumes: # Persistent data
-  postgres-db:volumes:
+volumes:
   # Persistent data
   postgres-db:
