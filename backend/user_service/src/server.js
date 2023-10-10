@@ -10,6 +10,7 @@ const bodyparser = require("body-parser"); // Middleware
 const cors = require("cors") // Middleware
 const usermanager = require("./usermanager");
 const authRouter = require('./controllers/authentication');
+const initialiseDB = require("./utility/db").initialiseDB;
 
 // Create an express app
 const app = express();
@@ -23,7 +24,7 @@ app.use(cors({
 
 //Setup Routing
 app.use('/auth', authRouter);
-app.post("/users/create", usermanager.createUser); //CREATE
+// app.post("/users/create", usermanager.createUser); //CREATE
 app.get("/users/getall", usermanager.getUsers); // READ
 app.get("/users/get/:id", usermanager.getUserById);
 app.post("/users/update/:id", usermanager.updateUser); //UPDATE
@@ -35,4 +36,4 @@ app.listen(process.env.RESTAPI_PORT, () => {
 });
 
 // Initialise DB with default parameters.
-// usermanager.initialiseDB();
+initialiseDB();
