@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { FormControl, FormLabel, Button, Input, VStack, Box, Heading, Highlight, Select } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react';
 
+const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
+
 const SignUp = () => {
     const router = useRouter();
     const toast = useToast();
@@ -14,7 +16,7 @@ const SignUp = () => {
         const formData = new FormData(form);
         if (formData.get("password") === formData.get("confirm_password")) {
             try {
-                const response = await fetch('http://localhost:3002/auth/signup', {
+                const response = await fetch(`${IP_ADDRESS}:3002/auth/signup`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
