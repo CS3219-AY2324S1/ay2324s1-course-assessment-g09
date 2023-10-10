@@ -19,11 +19,11 @@ io.on("connection", (socket) => {
   socket.join(socket.id);
   console.log("a user connected:", socket.id);
   socket.on("match", (data) => {
-    checkRoom(socket, data);
+    checkRoom(socket, data, io);
   });
-  socket.on("matched", (data) => {
+  io.on("matched", (data) => {
     console.log("matched");
-    socket.emit("matched", data);
+    io.emit("matched", data);
   });
 });
 

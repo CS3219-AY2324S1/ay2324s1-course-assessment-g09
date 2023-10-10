@@ -54,7 +54,7 @@ const IndexPage = () => {
     if (login && login.userLogin) {
       setSession(login.token);
     } else {
-      router.push("/signin");
+      // router.push("/signin");
     }
   }, []);
 
