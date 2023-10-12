@@ -4,7 +4,7 @@ import Questions from "../components/Questions";
 import QuestionInputField from "../components/QuestionsInputField";
 import UserInputField from "../components/UserInputField";
 import Users from "../components/Users";
-import History from "./history";
+import History from "../components/History";
 import Profile from "./profile";
 import QuestionProgress from "./questionProgress";
 

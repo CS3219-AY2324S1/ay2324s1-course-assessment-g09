@@ -8,6 +8,7 @@ async function checkRoom(socket, difficulty, io) {
   const rooms = await roomModel.findAll({
     where: { difficulty: difficulty },
   });
+
   if (rooms.length > 0) {
     console.log("room found");
     socket.join(socket.id);
