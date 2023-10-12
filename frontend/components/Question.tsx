@@ -114,6 +114,7 @@ const Question = ({
                 alignItems="center"
                 height="100%"
                 key={`flex_id_${question.qn_num}`}
+                fontSize={{ lg: "md", xl: "md", "2xl": "lg" }}
               >
                 {question.qn_num}
               </Flex>
@@ -132,9 +133,11 @@ const Question = ({
                 <Text
                   _hover={{
                     color: colorMode == "light" ? "teal.500" : "teal.300",
-                    fontWeight: "semibold",
+                    fontWeight: "extrabold",
                     cursor: "pointer",
                   }}
+                  fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
+                  fontWeight="semibold"
                 >
                   {question.title}
                 </Text>
@@ -149,6 +152,7 @@ const Question = ({
                 alignItems="center"
                 height="100%"
                 key={`flex_category_${question.category}`}
+                fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
               >
                 {question.category}
               </Flex>
@@ -162,6 +166,7 @@ const Question = ({
                 alignItems="center"
                 height="100%"
                 key={`flex_complexity_${question.complexity}`}
+                fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
               >
                 {question.complexity}
               </Flex>

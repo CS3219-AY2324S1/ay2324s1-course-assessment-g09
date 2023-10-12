@@ -1,12 +1,12 @@
 const express = require('express');
-const PrismaClient = require('@prisma/client').PrismaClient;
 const userSchema = require('../utility/ZSchema').userSchema;
-const db = new PrismaClient();
 const bcrypt = require('bcrypt');
 const { ZodError } = require('zod');
 const jwt = require('jsonwebtoken');
 
 const authRouter = express.Router();
+const db = require('../utility/db').db;
+const userAccountTable = require('../utility/db').userAccountTable;
 
 
 // const userSchema = z.object({
@@ -26,29 +26,21 @@ authRouter.post('/signup', async (request, response) => {
         const body = request.body;
 
         const { email, username, password, role } = userSchema.parse(body);
-        const existingUserByEmail = await db.user_account.findUnique({
-            where: { email: email }
-        });
-        if (existingUserByEmail) {
-            return response.status(409).json({ user: null, message: ["User already exists"] });
-        }
 
-        const existingUserByUsername = await db.user_account.findUnique({
-            where: { username: username }
-        });
-        if (existingUserByUsername) {
+        const query = `SELECT * FROM ${userAccountTable} WHERE email = $1 OR username = $2`;
+        const queryResult = await db.query(query, [email, username]);
+        const numUsers = queryResult.rows.length;
+        if (numUsers > 0) {
             return response.status(409).json({ user: null, message: ["User already exists"] });
         }
 
         const pwHash = await bcrypt.hash(password, 17);
-        const newUser = await db.user_account.create({
-            data: {
-                username,
-                email,
-                password: pwHash,
-                role,
-            }
-        });
+        const insertQuery = `INSERT INTO ${userAccountTable} (email, username, role, password) VALUES ($1, $2, $3, $4)`;
+        const insertResult = await db.query(insertQuery, [email, username, role, pwHash]);
+
+        if (insertResult.rowCount != 1) {
+            throw new Error('Unsuccessful insert into database');
+        }
 
         return response.json({ message: [`User:${username} has been created`] });
     } catch (error) {
@@ -56,7 +48,7 @@ authRouter.post('/signup', async (request, response) => {
             const allMsg = error.issues.map(issue => issue.message);
             return response.status(400).json({ message: allMsg });
         }
-
+        console.log(error.message);
         return response.status(500).json({ message: ["something went wrong..."] });
     }
 });
@@ -78,12 +70,17 @@ authRouter.post('/signin', async (request, response) => {
         if (!email && !password) {
             return response.status(400).json({ message: "Login requires email and password" });
         }
-        const myUser = await db.user_account.findUnique({
-            where: { email: email }
-        });
-        if (!myUser) {
+
+        const getUserQuery = `SELECT * FROM ${userAccountTable} WHERE email = $1`;
+        const queryResult = await db.query(getUserQuery, [email]);
+        const users = queryResult.rows;
+        if (users.length == 0) {
             return response.status(400).json({ message: "incorrect email or password" });
+        } else if (users.length > 1) {
+            throw new Error('User is non-unique');
         }
+
+        const myUser = users[0];
 
         const passwordCheck = await bcrypt.compare(password, myUser.password);
         if (!passwordCheck) {
