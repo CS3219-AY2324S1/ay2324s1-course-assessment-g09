@@ -131,13 +131,14 @@ const profile = ({ colorMode }) => {
       .then(response => {
         if (response.statusText === 'OK') {
           router.push("/signin");
+          window.sessionStorage.removeItem("login");
         }
       })
       .catch(error => {
         console.log("signout", error);
       })
 
-    window.sessionStorage.removeItem("login");
+
 
   };
 

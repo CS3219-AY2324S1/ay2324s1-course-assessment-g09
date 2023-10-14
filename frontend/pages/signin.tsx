@@ -35,8 +35,8 @@ const SignUp = () => {
 
   useEffect(() => {
     if (sessionStorage.getItem("login")) {
-      const eToken = JSON.parse(sessionStorage.getItem("login")).token;
-      if (eToken) {
+      const isLoggedIn = JSON.parse(sessionStorage.getItem("login")).isLoggedIn;
+      if (isLoggedIn) {
         router.push("/");
       }
     }
@@ -73,14 +73,9 @@ const SignUp = () => {
       const result = await response.json();
       // console.log("result", result);
       if (response.ok) {
-        sessionStorage.setItem(
-          "login",
-          JSON.stringify({
-            userLogin: true,
-            token: result.token,
-            role: result.role,
-          })
-        );
+        sessionStorage.setItem("login", JSON.stringify({
+          isLoggedIn: true
+        }))
 
         toast({
           position: "bottom-left",
