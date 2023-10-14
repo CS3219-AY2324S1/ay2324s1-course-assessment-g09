@@ -25,7 +25,7 @@ export default function Collaboration() {
     <Box>
       {matchedSocket ? (
         <Box>
-          <Grid templateColumns="repeat(2, 1fr)" gap={5}>
+          <Grid templateColumns="repeat(2, 1fr)" gap={5} h="80vh">
             <GridItem display="flex" flex="1">
               <Box flexDirection="column">
                 {selectedItem && (
