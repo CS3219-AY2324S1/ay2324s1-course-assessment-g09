@@ -25,7 +25,7 @@ apiAuthRouter.get('/validate-user', async (request, response) => {
     // if (request.headers.authorization) {
     //     console.log(request.headers.authorization);
     // }
-    console.log("HUH? No error?");
+    // console.log("HUH? No error?");
     return response.status(201).send();
 });
 
