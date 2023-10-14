@@ -51,11 +51,11 @@ const IndexPage = () => {
   useEffect(() => {
     const login = JSON.parse(window.sessionStorage.getItem("login"));
 
-    if (login && login.userLogin) {
-      setSession(login.token);
-    } else {
-      router.push("/signin");
-    }
+    // if (login && login.userLogin) {
+    //   setSession(login.token);
+    // } else {
+    //   router.push("/signin");
+    // }
   }, []);
 
   const toggleDisplayDB = () => {

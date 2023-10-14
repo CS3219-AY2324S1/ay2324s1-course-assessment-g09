@@ -53,20 +53,22 @@ const SignUp = () => {
     const formData = new FormData(form);
 
     try {
-      var eToken = "";
-      if (sessionStorage.getItem("login")) {
-        eToken = JSON.parse(sessionStorage.getItem("login")).token;
-      }
-      const response = await fetch(`${IP_ADDRESS}:3002/auth/signin`, {
+      // var eToken = "";
+      // if (sessionStorage.getItem("login")) {
+      //   eToken = JSON.parse(sessionStorage.getItem("login")).token;
+      // }
+      const response = await fetch(`${IP_ADDRESS}:3004/userauth/signin`, {
         method: "POST",
         headers: {
-          Authorization: eToken,
+          // Authorization: eToken,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: formData.get("email"),
           password: formData.get("password"),
         }),
+        mode: "cors",
+        credentials: "include"
       });
       const result = await response.json();
       // console.log("result", result);

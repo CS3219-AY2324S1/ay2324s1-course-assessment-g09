@@ -21,6 +21,9 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import router, { useRouter } from "next/router";
+import axios from "axios";
+
+const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
 const profile = ({ colorMode }) => {
   const cancelRef = React.useRef();
@@ -123,9 +126,19 @@ const profile = ({ colorMode }) => {
     }
   }, [minutes]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    axios.post(`${IP_ADDRESS}:3004/userauth/signout`, {}, { withCredentials: true })
+      .then(response => {
+        if (response.statusText === 'OK') {
+          router.push("/signin");
+        }
+      })
+      .catch(error => {
+        console.log("signout", error);
+      })
+
     window.sessionStorage.removeItem("login");
-    router.push("/signin");
+
   };
 
   return (
@@ -222,12 +235,12 @@ const profile = ({ colorMode }) => {
                         ? "green.500"
                         : "green.300"
                       : countdown > 1
-                      ? colorMode == "light"
-                        ? "orange.500"
-                        : "orange.300"
-                      : colorMode == "light"
-                      ? "red.500"
-                      : "red.300"
+                        ? colorMode == "light"
+                          ? "orange.500"
+                          : "orange.300"
+                        : colorMode == "light"
+                          ? "red.500"
+                          : "red.300"
                   }
                   size="70px"
                 >
@@ -238,12 +251,12 @@ const profile = ({ colorMode }) => {
                           ? "green.500"
                           : "green.300"
                         : countdown > 1
-                        ? colorMode == "light"
-                          ? "orange.500"
-                          : "orange.300"
-                        : colorMode == "light"
-                        ? "red.500"
-                        : "red.300"
+                          ? colorMode == "light"
+                            ? "orange.500"
+                            : "orange.300"
+                          : colorMode == "light"
+                            ? "red.500"
+                            : "red.300"
                     }
                     fontWeight="semibold"
                   >
