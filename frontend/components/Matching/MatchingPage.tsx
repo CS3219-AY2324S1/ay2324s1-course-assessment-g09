@@ -60,7 +60,7 @@ const MatchingPage: React.FC = () => {
       
       try {
         // Call the API route to perform matching
-        const response = await fetch('/api/match', {
+        const response = await fetch('http://localhost:1317/findMatch', {
           method: 'POST',
           body: JSON.stringify({ difficulty: selectedDifficulty, userId: selectedUserID }), // Include user ID in the request
           headers: {

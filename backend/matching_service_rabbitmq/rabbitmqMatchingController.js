@@ -1,12 +1,14 @@
 // Translating to RabbitMQ
 
-import * as amqp from 'amqplib';
+// import * as amqp from 'amqplib';
+const amqp = require('amqplib');
+
 
 MessageObjectForPairedQueue = {
-  user1_ID: number,
-  user2_ID: number,
-  ack1: boolean,
-  ack2: boolean
+  user1_ID: 0,
+  user2_ID: 0,
+  ack1: false,
+  ack2: false
 };
 
 const rabbitMQUrl = 'amqp://localhost:5672'; // Change this URL to match your RabbitMQ server
@@ -18,7 +20,8 @@ async function createRabbitMQConnection() {
     return connection;
   } catch (error) {
     console.error('Error creating RabbitMQ connection:', error);
-    throw error;
+    // throw error;
+    return null
   }
 }
 
@@ -166,7 +169,8 @@ async function checkForMatch(difficulty, userId) {
   });
 }
 
-export async function findMatch(req, res){
+async function findMatch(req, res){
+  console.log("Hello from find match :)");  
   try {
     const { difficulty, userId } = await req.json();
 
@@ -185,3 +189,7 @@ export async function findMatch(req, res){
       res.status(500).json({ success: false, message: 'Server Exception' });
     }
 }
+
+module.exports = {
+    findMatch
+};
