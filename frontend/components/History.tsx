@@ -22,12 +22,6 @@ export default function History() {
   const [user, setUser] = useState("Dennis");
   const [history, setHistory] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const editorRef = useRef(null);
-
-  const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor) => {
-    editorRef.current = editor;
-    editorRef.current.readOnly;
-  };
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -47,7 +41,7 @@ export default function History() {
     <Box>
       {history &&
         history.map((record) => (
-          <Box>
+          <Box key={record._id}>
             <Button onClick={onOpen}>
               <Text>{record.questionName}</Text>
               <Text>
@@ -64,10 +58,10 @@ export default function History() {
                   <Grid templateColumns="repeat(2, 1fr)" gap={6} height="75vh">
                     <GridItem colSpan={1}>
                       <Text>{record.question}</Text>
+                      <Text>{record.code}</Text>
                     </GridItem>
                     <GridItem colSpan={1}>
                       <Editor
-                        onMount={handleEditorDidMount}
                         defaultValue={record.code}
                         defaultLanguage={record.language}
                         theme={record.theme}
