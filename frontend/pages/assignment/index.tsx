@@ -22,6 +22,9 @@ import { FaHandshake } from "react-icons/fa";
 import { MdQuestionAnswer } from "react-icons/md";
 import { useRouter } from "next/router";
 import Collaboration from "../collaboration";
+import axios from "axios";
+
+const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
 const IndexPage = () => {
   const router = useRouter();
@@ -45,18 +48,7 @@ const IndexPage = () => {
   const [isCreate, setIsCreate] = useState(true);
   const [displayDB, setDisplayDB] = useState("questions");
 
-  const [session, setSession] = useState();
-  const [role, setRole] = useState("user");
 
-  useEffect(() => {
-    const login = JSON.parse(window.sessionStorage.getItem("login"));
-
-    if (login && login.userLogin) {
-      setSession(login.token);
-    } else {
-      router.push("/signin");
-    }
-  }, []);
 
   const toggleDisplayDB = () => {
     displayDB == "questions"
@@ -65,8 +57,17 @@ const IndexPage = () => {
   };
 
   const handleSignOut = () => {
-    window.sessionStorage.removeItem("login");
-    router.push("/signin");
+    axios.post(`${IP_ADDRESS}:3004/userauth/signout`, {}, { withCredentials: true })
+      .then(response => {
+        if (response.statusText === 'OK') {
+          router.push("/signin");
+          window.sessionStorage.removeItem("login");
+        }
+      })
+      .catch(error => {
+        console.log("signout", error);
+      })
+
   };
 
   return (
