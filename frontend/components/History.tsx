@@ -43,15 +43,6 @@ export default function History() {
           `http://localhost:6969/history/get/${user}`
         );
 
-        // console.log(
-        //   res.data
-        //     .slice()
-        //     .sort(
-        //       (a, b) =>
-        //         new Date(b.createdAt).getTime() -
-        //         new Date(a.createdAt).getTime()
-        //     )
-        // );
         setHistory(
           res.data
             .slice()
