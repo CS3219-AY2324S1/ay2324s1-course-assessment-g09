@@ -74,7 +74,8 @@ const SignUp = () => {
       // console.log("result", result);
       if (response.ok) {
         sessionStorage.setItem("login", JSON.stringify({
-          isLoggedIn: true
+          isLoggedIn: true,
+          email: result.email
         }))
 
         toast({
