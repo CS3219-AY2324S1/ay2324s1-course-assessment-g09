@@ -9,8 +9,9 @@ const express = require("express");
 const bodyparser = require("body-parser"); // Middleware
 const cors = require("cors") // Middleware
 const usermanager = require("./usermanager");
-const authRouter = require('./controllers/authentication');
+const userRouter = require('./controllers/user');
 const initialiseDB = require("./utility/db").initialiseDB;
+const logger = require("./middleware/logger");
 
 // Create an express app
 const app = express();
@@ -21,14 +22,15 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cors({
   methods: ["GET", "POST"]
 })); // WARN: Accepts any source origin!
+app.use(logger);
 
 //Setup Routing
-app.use('/auth', authRouter);
+app.use('/users', userRouter);
 // app.post("/users/create", usermanager.createUser); //CREATE
-app.get("/users/getall", usermanager.getUsers); // READ
-app.get("/users/get/:id", usermanager.getUserById);
-app.post("/users/update/:id", usermanager.updateUser); //UPDATE
-app.post("/users/delete/:id", usermanager.deleteUser); //DELETE
+// app.get("/users/getall", usermanager.getUsers); // READ
+// app.get("/users/get/:id", usermanager.getUserById);
+// app.post("/users/update/:id", usermanager.updateUser); //UPDATE
+// app.post("/users/delete/:id", usermanager.deleteUser); //DELETE
 
 // Start Express App
 app.listen(process.env.RESTAPI_PORT, () => {
