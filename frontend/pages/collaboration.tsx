@@ -35,7 +35,10 @@ export default function Collaboration() {
 						</Box>
 					</GridItem>
 					<GridItem display="flex" flex="1">
-						<CodeEditor socketRoom={matchedSocket} />
+						<CodeEditor
+							socketRoom={matchedSocket}
+							matchedUser={matchedUser}
+						/>
 					</GridItem>
 				</Grid>
 			</Box>

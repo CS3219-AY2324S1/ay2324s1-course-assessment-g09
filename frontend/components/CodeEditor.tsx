@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import SaveHistoryButton from "./SaveHistoryButton";
 
-export default function CodeEditor({ socketRoom }) {
+export default function CodeEditor({ socketRoom, matchedUser }) {
 	const editorRef = useRef(null);
 	const [socket, setSocket] = useState(null);
 	const isIncomingCode = useRef(false);
@@ -153,6 +153,7 @@ export default function CodeEditor({ socketRoom }) {
 						theme={theme}
 						language={language}
 						difficulty={"Easy"}
+						matchedUser={matchedUser}
 					/>
 					{/* <Button
 						onClick={() =>

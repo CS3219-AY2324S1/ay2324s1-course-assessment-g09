@@ -19,13 +19,17 @@ import Editor from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 
 export default function History() {
-	const [user, setUser] = useState("Dennis");
+	const [user, setUser] = useState(null);
 	const [history, setHistory] = useState(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	useEffect(() => {
 		const fetchHistory = async () => {
 			try {
+				const userEmail = await JSON.parse(
+					sessionStorage.getItem("login")
+				).email;
+				setUser(userEmail);
 				const res = await axios.get(
 					`http://localhost:6969/history/get/${user}`
 				);

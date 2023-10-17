@@ -42,16 +42,13 @@ const profile = ({ colorMode }) => {
 	const [seconds, setSeconds] = useState(0);
 	const [minutes, setMinutes] = useState(0);
 	const [isMatchFound, setIsMatchFound] = useState(false);
-	const [matchedSocket, setMatchedSocket] = useState(null);
-	const [matchedUser, setMatchedUser] = useState(null);
+
 	const receiveMatchedData = (socket, user) => {
 		{
-			setMatchedSocket(socket);
-			setMatchedUser(user);
 			console.log(socket);
 			router.push({
 				pathname: "/collaboration",
-				query: { matchedSocket: socket },
+				query: { matchedSocket: socket, matchedUser: user },
 			});
 		}
 	};

@@ -7,11 +7,12 @@ export default function SaveHistoryButton({
 	language,
 	difficulty,
 	theme,
+	matchedUser,
 }) {
 	const router = useRouter();
 	const handleHistory = async () => {
-		const user1 = "Dennis";
-		const user2 = "Wilson";
+		const user1 = JSON.parse(sessionStorage.getItem("login")).email;
+		const user2 = matchedUser;
 		const questionName = "Test Question";
 		const question = "Test Question";
 		const data = {
