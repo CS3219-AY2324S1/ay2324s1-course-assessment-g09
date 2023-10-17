@@ -22,8 +22,8 @@ export default function CodeEditor({ socketRoom }) {
 	const isIncomingCode = useRef(false);
 	const colorRef = useRef(null);
 	const [language, setLanguage] = useState("javascript");
-	const [code, setCode] = useState("");
-
+	const [code, setCode] = useState("//some comments");
+	const [theme, setTheme] = useState("light");
 	const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor) => {
 		editorRef.current = editor;
 	};
@@ -42,6 +42,7 @@ export default function CodeEditor({ socketRoom }) {
 	};
 
 	const handleThemeChange = (e) => {
+		setTheme(e.target.value);
 		window.monaco.editor.setTheme(e.target.value);
 	};
 
@@ -147,7 +148,12 @@ export default function CodeEditor({ socketRoom }) {
 					</Select>
 				</GridItem>
 				<GridItem>
-					<SaveHistoryButton />
+					<SaveHistoryButton
+						code={code}
+						theme={theme}
+						language={language}
+						difficulty={"Easy"}
+					/>
 					{/* <Button
 						onClick={() =>
 							alert(editorRef.current.getModel().getValue())
