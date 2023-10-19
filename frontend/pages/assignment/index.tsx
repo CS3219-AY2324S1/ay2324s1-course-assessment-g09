@@ -22,6 +22,10 @@ import { FaHandshake } from "react-icons/fa";
 import { MdQuestionAnswer } from "react-icons/md";
 import { useRouter } from "next/router";
 import Collaboration from "../collaboration";
+import MatchingPage from "../../components/Matching/MatchingPage";
+import axios from "axios";
+
+const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
 const IndexPage = () => {
   const router = useRouter();
@@ -65,8 +69,17 @@ const IndexPage = () => {
   };
 
   const handleSignOut = () => {
-    window.sessionStorage.removeItem("login");
-    router.push("/signin");
+    axios.post(`${IP_ADDRESS}:3004/userauth/signout`, {}, { withCredentials: true })
+      .then(response => {
+        if (response.statusText === 'OK') {
+          router.push("/signin");
+          window.sessionStorage.removeItem("login");
+        }
+      })
+      .catch(error => {
+        console.log("signout", error);
+      })
+
   };
 
   return (
@@ -111,6 +124,19 @@ const IndexPage = () => {
           >
             <Icon as={FaHandshake} boxSize={5} marginRight={2} />
             Collaboration Service
+          </Tab>
+          <Tab
+            _selected={{
+              color: colorMode == "light" ? "blue.400" : "blue.300",
+              fontWeight: "bold",
+            }}
+            _hover={{
+              color: colorMode == "light" ? "purple.500" : "purple.300",
+              fontWeight: "bold",
+            }}
+          >
+            <Icon as={FaHandshake} boxSize={5} marginRight={2} />
+            Matching Service
           </Tab>
           <div style={{ marginLeft: "auto" }}>
             <ToggleMode
@@ -198,6 +224,17 @@ const IndexPage = () => {
                     flex="1"
                   >
                     <Collaboration />
+                  </Flex>
+                </TabPanel>
+                <TabPanel>
+                  <Flex
+                    width="100%"
+                    alignItems="center"
+                    justify="center"
+                    flex="1"
+                  >
+                    <MatchingPage />
+                    <MatchingPage />
                   </Flex>
                 </TabPanel>
               </TabPanels>

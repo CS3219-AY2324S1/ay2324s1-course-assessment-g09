@@ -16,7 +16,7 @@ const SignUp = () => {
         const formData = new FormData(form);
         if (formData.get("password") === formData.get("confirm_password")) {
             try {
-                const response = await fetch(`${IP_ADDRESS}:3002/auth/signup`, {
+                const response = await fetch(`${IP_ADDRESS}:3004/userauth/signup`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

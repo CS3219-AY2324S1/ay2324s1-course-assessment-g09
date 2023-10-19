@@ -35,7 +35,8 @@ services:
     ports:
       - "3002:3002"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     healthcheck:
       test:
         [
