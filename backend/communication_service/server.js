@@ -1,18 +1,36 @@
-// backend/server.js
 const express = require("express");
-const { ExpressPeerServer } = require("peer");
-
+const http = require("http");
 const app = express();
-const server = require("http").Server(app);
-
-const peerServer = ExpressPeerServer(server, {
-  debug: true, // Enable debugging
+const server = http.createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
 });
 
-// Serve the PeerJS server on /peerjs
-app.use("/peerjs", peerServer);
+io.on("connection", (socket) => {
+  console.log(socket.id);
+  socket.emit("me", socket.id);
+  // console.log("socket id: ", socket.id);
+  socket.on("disconnect", () => {
+    socket.broadcast.emit("callEnded");
+  });
+  socket.on("callUser", (data) => {
+    io.to(data.userToCall).emit("callUser", {
+      signal: data.signalData,
+      from: data.from,
+      name: data.name,
+    });
+  });
 
-// Start the server
-server.listen(9000, () => {
-  console.log("Server is running on port 9000");
+  socket.on("answerCall", (data) => {
+    console.log("answer call");
+    // console.log(data);
+    // console.log(data.to);
+    io.to(data.to).emit("callAccepted", data.signal);
+    // io.emit("callAccepted", data.signal);
+  });
 });
+
+server.listen(5000, () => console.log("server is running on port 5000"));
