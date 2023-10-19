@@ -51,13 +51,12 @@ authRouter.post('/signup', async (request, response) => {
 authRouter.post('/signin', async (request, response) => {
     // if already have token then don't return token
     console.log("COOK", request.cookies);
-    if (request.headers.authorization) {
-        jwt.verify(request.headers.authorization, tokenDetails.secret, (error, user) => {
-            if (!error) {
-                console.log("already logged in");
+    if (request.cookies && Object.getPrototypeOf(request.cookies) !== null) {
+        jwt.verify(request.cookies.token, process.env.SECRET_KEY, function (err, decoded) {
+            if (!err) {
                 return response.status(200).send();
             }
-        })
+        });
     }
 
     try {
