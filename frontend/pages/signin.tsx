@@ -120,6 +120,13 @@ const SignUp = () => {
 
     } catch (error) {
       console.log("err", error);
+      toast({
+        position: 'bottom-left', render: () => (
+          <Box color='white' bg='red.300' textAlign="center" padding="10px" rounded="md">
+            {"Something went wrong..."}
+          </Box>
+        )
+      })
     } finally {
       setSubmitStatus(false);
     }
