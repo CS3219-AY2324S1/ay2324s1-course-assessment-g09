@@ -69,6 +69,8 @@ async function insertUserIdIntoQueue(difficulty, userId, videoSocket) {
 	// Then checkForPair in RabbitMQ queue
 	channel.checkQueue(queueNames[difficulty]).then(async (queueInfo) => {
 		const queueSize = queueInfo.messageCount;
+		console.log("Queue: ", queueInfo);
+		console.log("Queue size: ", queueSize);
 		// If there are at least two users in the queue, process them
 		if (queueSize >= 2) {
 			// Create a message object that includes user pair IDs, ack1, and ack2
@@ -85,6 +87,7 @@ async function insertUserIdIntoQueue(difficulty, userId, videoSocket) {
 
 			while (messageCount < 2) {
 				const message = await channel.get(queueNames[difficulty]);
+				console.log("message", message);
 				if (message !== false) {
 					const userId = message.content.toString();
 					if (messageCount == 0) {
@@ -98,11 +101,12 @@ async function insertUserIdIntoQueue(difficulty, userId, videoSocket) {
 					channel.ack(message);
 
 					messageCount++;
+					console.log("messge count", messageCount);
 				} else {
 					break; // No more messages in the queue
 				}
 			}
-			// console.log(messagePairedObject);
+
 			// You now have a pair of user IDs, e.g., userPair = [userId1, userId2] + ack 1 and ack 2
 			const matchedUserIDs = Buffer.from(
 				JSON.stringify(messagePairedObject)
@@ -112,6 +116,8 @@ async function insertUserIdIntoQueue(difficulty, userId, videoSocket) {
 			channel.sendToQueue(pairedQueueNames[difficulty], matchedUserIDs);
 
 			channel.close();
+		} else {
+			console.log("Not enough users in queue");
 		}
 	});
 }
@@ -194,18 +200,18 @@ async function checkForMatch(difficulty, userId) {
 
 				// Get pairing in the paired queue
 				const message = await channel.get(pairedQueueNames[difficulty]);
-				// console.log(message);
+				// console.log("message in check", message);
 				if (message !== false) {
 					// Extract message content into a string
 					const messageContent = message.content.toString();
-
+					console.log(messageContent);
 					// Parse the message content into the messagePairedObject
 					const messagePairedObject = JSON.parse(messageContent);
 					// console.log(messagePairedObject);
 					// Perform further processing as needed
 					const user1_ID = JSON.parse(messagePairedObject.user1_ID);
 					const user2_ID = JSON.parse(messagePairedObject.user2_ID);
-					console.log(messagePairedObject);
+					// console.log(messagePairedObject);
 					if (
 						userId == user1_ID.userId &&
 						!messagePairedObject.ack1
@@ -269,7 +275,14 @@ async function findMatch(req, res) {
 	console.log("Hello from find match :)");
 	try {
 		const { difficulty, userId, videoSocket } = await req.body;
-
+		console.log(
+			"Difficulty: ",
+			difficulty,
+			"   User ID: ",
+			userId,
+			"   Video Socket: ",
+			videoSocket
+		);
 		// Send the user ID to the corresponding queue
 		await insertUserIdIntoQueue(difficulty, userId, videoSocket);
 

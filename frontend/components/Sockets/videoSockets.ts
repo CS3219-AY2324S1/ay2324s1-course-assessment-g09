@@ -1,40 +1,30 @@
-import { set } from "zod";
-import { get } from "http";
+import { useState } from "react";
 import { io } from "socket.io-client";
 
 const socket = io("http://localhost:5000/", { autoConnect: false });
-let self = "";
+// const [self, setSelf] = useState("");
 function connectSocket() {
-  socket.connect();
+	socket.connect();
 }
 
 function disconnectSocket() {
-  socket.disconnect();
+	socket.disconnect();
 }
 
-function setSelf(id) {
-  self = id;
-}
+// export function setId(id) {
+// 	setSelf(id);
+// }
 
-function getSelf() {
-  return self;
-}
+// export function getId() {
+// 	return self;
+// }
 
 function subscribeToEvent(eventName, callback) {
-  socket.on(eventName, callback);
+	socket.on(eventName, callback);
 }
 
 function emitEvent(eventName, data) {
-  socket.emit(eventName, data);
+	socket.emit(eventName, data);
 }
 
-export {
-  connectSocket,
-  disconnectSocket,
-  subscribeToEvent,
-  emitEvent,
-  socket,
-  getSelf,
-  setSelf,
-  self,
-};
+export { connectSocket, disconnectSocket, subscribeToEvent, emitEvent, socket };

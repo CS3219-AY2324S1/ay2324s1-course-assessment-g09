@@ -10,12 +10,8 @@ import {
 import { useEffect, useState } from "react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import axios from "axios";
-
-export default function MatchButton({
-	sendMatchedData,
-	handleQuickStart,
-	videoSocket,
-}) {
+import socketManager from "./Sockets/SocketManager";
+export default function MatchButton({ sendMatchedData, handleQuickStart }) {
 	const [difficulty, setDifficulty] = useState("Easy");
 
 	const handleDifficultyChange = (e) => {
@@ -30,7 +26,7 @@ export default function MatchButton({
 				difficulty: difficulty,
 				// userId: JSON.parse(sessionStorage.getItem("login")).email,
 				userId: "test",
-				videoSocket: videoSocket,
+				videoSocket: socketManager.getSocketId(),
 			};
 			const res = await axios
 				.post("http://localhost:1317/findMatch", data)
