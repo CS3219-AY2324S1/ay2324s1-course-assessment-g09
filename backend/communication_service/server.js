@@ -10,9 +10,9 @@ const io = require("socket.io")(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log(socket.id);
-  socket.emit("me", socket.id);
-  // console.log("socket id: ", socket.id);
+  // console.log(socket.id);
+  socket.emit("getSelfId", socket.id);
+  console.log("socket id: ", socket.id);
   socket.on("disconnect", () => {
     socket.broadcast.emit("callEnded");
   });

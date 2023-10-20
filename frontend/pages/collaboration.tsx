@@ -8,7 +8,7 @@ import MatchButton from "../components/MatchButton";
 
 export default function Collaboration() {
   const router = useRouter();
-  const { matchedSocket, matchedUser } = router.query;
+  const { matchedSocket, matchedUser, videoSocket } = router.query;
   const [questions, setQuestions] = useState([]);
   // const [matchedSocket, setMatchedSocket] = useState(null);
   const selectedItem = {
@@ -31,7 +31,7 @@ export default function Collaboration() {
                   <Text>{selectedItem.content}</Text>
                 </Box>
               )}
-              <VideoCall />
+              <VideoCall videoSocket={videoSocket} />
             </Box>
           </GridItem>
           <GridItem display="flex" flex="1">

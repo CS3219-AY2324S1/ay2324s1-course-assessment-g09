@@ -9,10 +9,10 @@ import VideoCall from "../components/VideoCall";
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <ChakraProvider>
-      {/* <Component {...pageProps} /> */}
+      <Component {...pageProps} />
       {/* <IndexPage /> */}
       {/* <Collaboration /> */}
-      <VideoCall />
+      {/* <VideoCall /> */}
     </ChakraProvider>
   );
 }

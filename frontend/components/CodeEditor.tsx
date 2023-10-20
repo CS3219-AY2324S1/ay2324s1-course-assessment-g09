@@ -43,11 +43,11 @@ export default function CodeEditor({ socketRoom, matchedUser }) {
 
   const handleThemeChange = (e) => {
     setTheme(e.target.value);
-    window.monaco.editor.setTheme(e.target.value);
+    (window as any).monaco.editor.setTheme(e.target.value);
   };
 
   const handleLanguageChange = (e) => {
-    window.monaco.editor.setModelLanguage(
+    (window as any).monaco.editor.setModelLanguage(
       editorRef.current?.getModel(),
       e.target.value
     );
@@ -56,8 +56,8 @@ export default function CodeEditor({ socketRoom, matchedUser }) {
   };
 
   useEffect(() => {
-    const socketIn = io("http://localhost:8080");
-    setSocket(socketIn);
+    const socket = io("http://localhost:8080");
+    setSocket(socket);
 
     socket?.emit("joinRoom", socketRoom);
 
@@ -69,7 +69,7 @@ export default function CodeEditor({ socketRoom, matchedUser }) {
 
     socket.on("languageChange", (event) => {
       console.log("received", event);
-      window.monaco.editor.setModelLanguage(
+      (window as any).monaco.editor.setModelLanguage(
         editorRef.current?.getModel(),
         event
       );
@@ -85,7 +85,10 @@ export default function CodeEditor({ socketRoom, matchedUser }) {
       const editor = editorRef.current;
 
       // Specify the language ID (e.g., 'python' for Python)
-      monaco.editor.setModelLanguage(editor.getModel(), language);
+      (window as any).monaco.editor.setModelLanguage(
+        editor.getModel(),
+        language
+      );
 
       // Check if the action exists
       const formatAction = editor.getAction("editor.action.formatDocument");
