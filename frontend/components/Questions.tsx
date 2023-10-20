@@ -12,7 +12,7 @@ const Questions = ({
   colorMode,
 }) => {
   return (
-    <Box width="100%" marginX={12} h="full">
+    <Box width="100%" marginX={12}>
       <QuestionsHeader />
       {/* <div style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}> */}
       <Question

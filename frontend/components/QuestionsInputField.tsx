@@ -130,7 +130,12 @@ const QuestionInputField = ({
   };
 
   return (
-    <Grid templateColumns="repeat(6, 1fr)" templateRows="repeat(2,1fr)" gap={2}>
+    <Grid
+      templateColumns="repeat(6, 1fr)"
+      templateRows="repeat(2,1fr)"
+      gap={2}
+      height="100%"
+    >
       <GridItem>
         {error ? (
           <Input

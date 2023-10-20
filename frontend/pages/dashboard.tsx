@@ -61,6 +61,7 @@ const dashboard = () => {
         bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
         borderRadius="xl"
         boxShadow="xl"
+        height="100%"
       >
         <Flex
           width="100%"
@@ -92,11 +93,32 @@ const dashboard = () => {
         borderRadius="xl"
         display="flex"
         justifyContent="center"
-        alignItems="center"
+        alignItems="flex-start"
         boxShadow="xl"
         rowSpan={3}
       >
-        <History />
+        <Flex
+          marginTop={5}
+          alignItems="center"
+          justifyContent="flex-start"
+          flexDirection="column"
+          width="90%"
+        >
+          <UserInputField
+            userInputValues={userInputValues}
+            setUserInputValues={setUserInputValues}
+            colorMode={colorMode}
+            isCreate={isCreateUser}
+            setIsCreate={setIsCreateUser}
+          />
+          <Users
+            userInputValues={userInputValues}
+            setUserInputValues={setUserInputValues}
+            isCreate={isCreateUser}
+            setIsCreate={setIsCreateUser}
+            colorMode={colorMode}
+          />
+        </Flex>
       </GridItem>
 
       {/* Circular Progress to show how many question is completed */}
@@ -137,28 +159,7 @@ const dashboard = () => {
         colSpan={2}
         rowSpan={2}
       >
-        <Flex
-          alignItems="center"
-          justifyContent="center"
-          flexDirection="column"
-          width="90%"
-        >
-          <UserInputField
-            userInputValues={userInputValues}
-            setUserInputValues={setUserInputValues}
-            colorMode={colorMode}
-            isCreate={isCreateUser}
-            setIsCreate={setIsCreateUser}
-          />
-
-          <Users
-            userInputValues={userInputValues}
-            setUserInputValues={setUserInputValues}
-            isCreate={isCreateUser}
-            setIsCreate={setIsCreateUser}
-            colorMode={colorMode}
-          />
-        </Flex>
+        <History />
       </GridItem>
     </Grid>
   );

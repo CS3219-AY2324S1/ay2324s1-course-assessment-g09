@@ -24,7 +24,7 @@ const QuestionsHeader = () => {
           <Text fontWeight="bold">Question Complexity</Text>
         </Flex>
       </GridItem>
-      <GridItem border="2px solid">
+      <GridItem border="2px solid" marginRight="0.2rem">
         <Flex justifyContent="center">
           <Text fontWeight="bold">Action</Text>
         </Flex>
