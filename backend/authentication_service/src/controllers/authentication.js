@@ -55,31 +55,21 @@ authRouter.post("/signup", async (request, response) => {
 	}
 });
 
-authRouter.post("/signin", async (request, response) => {
+authRouter.post('/signin', async (request, response) => {
 	// if already have token then don't return token
 	console.log("COOK", request.cookies);
-	if (request.headers.authorization) {
-		jwt.verify(
-			request.headers.authorization,
-			tokenDetails.secret,
-			(error, user) => {
-				if (!error) {
-					console.log("already logged in");
-					return response.status(200).send();
-				}
+	if (request.cookies && Object.getPrototypeOf(request.cookies) !== null) {
+		jwt.verify(request.cookies.token, process.env.SECRET_KEY, function (err, decoded) {
+			if (!err) {
+				return response.status(200).send();
 			}
-		);
+		});
 	}
 
-	authRouter.post('/signin', async (request, response) => {
-		// if already have token then don't return token
-		console.log("COOK", request.cookies);
-		if (request.cookies && Object.getPrototypeOf(request.cookies) !== null) {
-			jwt.verify(request.cookies.token, process.env.SECRET_KEY, function (err, decoded) {
-				if (!err) {
-					return response.status(200).send();
-				}
-			});
+	try {
+		const { email, password } = request.body;
+		if (!email && !password) {
+			return response.status(400).json({ message: "Login requires email and password" });
 		}
 
 		const params = new url.URLSearchParams({ email: email });
@@ -87,33 +77,26 @@ authRouter.post("/signin", async (request, response) => {
 		// const result = await axios.get(`http://localhost:3002/users/getUserByEmail?${params}`);
 		const result = await axios.get(`http://localhost:3002/auth/getUserByEmail?${params}`);
 
+		const myUser = result.data;
+		console.log(myUser);
+
 		const passwordCheck = await bcrypt.compare(password, myUser.password);
 		if (!passwordCheck) {
-			return response
-				.status(400)
-				.json({ message: "incorrect email or password" });
+			return response.status(400).json({ message: "incorrect email or password" });
 		}
 
-		const token = jwt.sign(
-			{ email: myUser.email, role: myUser.role },
-			tokenDetails.secret,
-			{ expiresIn: tokenDetails.duration }
-		);
+		const token = jwt.sign({ email: myUser.email, role: myUser.role }, tokenDetails.secret, { expiresIn: tokenDetails.duration });
 
 		// response.setHeader('Set-Cookie', [`accessToken=${token}; HttpOnly; Max-Age=34560000`]);
-		response.cookie("token", token, {
+		response.cookie('token', token, {
 			secure: false,
-			httpOnly: true,
+			httpOnly: true
 		});
-		return response
-			.status(200)
-			.send({ message: "login success", email: myUser.email }); //.json({ token: token, role: myUser.role });
+		return response.status(200).send({ message: "login success", email: myUser.email });//.json({ token: token, role: myUser.role });
 	} catch (error) {
 		if (error.response) {
 			if (error.response.status === 404) {
-				return response
-					.status(400)
-					.json({ message: "incorrect email or password" });
+				return response.status(400).json({ message: "incorrect email or password" });
 			}
 			console.log(error.response.data);
 			console.log(error.response.status);
@@ -122,10 +105,9 @@ authRouter.post("/signin", async (request, response) => {
 			console.log("Err:", error);
 		}
 
-		return response
-			.status(500)
-			.json({ message: "something went wrong..." });
+		return response.status(500).json({ message: "something went wrong..." });
 	}
+
 });
 
 authRouter.post("/signout", async (request, response) => {
