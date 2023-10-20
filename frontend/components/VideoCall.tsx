@@ -4,13 +4,14 @@ import Peer from "simple-peer";
 import { io } from "socket.io-client";
 import { Box, Text, Button, Input } from "@chakra-ui/react";
 import {
-  connectSocket,
   disconnectSocket,
   subscribeToEvent,
   emitEvent,
+  getSelf,
 } from "../components/Sockets/videoSockets";
+import { get } from "http";
 
-export default function VideoCall(videoSocket) {
+export default function VideoCall() {
   const [self, setSelf] = useState(null);
   const [stream, setStream] = useState<MediaStream>();
   const [receivingCall, setReceivingCall] = useState(false);
@@ -40,7 +41,7 @@ export default function VideoCall(videoSocket) {
         console.log(err);
       }
     };
-    setSelf(videoSocket);
+    setSelf(getSelf());
     // getVideo();
     // subscribeToEvent("getSelfId", (socketId) => {
     //   console.log(socketId);

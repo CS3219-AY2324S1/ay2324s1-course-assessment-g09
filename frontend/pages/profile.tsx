@@ -26,6 +26,7 @@ import MatchButton from "../components/MatchButton";
 import {
   connectSocket,
   subscribeToEvent,
+  setSelf,
 } from "../components/Sockets/videoSockets";
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
@@ -105,6 +106,7 @@ const profile = ({ colorMode }) => {
     connectSocket();
     subscribeToEvent("getSelfId", (socketId) => {
       setVideoSocket(socketId);
+      setSelf(socketId);
     });
     console.log(videoSocket);
   }, [videoSocket]);
