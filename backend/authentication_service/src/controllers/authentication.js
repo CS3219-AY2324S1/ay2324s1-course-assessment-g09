@@ -71,40 +71,21 @@ authRouter.post("/signin", async (request, response) => {
 		);
 	}
 
-<<<<<<< HEAD
-authRouter.post('/signin', async (request, response) => {
-    // if already have token then don't return token
-    console.log("COOK", request.cookies);
-    if (request.cookies && Object.getPrototypeOf(request.cookies) !== null) {
-        jwt.verify(request.cookies.token, process.env.SECRET_KEY, function (err, decoded) {
-            if (!err) {
-                return response.status(200).send();
-            }
-        });
-    }
-=======
-	try {
-		const { email, password } = request.body;
-		if (!email && !password) {
-			return response
-				.status(400)
-				.json({ message: "Login requires email and password" });
+	authRouter.post('/signin', async (request, response) => {
+		// if already have token then don't return token
+		console.log("COOK", request.cookies);
+		if (request.cookies && Object.getPrototypeOf(request.cookies) !== null) {
+			jwt.verify(request.cookies.token, process.env.SECRET_KEY, function (err, decoded) {
+				if (!err) {
+					return response.status(200).send();
+				}
+			});
 		}
->>>>>>> 50e3364de7255c951f3165e0faa2796f4dfd5d39
 
 		const params = new url.URLSearchParams({ email: email });
 
-		const result = await axios.get(
-			`http://localhost:3002/users/getUserByEmail?${params}`
-		);
-
-<<<<<<< HEAD
-        // const result = await axios.get(`http://localhost:3002/users/getUserByEmail?${params}`);
-        const result = await axios.get(`http://localhost:3002/auth/getUserByEmail?${params}`);
-=======
-		const myUser = result.data;
-		console.log(myUser);
->>>>>>> 50e3364de7255c951f3165e0faa2796f4dfd5d39
+		// const result = await axios.get(`http://localhost:3002/users/getUserByEmail?${params}`);
+		const result = await axios.get(`http://localhost:3002/auth/getUserByEmail?${params}`);
 
 		const passwordCheck = await bcrypt.compare(password, myUser.password);
 		if (!passwordCheck) {
