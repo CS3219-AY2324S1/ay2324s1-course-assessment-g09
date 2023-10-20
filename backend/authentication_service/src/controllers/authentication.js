@@ -13,6 +13,8 @@ const tokenDetails = {
 	duration: "1800s",
 };
 
+const user_service = process.env.USER_SERVICE;
+
 authRouter.post("/signup", async (request, response) => {
 	try {
 		const body = request.body;
@@ -22,7 +24,7 @@ authRouter.post("/signup", async (request, response) => {
 		const pwHash = await bcrypt.hash(password, 17);
 
 		const result = await axios.post(
-			"http://localhost:3002/users/createUser",
+			`http://${user_service}/users/createUser`,
 			{
 				email: email,
 				username: username,
@@ -75,7 +77,7 @@ authRouter.post('/signin', async (request, response) => {
 		const params = new url.URLSearchParams({ email: email });
 
 		// const result = await axios.get(`http://localhost:3002/users/getUserByEmail?${params}`);
-		const result = await axios.get(`http://localhost:3002/auth/getUserByEmail?${params}`);
+		const result = await axios.get(`http://${user_service}/auth/getUserByEmail?${params}`);
 
 		const myUser = result.data;
 		console.log(myUser);
