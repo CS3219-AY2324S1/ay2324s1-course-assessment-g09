@@ -31,7 +31,7 @@ export default function Collaboration() {
                   <Text>{selectedItem.content}</Text>
                 </Box>
               )}
-              <VideoCall videoSocket={videoSocket} />
+              <VideoCall />
             </Box>
           </GridItem>
           <GridItem display="flex" flex="1">
