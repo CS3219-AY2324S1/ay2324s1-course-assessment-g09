@@ -97,8 +97,18 @@ const Question = ({
   const htmlContent = { __html: description };
 
   return (
-    <div style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}>
-      {/* <GridItem>{questions}</GridItem> */}
+    <Box
+      height="29vh"
+      overflowY="auto"
+      css={{
+        "&::-webkit-scrollbar": {
+          width: "0.2rem",
+        },
+        "&::-webkit-scrollbar-track": {
+          backgroundColor: colorMode == "light" ? "rgba(0,0,0,0.5)" : "#E2E8F0",
+        },
+      }}
+    >
       {questions &&
         questions.map((question) => (
           <Grid
@@ -247,7 +257,7 @@ const Question = ({
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </div>
+    </Box>
   );
 };
 
