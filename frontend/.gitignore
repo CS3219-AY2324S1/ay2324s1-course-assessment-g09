@@ -7,7 +7,6 @@
 
 # testing
 /coverage
-/auth_dev
 
 # next.js
 /.next/
