@@ -1,4 +1,11 @@
-import { Box, Flex, Grid, GridItem, useColorMode } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Grid,
+  GridItem,
+  VStack,
+  useColorMode,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import Questions from "../components/Questions";
 import QuestionInputField from "../components/QuestionsInputField";
@@ -50,6 +57,8 @@ const dashboard = () => {
         alignItems="center"
         rowSpan={2}
         boxShadow="xl"
+        width="100%"
+        height="100%"
       >
         <Profile colorMode={colorMode} />
       </GridItem>
@@ -62,14 +71,9 @@ const dashboard = () => {
         borderRadius="xl"
         boxShadow="xl"
         height="100%"
+        width="100%"
       >
-        <Flex
-          width="100%"
-          alignItems="center"
-          justify="center"
-          flexDirection="column"
-          p={5}
-        >
+        <VStack m={5} height="100%">
           <QuestionInputField
             inputValues={questionInputValues}
             setInputValues={setQuestionInputValues}
@@ -77,6 +81,7 @@ const dashboard = () => {
             setIsCreate={setIsCreateQuestion}
             colorMode={colorMode}
           />
+
           <Questions
             inputValues={questionInputValues}
             setInputValues={setQuestionInputValues}
@@ -84,7 +89,7 @@ const dashboard = () => {
             setIsCreate={setIsCreateQuestion}
             colorMode={colorMode}
           />
-        </Flex>
+        </VStack>
       </GridItem>
 
       {/* History Portion */}
@@ -96,6 +101,8 @@ const dashboard = () => {
         alignItems="flex-start"
         boxShadow="xl"
         rowSpan={3}
+        width="100%"
+        height="100%"
       >
         <Flex
           marginTop={5}
@@ -129,6 +136,8 @@ const dashboard = () => {
         justifyContent="center"
         alignItems="center"
         boxShadow="xl"
+        height="100%"
+        width="100%"
       >
         <QuestionProgress colorMode={colorMode} />
       </GridItem>
@@ -142,6 +151,8 @@ const dashboard = () => {
         alignItems="center"
         boxShadow="xl"
         colStart={2}
+        height="100%"
+        width="100%"
       >
         <Box>Placeholder 1</Box>
       </GridItem>
