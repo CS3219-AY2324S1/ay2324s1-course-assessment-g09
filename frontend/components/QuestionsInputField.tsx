@@ -134,7 +134,7 @@ const QuestionInputField = ({
       templateColumns="repeat(6, 1fr)"
       templateRows="repeat(2,1fr)"
       gap={2}
-      height="100%"
+      height="20%"
     >
       <GridItem>
         {error ? (

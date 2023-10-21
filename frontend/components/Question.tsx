@@ -98,13 +98,13 @@ const Question = ({
 
   return (
     <Box
-      height="29vh"
+      height="55%"
       overflowY="auto"
       css={{
         "&::-webkit-scrollbar": {
           width: "0.2rem",
         },
-        "&::-webkit-scrollbar-track": {
+        "&::-webkit-scrollbar-thumb": {
           backgroundColor: colorMode == "light" ? "rgba(0,0,0,0.5)" : "#E2E8F0",
         },
       }}
@@ -240,7 +240,7 @@ const Question = ({
                 width: "0.5em",
               },
               "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "transparent",
+                backgroundColor: "#292929",
               },
             }}
           >
