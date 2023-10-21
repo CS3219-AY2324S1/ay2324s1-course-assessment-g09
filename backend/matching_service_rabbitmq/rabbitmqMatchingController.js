@@ -53,15 +53,24 @@ const pairedQueueNames = {
 };
 
 // Function to insert a user ID into the queue and insert paired queue if there are more than two users
-async function insertUserIdIntoQueue(difficulty, userId) {
+async function insertUserIdIntoQueue(difficulty, userId, videoSocket) {
 	const connection = await sharedConnection; // Use the shared connection
 	const channel = await connection.createChannel();
+	const data = {
+		userId: userId,
+		videoSocket: videoSocket,
+	};
 	channel.assertQueue(queueNames[difficulty], queueOptions);
-	channel.sendToQueue(queueNames[difficulty], Buffer.from(userId));
+	channel.sendToQueue(
+		queueNames[difficulty],
+		Buffer.from(JSON.stringify(data))
+	);
 
 	// Then checkForPair in RabbitMQ queue
 	channel.checkQueue(queueNames[difficulty]).then(async (queueInfo) => {
 		const queueSize = queueInfo.messageCount;
+		console.log("Queue: ", queueInfo);
+		console.log("Queue size: ", queueSize);
 		// If there are at least two users in the queue, process them
 		if (queueSize >= 2) {
 			// Create a message object that includes user pair IDs, ack1, and ack2
@@ -78,25 +87,26 @@ async function insertUserIdIntoQueue(difficulty, userId) {
 
 			while (messageCount < 2) {
 				const message = await channel.get(queueNames[difficulty]);
+				console.log("message", message);
 				if (message !== false) {
 					const userId = message.content.toString();
-
 					if (messageCount == 0) {
 						messagePairedObject.user1_ID = userId;
 					} else if (messageCount == 1) {
 						messagePairedObject.user2_ID = userId;
 					}
-					console.log(messagePairedObject);
+					// console.log(messagePairedObject);
 
 					// Acknowledge the message
 					channel.ack(message);
 
 					messageCount++;
+					console.log("messge count", messageCount);
 				} else {
 					break; // No more messages in the queue
 				}
 			}
-			console.log(messagePairedObject);
+
 			// You now have a pair of user IDs, e.g., userPair = [userId1, userId2] + ack 1 and ack 2
 			const matchedUserIDs = Buffer.from(
 				JSON.stringify(messagePairedObject)
@@ -106,6 +116,8 @@ async function insertUserIdIntoQueue(difficulty, userId) {
 			channel.sendToQueue(pairedQueueNames[difficulty], matchedUserIDs);
 
 			channel.close();
+		} else {
+			console.log("Not enough users in queue");
 		}
 	});
 }
@@ -176,6 +188,7 @@ async function checkForMatch(difficulty, userId) {
 		const connection = await sharedConnection; // Use the shared connection
 		let matchedUser = null; // Initialize with null or any default value
 		let room = null;
+		let receiverVideoSocket = null;
 		const interval = setInterval(async () => {
 			try {
 				// Connect to RabbitMQ paired queue for the selected difficulty
@@ -187,27 +200,33 @@ async function checkForMatch(difficulty, userId) {
 
 				// Get pairing in the paired queue
 				const message = await channel.get(pairedQueueNames[difficulty]);
+				// console.log("message in check", message);
 				if (message !== false) {
 					// Extract message content into a string
 					const messageContent = message.content.toString();
-
+					console.log(messageContent);
 					// Parse the message content into the messagePairedObject
 					const messagePairedObject = JSON.parse(messageContent);
-					console.log(messagePairedObject);
+					// console.log(messagePairedObject);
 					// Perform further processing as needed
+					const user1_ID = JSON.parse(messagePairedObject.user1_ID);
+					const user2_ID = JSON.parse(messagePairedObject.user2_ID);
+					// console.log(messagePairedObject);
 					if (
-						userId == messagePairedObject.user1_ID &&
+						userId == user1_ID.userId &&
 						!messagePairedObject.ack1
 					) {
 						messagePairedObject.ack1 = true;
-						matchedUser = messagePairedObject.user2_ID;
+						matchedUser = user2_ID.userId;
+						receiverVideoSocket = user2_ID.videoSocket;
 						// console.log("Current User ID: ", userId, "   Matched User ID: ", matchedUser)
 					} else if (
-						userId == messagePairedObject.user2_ID &&
+						userId == user2_ID.userId &&
 						!messagePairedObject.ack2
 					) {
 						messagePairedObject.ack2 = true;
-						matchedUser = messagePairedObject.user1_ID;
+						matchedUser = user1_ID.userId;
+						receiverVideoSocket = user1_ID.videoSocket;
 						// console.log("Current User ID: ", userId, "   Matched User ID: ", matchedUser)
 					}
 					// Acknowledge and remove the original message from the queue
@@ -235,7 +254,7 @@ async function checkForMatch(difficulty, userId) {
 					if (matchedUser != null) {
 						clearInterval(interval);
 						console.log(matchedUser, room);
-						resolve({ matchedUser, room });
+						resolve({ matchedUser, room, receiverVideoSocket });
 					}
 				}
 			} catch (error) {
@@ -247,7 +266,7 @@ async function checkForMatch(difficulty, userId) {
 		// Add a setTimeout to resolve if no match is found within 30 seconds
 		setTimeout(() => {
 			clearInterval(interval); // Stop checking after 30 seconds
-			resolve({ matchedUser, room }); // Resolve with null if no match found
+			resolve({ matchedUser, room, receiverVideoSocket }); // Resolve with null if no match found
 		}, 30000);
 	});
 }
@@ -255,16 +274,31 @@ async function checkForMatch(difficulty, userId) {
 async function findMatch(req, res) {
 	console.log("Hello from find match :)");
 	try {
-		const { difficulty, userId } = await req.body;
-
+		const { difficulty, userId, videoSocket } = await req.body;
+		console.log(
+			"Difficulty: ",
+			difficulty,
+			"   User ID: ",
+			userId,
+			"   Video Socket: ",
+			videoSocket
+		);
 		// Send the user ID to the corresponding queue
-		await insertUserIdIntoQueue(difficulty, userId);
+		await insertUserIdIntoQueue(difficulty, userId, videoSocket);
 
 		// Check for a match
-		const { matchedUser, room } = await checkForMatch(difficulty, userId);
+		const { matchedUser, room, receiverVideoSocket } = await checkForMatch(
+			difficulty,
+			userId
+		);
 		console.log("Matched user: ", matchedUser);
 		if (matchedUser != null) {
-			res.status(200).json({ success: true, matchedUser, room });
+			res.status(200).json({
+				success: true,
+				matchedUser,
+				room,
+				receiverVideoSocket,
+			});
 		} else {
 			res.status(200).json({ success: false, message: "No match found" });
 		}

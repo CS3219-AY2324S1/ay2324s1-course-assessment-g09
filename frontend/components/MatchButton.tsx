@@ -10,8 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import axios from "axios";
-import { send } from "process";
-
+import socketManager from "./Sockets/SocketManager";
 export default function MatchButton({ sendMatchedData, handleQuickStart }) {
 	const [difficulty, setDifficulty] = useState("Easy");
 
@@ -23,13 +22,23 @@ export default function MatchButton({ sendMatchedData, handleQuickStart }) {
 		console.log("matching begins");
 		handleQuickStart();
 		try {
-			const data = { difficulty: difficulty, userId: "user1" };
+			const data = {
+				difficulty: difficulty,
+				// userId: JSON.parse(sessionStorage.getItem("login")).email,
+				userId: "test",
+				videoSocket: socketManager.getSocketId(),
+			};
 			const res = await axios
 				.post("http://localhost:1317/findMatch", data)
 				.then((res) => {
 					console.log(res.data);
-					const { matchedUser, room } = res.data;
-					sendMatchedData(room, matchedUser);
+					const { matchedUser, matchedSocket, receiverVideoSocket } =
+						res.data;
+					sendMatchedData(
+						matchedSocket,
+						matchedUser,
+						receiverVideoSocket
+					);
 				});
 		} catch (error) {
 			console.log(error);
