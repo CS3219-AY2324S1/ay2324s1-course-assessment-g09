@@ -10,10 +10,11 @@ const Questions = ({
   isCreate,
   setIsCreate,
   colorMode,
+  userMode,
 }) => {
   return (
     <Box width="100%" height="100%">
-      <QuestionsHeader />
+      <QuestionsHeader userMode={userMode} />
       {/* <div style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}> */}
       <Question
         inputValues={inputValues}
@@ -21,6 +22,7 @@ const Questions = ({
         isCreate={isCreate}
         setIsCreate={setIsCreate}
         colorMode={colorMode}
+        userMode={userMode}
       />
       {/* </div> */}
     </Box>

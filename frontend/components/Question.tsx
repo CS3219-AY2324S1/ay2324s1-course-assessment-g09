@@ -29,6 +29,7 @@ const Question = ({
   isCreate,
   setIsCreate,
   colorMode,
+  userMode,
 }) => {
   const [questions, setQuestions] = useState(null);
   const [description, setDescription] = useState(null);
@@ -102,21 +103,24 @@ const Question = ({
 
   return (
     <Box
-      height="55%"
+      height={userMode == "user" ? "80%" : "55%"}
       overflowY="auto"
       css={{
         "&::-webkit-scrollbar": {
           width: "0.2rem",
         },
         "&::-webkit-scrollbar-thumb": {
-          backgroundColor: colorMode == "light" ? "rgba(0,0,0,0.5)" : "#E2E8F0",
+          backgroundColor:
+            colorMode == "light" ? "rgba(0,0,0,0.5)" : "RGBA(20, 20, 20, 0.76)",
         },
       }}
     >
       {questions &&
         questions.map((question, index) => (
           <Grid
-            templateColumns="repeat(13, 1fr)"
+            templateColumns={
+              userMode == "admin" ? "repeat(13, 1fr)" : "repeat(11, 1fr)"
+            }
             key={`grid_${question.qn_num}`}
             backgroundColor={
               index % 2 === 0
@@ -160,6 +164,7 @@ const Question = ({
                   }}
                   fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
                   fontWeight="semibold"
+                  my={2}
                 >
                   {question.title}
                 </Text>
@@ -207,30 +212,34 @@ const Question = ({
                 </Badge>
               </Flex>
             </GridItem>
-            <GridItem colSpan={2}>
-              <Flex justifyContent="center" alignItems="center" height="100%">
-                <Button
-                  size="sm"
-                  my={1}
-                  bgColor={colorMode === "light" ? "yellow.400" : "yellow.300"}
-                  color="black"
-                  mx={1}
-                  onClick={() => handleEdit(question)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  size="sm"
-                  my={1}
-                  bgColor={colorMode === "light" ? "orange.400" : "orange.300"}
-                  color="black"
-                  mx={1}
-                  onClick={() => deleteQuestion(question)}
-                >
-                  Delete
-                </Button>
-              </Flex>
-            </GridItem>
+            {userMode == "admin" && (
+              <GridItem colSpan={2}>
+                <Flex justifyContent="center" alignItems="center" height="100%">
+                  <Button
+                    size="sm"
+                    my={1}
+                    bgColor={
+                      colorMode === "light" ? "purple.100" : "purple.200"
+                    }
+                    color="black"
+                    mx={1}
+                    onClick={() => handleEdit(question)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    my={1}
+                    bgColor={colorMode === "light" ? "pink.200" : "pink.300"}
+                    color="black"
+                    mx={1}
+                    onClick={() => deleteQuestion(question)}
+                  >
+                    Delete
+                  </Button>
+                </Flex>
+              </GridItem>
+            )}
           </Grid>
         ))}
 
@@ -264,10 +273,13 @@ const Question = ({
             overflowY="auto"
             css={{
               "&::-webkit-scrollbar": {
-                width: "0.5em",
+                width: "0.25em",
               },
               "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "#292929",
+                backgroundColor:
+                  colorMode == "light"
+                    ? "RGBA(0, 0, 0, 0.7)"
+                    : "RGBA(255, 255, 255, 0.48)",
               },
             }}
           >
