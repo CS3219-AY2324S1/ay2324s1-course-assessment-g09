@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import axios, { isCancel } from "axios";
+import CategoryTag from "./CategoryTag";
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
@@ -32,6 +33,7 @@ const Question = ({
   const [questions, setQuestions] = useState(null);
   const [description, setDescription] = useState(null);
   const [difficulty, setDifficulty] = useState(null);
+  const [category, setCategory] = useState(null);
 
   const [title, setTitle] = useState(null);
   const [openQuestion, setOpenQuestion] = useState(null);
@@ -79,10 +81,12 @@ const Question = ({
     fetchQuestions();
   };
 
-  const handleModal = (question) => {
+  const handleModal = (question, index) => {
+    console.log(index);
     setDescription(question.description);
     setTitle(question.title);
     setDifficulty(question.complexity);
+    setCategory(question.category);
 
     if (openQuestion === question) {
       if (isOpen) {
@@ -110,32 +114,40 @@ const Question = ({
       }}
     >
       {questions &&
-        questions.map((question) => (
+        questions.map((question, index) => (
           <Grid
-            templateColumns="repeat(5, 1fr)"
+            templateColumns="repeat(13, 1fr)"
             key={`grid_${question.qn_num}`}
+            backgroundColor={
+              index % 2 === 0
+                ? colorMode == "light"
+                  ? "gray.300"
+                  : "gray.700"
+                : colorMode == "light"
+                ? "gray.400"
+                : "gray.800"
+            }
           >
-            <GridItem
-              border="1px solid"
-              key={`grid_item_id_${question.qn_num}`}
-            >
+            <GridItem key={`grid_item_id_${question.qn_num}`} colSpan={1}>
               <Flex
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="center"
                 height="100%"
                 key={`flex_id_${question.qn_num}`}
                 fontSize={{ lg: "md", xl: "md", "2xl": "lg" }}
+                pl={2}
               >
                 {question.qn_num}
               </Flex>
             </GridItem>
             <GridItem
-              border="1px solid"
               key={`grid_item_title${question.title}`}
-              onClick={() => handleModal(question)}
+              onClick={() => handleModal(question, index)}
+              colSpan={4}
             >
               <Flex
-                justifyContent="center"
+                justifyContent="flex-start"
+                pl={2}
                 alignItems="center"
                 height="100%"
                 key={`flex_title_${question.title}`}
@@ -154,11 +166,12 @@ const Question = ({
               </Flex>
             </GridItem>
             <GridItem
-              border="1px solid"
               key={`grid_item_category_${question.category}`}
+              colSpan={4}
             >
               <Flex
-                justifyContent="center"
+                justifyContent="flex-start"
+                pl={2}
                 alignItems="center"
                 height="100%"
                 key={`flex_category_${question.category}`}
@@ -168,20 +181,33 @@ const Question = ({
               </Flex>
             </GridItem>
             <GridItem
-              border="1px solid"
               key={`grid_item_complexity_${question.complexity}`}
+              colSpan={2}
             >
               <Flex
-                justifyContent="center"
+                justifyContent="flex-start"
+                pl={2}
                 alignItems="center"
                 height="100%"
                 key={`flex_complexity_${question.complexity}`}
                 fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
               >
-                {question.complexity}
+                <Badge
+                  variant="outline"
+                  colorScheme={
+                    question.complexity == "Easy"
+                      ? "green"
+                      : question.complexity == "Medium"
+                      ? "orange"
+                      : "red"
+                  }
+                  fontWeight="bold"
+                >
+                  {question.complexity}
+                </Badge>
               </Flex>
             </GridItem>
-            <GridItem border="1px solid">
+            <GridItem colSpan={2}>
               <Flex justifyContent="center" alignItems="center" height="100%">
                 <Button
                   size="sm"
@@ -230,6 +256,7 @@ const Question = ({
             >
               {difficulty}
             </Badge>
+            <CategoryTag categoryTag={category} />
           </ModalHeader>
 
           <ModalBody

@@ -211,7 +211,7 @@ const profile = ({ colorMode }) => {
         @wilsonngja{" "}
         <Badge
           variant="outline"
-          colorScheme="purple"
+          colorScheme="green"
           fontSize={{ lg: "md", xl: "md", "2xl": "lg" }}
         >
           User
