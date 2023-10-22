@@ -67,7 +67,7 @@ const UserInputField = ({
   };
 
   return (
-    <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+    <Grid templateColumns="repeat(3, 1fr)" gap={2}>
       <Input
         placeholder="ID"
         variant="filled"

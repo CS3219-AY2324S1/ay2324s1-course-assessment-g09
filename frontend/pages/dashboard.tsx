@@ -41,6 +41,8 @@ const dashboard = () => {
     name: "",
   });
 
+  const [user, setUser] = useState("user");
+
   return (
     <Grid
       templateColumns="repeat(4, 1fr)"
@@ -50,7 +52,7 @@ const dashboard = () => {
     >
       {/* GridItem that contains Profile */}
       <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         display="flex"
         justifyContent="center"
@@ -60,41 +62,54 @@ const dashboard = () => {
         width="100%"
         height="100%"
       >
-        <Profile colorMode={colorMode} />
+        <Profile colorMode={colorMode} userMode={user} />
       </GridItem>
 
       {/* Question Storage Entry */}
       <GridItem
         colSpan={3}
         rowSpan={3}
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         boxShadow="xl"
         height="100%"
         width="100%"
       >
         <VStack m={5} height="100%">
-          <QuestionInputField
-            inputValues={questionInputValues}
-            setInputValues={setQuestionInputValues}
-            isCreate={isCreateQuestion}
-            setIsCreate={setIsCreateQuestion}
-            colorMode={colorMode}
-          />
-
-          <Questions
-            inputValues={questionInputValues}
-            setInputValues={setQuestionInputValues}
-            isCreate={isCreateQuestion}
-            setIsCreate={setIsCreateQuestion}
-            colorMode={colorMode}
-          />
+          {user == "user" ? (
+            <Questions
+              inputValues={questionInputValues}
+              setInputValues={setQuestionInputValues}
+              isCreate={isCreateQuestion}
+              setIsCreate={setIsCreateQuestion}
+              colorMode={colorMode}
+              userMode={user}
+            />
+          ) : (
+            <>
+              <QuestionInputField
+                inputValues={questionInputValues}
+                setInputValues={setQuestionInputValues}
+                isCreate={isCreateQuestion}
+                setIsCreate={setIsCreateQuestion}
+                colorMode={colorMode}
+              />
+              <Questions
+                inputValues={questionInputValues}
+                setInputValues={setQuestionInputValues}
+                isCreate={isCreateQuestion}
+                setIsCreate={setIsCreateQuestion}
+                colorMode={colorMode}
+                userMode={user}
+              />
+            </>
+          )}
         </VStack>
       </GridItem>
 
-      {/* History Portion */}
+      {/* User Portion */}
       <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         display="flex"
         justifyContent="center"
@@ -130,7 +145,7 @@ const dashboard = () => {
 
       {/* Circular Progress to show how many question is completed */}
       <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         display="flex"
         justifyContent="center"
@@ -144,7 +159,7 @@ const dashboard = () => {
 
       {/* Placeholder */}
       <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         display="flex"
         justifyContent="center"
@@ -159,7 +174,7 @@ const dashboard = () => {
 
       {/* User Entry Table */}
       <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         display="flex"
         justifyContent="center"

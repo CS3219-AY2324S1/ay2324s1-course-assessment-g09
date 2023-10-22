@@ -30,7 +30,7 @@ import socketManager from "../components/Sockets/SocketManager";
 
 import { io } from "socket.io-client";
 
-const profile = ({ colorMode }) => {
+const profile = ({ colorMode, userMode }) => {
   const cancelRef = React.useRef();
 
   // State Hook
@@ -211,10 +211,10 @@ const profile = ({ colorMode }) => {
         @wilsonngja{" "}
         <Badge
           variant="outline"
-          colorScheme="purple"
+          colorScheme={userMode == "user" ? "green" : "red"}
           fontSize={{ lg: "md", xl: "md", "2xl": "lg" }}
         >
-          User
+          {userMode}
         </Badge>
       </Text>
       <Divider />
