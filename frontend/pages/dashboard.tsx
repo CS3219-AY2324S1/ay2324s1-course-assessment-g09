@@ -50,7 +50,7 @@ const dashboard = () => {
     >
       {/* GridItem that contains Profile */}
       <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         display="flex"
         justifyContent="center"
@@ -67,7 +67,7 @@ const dashboard = () => {
       <GridItem
         colSpan={3}
         rowSpan={3}
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         boxShadow="xl"
         height="100%"
@@ -94,7 +94,7 @@ const dashboard = () => {
 
       {/* History Portion */}
       <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         display="flex"
         justifyContent="center"
@@ -130,7 +130,7 @@ const dashboard = () => {
 
       {/* Circular Progress to show how many question is completed */}
       <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         display="flex"
         justifyContent="center"
@@ -144,7 +144,7 @@ const dashboard = () => {
 
       {/* Placeholder */}
       <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         display="flex"
         justifyContent="center"
@@ -159,7 +159,7 @@ const dashboard = () => {
 
       {/* User Entry Table */}
       <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.600"}
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         display="flex"
         justifyContent="center"
