@@ -2,3 +2,4 @@
 **/node_modules
 **/data
 backend/user_service/.env-local
+/auth_dev
