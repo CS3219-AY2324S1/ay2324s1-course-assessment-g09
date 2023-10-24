@@ -65,7 +65,7 @@ const SignUp = () => {
       // if (sessionStorage.getItem("login")) {
       //   eToken = JSON.parse(sessionStorage.getItem("login")).token;
       // }
-      const response = await fetch(`${IP_ADDRESS}:3004/userauth/signin`, {
+      const response = await fetch(`/auth_service/userauth/signin`, {
         method: "POST",
         headers: {
           // Authorization: eToken,

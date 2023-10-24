@@ -68,7 +68,7 @@ const IndexPage = () => {
   };
 
   const handleSignOut = () => {
-    axios.post(`${IP_ADDRESS}:3004/userauth/signout`, {}, { withCredentials: true })
+    axios.post(`auth_service/userauth/signout`, {}, { withCredentials: true })
       .then(response => {
         if (response.statusText === 'OK') {
           router.push("/signin");
