@@ -49,14 +49,13 @@ const IndexPage = () => {
   const [isCreate, setIsCreate] = useState(true);
   const [displayDB, setDisplayDB] = useState("questions");
 
-  const [session, setSession] = useState();
   const [role, setRole] = useState("user");
 
   useEffect(() => {
     const login = JSON.parse(window.sessionStorage.getItem("login"));
 
     if (login && login.isLoggedIn) {
-      setSession(login.token);
+      setRole(login.role);
     } else {
       router.push("/signin");
     }
