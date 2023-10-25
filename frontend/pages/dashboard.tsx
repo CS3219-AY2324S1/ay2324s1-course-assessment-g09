@@ -6,7 +6,7 @@ import {
   VStack,
   useColorMode,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Questions from "../components/Questions";
 import QuestionInputField from "../components/QuestionsInputField";
 import UserInputField from "../components/UserInputField";
@@ -14,8 +14,26 @@ import Users from "../components/Users";
 import History from "../components/History";
 import Profile from "./profile";
 import QuestionProgress from "./questionProgress";
+import axios from "axios";
+
+const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
 const dashboard = () => {
+  const [questions, setQuestions] = useState(null);
+  const fetchQuestions = async () => {
+    try {
+      const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
+
+      setQuestions(res.data.qns);
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
   // Questions input field
   const [questionInputValues, setQuestionInputValues] = useState({
     edit_id: "",
@@ -41,7 +59,7 @@ const dashboard = () => {
     name: "",
   });
 
-  const [user, setUser] = useState("user");
+  const [user, setUser] = useState("admin");
 
   return (
     <Grid
@@ -84,6 +102,8 @@ const dashboard = () => {
               setIsCreate={setIsCreateQuestion}
               colorMode={colorMode}
               userMode={user}
+              questions={questions}
+              fetchQuestions={fetchQuestions}
             />
           ) : (
             <>
@@ -93,6 +113,7 @@ const dashboard = () => {
                 isCreate={isCreateQuestion}
                 setIsCreate={setIsCreateQuestion}
                 colorMode={colorMode}
+                setQuestions={setQuestions}
               />
               <Questions
                 inputValues={questionInputValues}
@@ -101,6 +122,8 @@ const dashboard = () => {
                 setIsCreate={setIsCreateQuestion}
                 colorMode={colorMode}
                 userMode={user}
+                questions={questions}
+                fetchQuestions={fetchQuestions}
               />
             </>
           )}
