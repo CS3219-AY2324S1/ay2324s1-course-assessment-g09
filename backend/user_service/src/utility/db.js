@@ -59,7 +59,19 @@ const initialiseDB = () => {
             return process.exit(1);
         }
         console.log(`Initialisation: Initialised Users table.`);
+
+        const values = ["admin@peerprep.com", "admin", "admin", "$2b$17$EX1Zy0w3l7vODKWlr5bzs.MhFN36zLU1a8yAdYPE4wrmmUTDDmJm."];
+        const adminQuery = `INSERT INTO ${userAccountTable} (email, username, role, password) VALUES ($1, $2, $3, $4);`;
+        db.query(adminQuery, values, (error, results) => {
+            if (error) {
+                console.log('Initialisation: Error initialising Admin account.');
+                return process.exit(1);
+            }
+            console.log(`Initialisation: Initialised Admin account.`);
+        });
     });
+
+
 };
 
 module.exports = {
