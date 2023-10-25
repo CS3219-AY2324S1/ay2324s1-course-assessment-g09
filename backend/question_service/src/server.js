@@ -10,6 +10,8 @@ const express = require('express');
 const bodyparser = require('body-parser'); // Middleware
 const cors = require('cors'); // Middleware
 const questionmanager = require('./questionmanager');
+const connectToDB = require('./utility/db').connectToDB;
+const adminQuestionRouter = require('./controllers/questionadmin');
 
 // Create an express app
 const app = express();
@@ -22,6 +24,7 @@ app.use(cors({
     methods: ['GET', 'POST']
 })); // WARN: Accepts any source origin!
 
+app.use('/admin', adminQuestionRouter);
 app.post('/questions/create', questionmanager.createQuestion); //CREATE
 app.get('/questions/getall', questionmanager.getQuestions); // READ
 app.get('/questions/get/:qn_num', questionmanager.getQuestionByQnNum);
@@ -34,4 +37,5 @@ app.listen(process.env.RESTAPI_PORT, () => {
 });
 
 // Connect to MongoDB .
-questionmanager.connectToDB();
+// questionmanager.connectToDB();
+connectToDB();
