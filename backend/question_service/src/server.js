@@ -24,7 +24,7 @@ app.use(cors({
     methods: ['GET', 'POST']
 })); // WARN: Accepts any source origin!
 
-app.use('/admin', adminQuestionRouter);
+app.use('/admin/questions', adminQuestionRouter);
 app.post('/questions/create', questionmanager.createQuestion); //CREATE
 app.get('/questions/getall', questionmanager.getQuestions); // READ
 app.get('/questions/get/:qn_num', questionmanager.getQuestionByQnNum);
