@@ -18,8 +18,6 @@ import {
   CircularProgressLabel,
   Box,
   Center,
-  GridItem,
-  Grid,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import router, { useRouter } from "next/router";
@@ -27,9 +25,7 @@ import axios from "axios";
 import MatchButton from "../components/MatchButton";
 import socketManager from "../components/Sockets/SocketManager";
 
-
-import { io } from "socket.io-client";
-import MatchButton from "../components/MatchButton";
+const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
 const profile = ({ colorMode }) => {
   const cancelRef = React.useRef();
@@ -47,70 +43,25 @@ const profile = ({ colorMode }) => {
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [isMatchFound, setIsMatchFound] = useState(false);
-
-  const [waitingPlayer, setWaitingPlayer] = useState(null);
-
-  const [socket, setSocket] = useState(io("http://localhost:6927"));
-
-  // socket.on("connection", (socket) => {
-  //   socket.on("easy_room", (event) => {
-  //     console.log(event);
-  //     socket.emit("match", "easy");
-  //     // console.log(event);
-  //     setIsMatchFound(true);
-  //   });
-  // });
-  useEffect(() => {
-    socket.on("easy_room", (event) => {
-      console.log(event);
-      socket.emit("easy_room", "easy");
-      // console.log(event);
-      setIsMatchFound(true);
-    });
-  });
-
+  const receiveMatchedData = (socket, user) => {
+    {
+      console.log(socket);
+      router.push({
+        pathname: "/collaboration",
+        query: {
+          matchedSocket: socket,
+          matchedUser: user,
+        },
+      });
+    }
+  };
   // Reset the timer and put the user in the queue
   const handleQuickStart = () => {
-    console.log("handleQuickStart function called");
-    socket.emit("easy_room", "easy");
     setInQueue(true);
-
     setMinutes(0);
     setSeconds(0);
   };
 
-	// State Hook
-	// inQueue refers to whether the user is looking for a match
-	// timerValue refers to the circular progress that is decreasing when match found
-	// countdown refers to the down counter inside the progress bar
-	// seconds portion of the duration when in queue
-	// minutes portion of the duration when in queue
-	// isMatchFound refers to the boolean state on whether the match has been found
-	const [inQueue, setInQueue] = useState(false);
-	const [timerValue, setTimerValue] = useState(100);
-	const [countdown, setCoundown] = useState(5);
-	const [seconds, setSeconds] = useState(0);
-	const [minutes, setMinutes] = useState(0);
-	const [isMatchFound, setIsMatchFound] = useState(false);
-	const receiveMatchedData = (socket, user, receiverVideoSocket) => {
-		{
-			console.log(socket);
-			router.push({
-				pathname: "/collaboration",
-				query: {
-					matchedSocket: socket,
-					matchedUser: user,
-					receiverVideoSocket: receiverVideoSocket,
-				},
-			});
-		}
-	};
-	// Reset the timer and put the user in the queue
-	const handleQuickStart = () => {
-		setInQueue(true);
-		setMinutes(0);
-		setSeconds(0);
-	};
   // Pop the user from the queue and reset the timer
   const handleLeaveQueue = () => {
     setInQueue(false);
@@ -148,7 +99,6 @@ const profile = ({ colorMode }) => {
   // useEffect hook to reduce the value of progress bar once even 100ms
   useEffect(() => {
     let interval: NodeJS.Timeout;
-
     if (timerValue > 0 && isOpen) {
       interval = setInterval(() => {
         setTimerValue((prevTimer) => {
@@ -156,15 +106,6 @@ const profile = ({ colorMode }) => {
         });
       }, 100);
 
-	// useEffect hook to reduce the value of progress bar once even 100ms
-	useEffect(() => {
-		let interval: NodeJS.Timeout;
-		if (timerValue > 0 && isOpen) {
-			interval = setInterval(() => {
-				setTimerValue((prevTimer) => {
-					return prevTimer - 2;
-				});
-			}, 100);
       // Set the countdown based on the value of the progress bar.
       setCoundown(Math.floor(timerValue / 20) + 1);
     }
@@ -190,15 +131,29 @@ const profile = ({ colorMode }) => {
   // For this effect hook, the trigger is 2 minutes. This can be replaced
   // with the related condition for matching.
   useEffect(() => {
-    if (isMatchFound) {
+    if (minutes === 2 && seconds === 0) {
+      setIsMatchFound(true);
       setInQueue(false);
       onOpen();
     }
-  });
+  }, [minutes]);
 
-  const handleLogout = () => {
-    window.sessionStorage.removeItem("login");
-    router.push("/signin");
+  const handleLogout = async () => {
+    axios
+      .post(
+        `${IP_ADDRESS}:3004/userauth/signout`,
+        {},
+        { withCredentials: true }
+      )
+      .then((response) => {
+        if (response.statusText === "OK") {
+          router.push("/signin");
+          window.sessionStorage.removeItem("login");
+        }
+      })
+      .catch((error) => {
+        console.log("signout", error);
+      });
   };
 
   return (
@@ -245,111 +200,32 @@ const profile = ({ colorMode }) => {
             </Text>
           </>
         ) : (
-          <Grid templateColumns="repeat(3, 1fr)" gap={2} marginX={4}>
-            <GridItem>
-              <Button
-                colorScheme="purple"
-                size={{ lg: "sm", xl: "xs", "2xl": "sm" }}
-                onClick={handleQuickStart}
-                width="100%"
-              >
-                Quick Start
-              </Button>
-            </GridItem>
-
-            <GridItem display="flex" justifyContent="center">
-              <Button
-                colorScheme="blue"
-                size={{ lg: "sm", xl: "xs", "2xl": "sm" }}
-                width="100%"
-              >
-                Custom Room
-              </Button>
-            </GridItem>
-
-	return (
-		<VStack>
-			<WrapItem>
-				<Avatar
-					size={{ lg: "lg", xl: "lg", "2xl": "xl" }}
-					name="Wilson Ng"
-					bg={colorMode == "light" ? "cyan.500" : "cyan.700"}
-				/>
-			</WrapItem>
-			<Text
-				fontSize={{ lg: "xl", xl: "xl", "2xl": "2xl" }}
-				color={colorMode == "light" ? "black" : "white"}
-				fontWeight="semibold"
-			>
-				Wilson Ng Jing An
-			</Text>
-			<Text
-				fontSize={{ lg: "md", xl: "md", "2xl": "lg" }}
-				color={colorMode == "light" ? "black" : "white"}
-				fontFamily="monospace"
-				fontWeight="bold"
-			>
-				@wilsonngja{" "}
-				<Badge
-					variant="outline"
-					colorScheme="purple"
-					fontSize={{ lg: "md", xl: "md", "2xl": "lg" }}
-				>
-					User
-				</Badge>
-			</Text>
-			<Divider />
-			<HStack mt={{ lg: 2, xl: 4, "2xl": 5 }}>
-				{inQueue ? (
-					<>
-						<Button onClick={handleLeaveQueue} colorScheme="orange">
-							Leave Queue
-						</Button>
-						<Text fontSize="xl" fontWeight="bold" ml={5}>
-							{String(minutes).padStart(2, "0")}:
-							{String(seconds).padStart(2, "0")}
-						</Text>
-					</>
-				) : (
-					<>
-						{/* <Button
+          <>
+            {/* <Button
               colorScheme="purple"
               size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
               onClick={handleQuickStart}
             >
               Quick Start
             </Button> */}
-						<MatchButton
-							sendMatchedData={receiveMatchedData}
-							handleQuickStart={handleQuickStart}
-						/>
-						<Button
-							colorScheme="blue"
-							size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
-						>
-							Custom Room
-						</Button>
-						<Button
-							colorScheme="red"
-							size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
-							onClick={handleLogout}
-						>
-							Log Out{" "}
-						</Button>
-					</>
-				)}
-			</HStack>
-            <GridItem>
-              <Button
-                colorScheme="red"
-                size={{ lg: "sm", xl: "xs", "2xl": "sm" }}
-                onClick={handleLogout}
-                width="100%"
-              >
-                Log Out
-              </Button>
-            </GridItem>
-          </Grid>
+            <MatchButton
+              sendMatchedData={receiveMatchedData}
+              handleQuickStart={handleQuickStart}
+            />
+            <Button
+              colorScheme="blue"
+              size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
+            >
+              Custom Room
+            </Button>
+            <Button
+              colorScheme="red"
+              size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
+              onClick={handleLogout}
+            >
+              Log Out{" "}
+            </Button>
+          </>
         )}
       </HStack>
 
