@@ -130,8 +130,8 @@ const Question = ({
                   ? "gray.300"
                   : "gray.700"
                 : colorMode == "light"
-                ? "gray.400"
-                : "gray.800"
+                  ? "gray.400"
+                  : "gray.800"
             }
           >
             <GridItem key={`grid_item_id_${question.qn_num}`} colSpan={1}>
@@ -205,8 +205,8 @@ const Question = ({
                     question.complexity == "Easy"
                       ? "green"
                       : question.complexity == "Medium"
-                      ? "orange"
-                      : "red"
+                        ? "orange"
+                        : "red"
                   }
                   fontWeight="bold"
                 >
@@ -261,8 +261,8 @@ const Question = ({
                 String(difficulty).toLowerCase() == "easy"
                   ? "green"
                   : String(difficulty).toLowerCase() == "medium"
-                  ? "orange"
-                  : "red"
+                    ? "orange"
+                    : "red"
               }
             >
               {difficulty}

@@ -30,6 +30,8 @@ import socketManager from "../components/Sockets/SocketManager";
 
 import { io } from "socket.io-client";
 
+const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
+
 const profile = ({ colorMode, userMode }) => {
   const cancelRef = React.useRef();
 
@@ -182,8 +184,17 @@ const profile = ({ colorMode, userMode }) => {
   });
 
   const handleLogout = () => {
-    window.sessionStorage.removeItem("login");
-    router.push("/signin");
+    axios.post(`auth_service/userauth/signout`, {}, { withCredentials: true })
+      .then(response => {
+        if (response.statusText === 'OK') {
+          router.push("/signin");
+          window.sessionStorage.removeItem("login");
+        }
+      })
+      .catch(error => {
+        console.log("signout", error);
+      })
+
   };
 
   return (
@@ -297,12 +308,12 @@ const profile = ({ colorMode, userMode }) => {
                         ? "green.500"
                         : "green.300"
                       : countdown > 1
-                      ? colorMode == "light"
-                        ? "orange.500"
-                        : "orange.300"
-                      : colorMode == "light"
-                      ? "red.500"
-                      : "red.300"
+                        ? colorMode == "light"
+                          ? "orange.500"
+                          : "orange.300"
+                        : colorMode == "light"
+                          ? "red.500"
+                          : "red.300"
                   }
                   size="70px"
                 >
@@ -313,12 +324,12 @@ const profile = ({ colorMode, userMode }) => {
                           ? "green.500"
                           : "green.300"
                         : countdown > 1
-                        ? colorMode == "light"
-                          ? "orange.500"
-                          : "orange.300"
-                        : colorMode == "light"
-                        ? "red.500"
-                        : "red.300"
+                          ? colorMode == "light"
+                            ? "orange.500"
+                            : "orange.300"
+                          : colorMode == "light"
+                            ? "red.500"
+                            : "red.300"
                     }
                     fontWeight="semibold"
                   >
