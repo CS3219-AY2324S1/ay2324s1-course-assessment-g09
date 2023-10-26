@@ -1,5 +1,5 @@
 name: Deployment to AWS Elastic Beanstalk
-on: push
+on: push # Test
 env:
   AWS_REGION : ap-southeast-1
 permissions:
