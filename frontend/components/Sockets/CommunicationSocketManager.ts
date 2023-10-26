@@ -14,9 +14,6 @@ class SocketManager {
 		this.socket.on("connect", () => {
 			this.socketId = this.socket?.id || null;
 			console.log(`Connected with Socket ID: ${this.socketId}`);
-
-			// You can store the socket ID or use it as needed
-			// For example, you can store it in a state variable or use it for interactions
 		});
 	}
 
@@ -31,9 +28,9 @@ class SocketManager {
 		return this.matchedSocketId;
 	}
 
-	public setMatchedSocketId(matchedSocketId: string | null) {
-		console.log("setMatchedSocketId", matchedSocketId);
-		this.matchedSocketId = matchedSocketId;
+	public setMatchedSocketId(id: string | null) {
+		console.log("setMatchedSocketId", id);
+		this.matchedSocketId = id;
 	}
 
 	public subscribeToEvent(eventName: any, callback: any) {

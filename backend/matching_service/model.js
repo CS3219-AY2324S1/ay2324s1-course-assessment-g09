@@ -1,23 +1,36 @@
-const sequelize = require("./db").sequelize;
-const { DataTypes } = require("sequelize");
+const { db, Sequelize } = require("./db");
 
-const roomModel = sequelize.define("room", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  socketID: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  difficulty: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+const userModel = db.define("user", {
+	id: {
+		type: Sequelize.INTEGER,
+		primaryKey: true,
+		autoIncrement: true,
+	},
+	difficulty: {
+		type: Sequelize.STRING,
+		allowNull: false,
+	},
+	user: {
+		type: Sequelize.STRING,
+		primaryKey: false,
+	},
+	videoSocket: {
+		type: Sequelize.STRING,
+		allowNull: false,
+	},
+	socketId: {
+		type: Sequelize.STRING,
+		allowNull: false,
+	},
+	createdAt: {
+		type: Sequelize.DATE,
+		defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+		allowNull: false,
+	},
 });
 (async () => {
-  await sequelize.sync({ force: true });
-  console.log("All models were synchronized successfully.");
+	await db.sync({ force: true });
+	console.log("All models were synchronized successfully.");
 })();
-exports.roomModel = roomModel;
+
+exports.userModel = userModel;
