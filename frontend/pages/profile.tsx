@@ -43,7 +43,7 @@ const profile = ({ colorMode }) => {
 	const [seconds, setSeconds] = useState(0);
 	const [minutes, setMinutes] = useState(0);
 	const [isMatchFound, setIsMatchFound] = useState(false);
-	const receiveMatchedData = (socket, user, receiverVideoSocket) => {
+	const receiveMatchedData = (socket, user) => {
 		{
 			console.log(socket);
 			router.push({
@@ -51,7 +51,6 @@ const profile = ({ colorMode }) => {
 				query: {
 					matchedSocket: socket,
 					matchedUser: user,
-					receiverVideoSocket: receiverVideoSocket,
 				},
 			});
 		}
