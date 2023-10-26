@@ -8,10 +8,11 @@ if (process.env.NODE_ENV != "production") {
 const express = require("express");
 const bodyparser = require("body-parser"); // Middleware
 const cors = require("cors") // Middleware
-const usermanager = require("./usermanager");
 const userRouter = require('./controllers/user');
+const userAuthRouter = require('./controllers/auth');
 const initialiseDB = require("./utility/db").initialiseDB;
 const logger = require("./middleware/logger");
+
 
 // Create an express app
 const app = express();
@@ -26,11 +27,8 @@ app.use(logger);
 
 //Setup Routing
 app.use('/users', userRouter);
-// app.post("/users/create", usermanager.createUser); //CREATE
-// app.get("/users/getall", usermanager.getUsers); // READ
-// app.get("/users/get/:id", usermanager.getUserById);
-// app.post("/users/update/:id", usermanager.updateUser); //UPDATE
-// app.post("/users/delete/:id", usermanager.deleteUser); //DELETE
+app.use('/auth', userAuthRouter);
+
 
 // Start Express App
 app.listen(process.env.RESTAPI_PORT, () => {
