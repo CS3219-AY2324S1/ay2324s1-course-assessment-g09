@@ -34,11 +34,8 @@ export default function MatchButton({ sendMatchedData, handleQuickStart }) {
 					console.log(res.data);
 					const { matchedUser, matchedSocket, receiverVideoSocket } =
 						res.data;
-					sendMatchedData(
-						matchedSocket,
-						matchedUser,
-						receiverVideoSocket
-					);
+					sendMatchedData(matchedSocket, matchedUser);
+					socketManager.setMatchedSocketId(receiverVideoSocket);
 				});
 		} catch (error) {
 			console.log(error);

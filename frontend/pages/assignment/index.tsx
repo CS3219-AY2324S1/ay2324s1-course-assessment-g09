@@ -55,7 +55,7 @@ const IndexPage = () => {
   useEffect(() => {
     const login = JSON.parse(window.sessionStorage.getItem("login"));
 
-    if (login && login.userLogin) {
+    if (login && login.isLoggedIn) {
       setSession(login.token);
     } else {
       router.push("/signin");

@@ -89,6 +89,7 @@ userRouter.get('/getUserByEmail', async (request, response) => {
         }
 
         const user = allUsers[0];
+        delete user.password; // Remove password 
         return response.status(200).json(user);
     })
 });

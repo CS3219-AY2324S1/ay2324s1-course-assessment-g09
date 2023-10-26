@@ -3,7 +3,7 @@ import { io, Socket } from "socket.io-client";
 class SocketManager {
 	private socket: Socket | null = null;
 	private socketId: string | null = null;
-
+	private matchedSocketId: string | null = null;
 	constructor() {
 		this.initialize();
 	}
@@ -27,6 +27,15 @@ class SocketManager {
 	public getSocketId(): string | null {
 		return this.socketId;
 	}
+	public getMatchedSocketId(): string | null {
+		return this.matchedSocketId;
+	}
+
+	public setMatchedSocketId(matchedSocketId: string | null) {
+		console.log("setMatchedSocketId", matchedSocketId);
+		this.matchedSocketId = matchedSocketId;
+	}
+
 	public subscribeToEvent(eventName: any, callback: any) {
 		this.socket.on(eventName, callback);
 	}
