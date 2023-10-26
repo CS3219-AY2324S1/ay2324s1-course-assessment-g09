@@ -3,7 +3,6 @@ services:
   apigateway:
     container_name: apigateway
     image: apigateway-img
-    restart: always
     build: .
     ports:
-      - "80:80"
+      - "3000:3000"

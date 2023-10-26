@@ -18,14 +18,19 @@ import {
   CircularProgressLabel,
   Box,
   Center,
+  GridItem,
+  Grid,
+  Flex,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import router, { useRouter } from "next/router";
 import axios from "axios";
+import MatchButton from "../components/MatchButton";
+import socketManager from "../components/Sockets/SocketManager";
 
-const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
+import { io } from "socket.io-client";
 
-const profile = ({ colorMode }) => {
+const profile = ({ colorMode, userMode }) => {
   const cancelRef = React.useRef();
 
   // State Hook
@@ -42,13 +47,64 @@ const profile = ({ colorMode }) => {
   const [minutes, setMinutes] = useState(0);
   const [isMatchFound, setIsMatchFound] = useState(false);
 
+  const [waitingPlayer, setWaitingPlayer] = useState(null);
+
+  const [socket, setSocket] = useState(io("http://localhost:6927"));
+
+  // socket.on("connection", (socket) => {
+  //   socket.on("easy_room", (event) => {
+  //     console.log(event);
+  //     socket.emit("match", "easy");
+  //     // console.log(event);
+  //     setIsMatchFound(true);
+  //   });
+  // });
+  useEffect(() => {
+    socket.on("easy_room", (event) => {
+      console.log(event);
+      socket.emit("easy_room", "easy");
+      // console.log(event);
+      setIsMatchFound(true);
+    });
+  });
+
   // Reset the timer and put the user in the queue
   const handleQuickStart = () => {
+    console.log("handleQuickStart function called");
+    socket.emit("easy_room", "easy");
     setInQueue(true);
+
     setMinutes(0);
     setSeconds(0);
   };
 
+  // State Hook
+  // inQueue refers to whether the user is looking for a match
+  // timerValue refers to the circular progress that is decreasing when match found
+  // countdown refers to the down counter inside the progress bar
+  // seconds portion of the duration when in queue
+  // minutes portion of the duration when in queue
+  // isMatchFound refers to the boolean state on whether the match has been found
+
+  const receiveMatchedData = (socket, user, receiverVideoSocket) => {
+    {
+      console.log(socket);
+      router.push({
+        pathname: "/collaboration",
+        query: {
+          matchedSocket: socket,
+          matchedUser: user,
+          receiverVideoSocket: receiverVideoSocket,
+        },
+      });
+    }
+  };
+  // Reset the timer and put the user in the queue
+  // const handleQuickStart = () => {
+  // 	setInQueue(true);
+  // 	setMinutes(0);
+  // 	setSeconds(0);
+  // };
   // Pop the user from the queue and reset the timer
   const handleLeaveQueue = () => {
     setInQueue(false);
@@ -84,16 +140,16 @@ const profile = ({ colorMode }) => {
   }, [inQueue]);
 
   // useEffect hook to reduce the value of progress bar once even 100ms
+
+  // useEffect hook to reduce the value of progress bar once even 100ms
   useEffect(() => {
     let interval: NodeJS.Timeout;
-
     if (timerValue > 0 && isOpen) {
       interval = setInterval(() => {
         setTimerValue((prevTimer) => {
           return prevTimer - 2;
         });
       }, 100);
-
       // Set the countdown based on the value of the progress bar.
       setCoundown(Math.floor(timerValue / 20) + 1);
     }
@@ -119,31 +175,19 @@ const profile = ({ colorMode }) => {
   // For this effect hook, the trigger is 2 minutes. This can be replaced
   // with the related condition for matching.
   useEffect(() => {
-    if (minutes === 2 && seconds === 0) {
-      setIsMatchFound(true);
+    if (isMatchFound) {
       setInQueue(false);
       onOpen();
     }
-  }, [minutes]);
+  });
 
-  const handleLogout = async () => {
-    axios.post(`${IP_ADDRESS}:3004/userauth/signout`, {}, { withCredentials: true })
-      .then(response => {
-        if (response.statusText === 'OK') {
-          router.push("/signin");
-          window.sessionStorage.removeItem("login");
-        }
-      })
-      .catch(error => {
-        console.log("signout", error);
-      })
-
-
-
+  const handleLogout = () => {
+    window.sessionStorage.removeItem("login");
+    router.push("/signin");
   };
 
   return (
-    <VStack>
+    <VStack width="100%">
       <WrapItem>
         <Avatar
           size={{ lg: "lg", xl: "lg", "2xl": "xl" }}
@@ -167,47 +211,64 @@ const profile = ({ colorMode }) => {
         @wilsonngja{" "}
         <Badge
           variant="outline"
-          colorScheme="purple"
+          colorScheme={userMode == "user" ? "green" : "red"}
           fontSize={{ lg: "md", xl: "md", "2xl": "lg" }}
         >
-          User
+          {userMode}
         </Badge>
       </Text>
       <Divider />
-      <HStack mt={{ lg: 2, xl: 4, "2xl": 5 }}>
+      <HStack my={{ lg: 2, xl: 3, "2xl": 3 }}>
         {inQueue ? (
-          <>
-            <Button onClick={handleLeaveQueue} colorScheme="orange">
-              Leave Queue
-            </Button>
-            <Text fontSize="xl" fontWeight="bold" ml={5}>
-              {String(minutes).padStart(2, "0")}:
-              {String(seconds).padStart(2, "0")}
-            </Text>
-          </>
+          <Grid
+            templateColumns="repeat(4, 1fr)"
+            gap={2}
+            marginX={4}
+            width="100%"
+          >
+            <GridItem colStart={2}>
+              <Button onClick={handleLeaveQueue} colorScheme="orange">
+                Leave Queue
+              </Button>
+            </GridItem>
+            <GridItem>
+              <Text fontSize="xl" fontWeight="bold" ml={5}>
+                {String(minutes).padStart(2, "0")}:
+                {String(seconds).padStart(2, "0")}
+              </Text>
+            </GridItem>
+          </Grid>
         ) : (
-          <>
-            <Button
-              colorScheme="purple"
-              size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
-              onClick={handleQuickStart}
-            >
-              Quick Start
-            </Button>
-            <Button
-              colorScheme="blue"
-              size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
-            >
-              Custom Room
-            </Button>
-            <Button
-              colorScheme="red"
-              size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
-              onClick={handleLogout}
-            >
-              Log Out{" "}
-            </Button>
-          </>
+          <Grid
+            templateColumns="repeat(4, 1fr)"
+            gap={2}
+            marginX={4}
+            width="100%"
+          >
+            <GridItem>
+              <MatchButton
+                sendMatchedData={receiveMatchedData}
+                handleQuickStart={handleQuickStart}
+              />
+            </GridItem>
+            <GridItem>
+              <Button
+                colorScheme="blue"
+                size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
+              >
+                Custom Room
+              </Button>
+            </GridItem>
+            <GridItem>
+              <Button
+                colorScheme="red"
+                size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
+                onClick={handleLogout}
+              >
+                Log Out{" "}
+              </Button>
+            </GridItem>
+          </Grid>
         )}
       </HStack>
 
@@ -236,12 +297,12 @@ const profile = ({ colorMode }) => {
                         ? "green.500"
                         : "green.300"
                       : countdown > 1
-                        ? colorMode == "light"
-                          ? "orange.500"
-                          : "orange.300"
-                        : colorMode == "light"
-                          ? "red.500"
-                          : "red.300"
+                      ? colorMode == "light"
+                        ? "orange.500"
+                        : "orange.300"
+                      : colorMode == "light"
+                      ? "red.500"
+                      : "red.300"
                   }
                   size="70px"
                 >
@@ -252,12 +313,12 @@ const profile = ({ colorMode }) => {
                           ? "green.500"
                           : "green.300"
                         : countdown > 1
-                          ? colorMode == "light"
-                            ? "orange.500"
-                            : "orange.300"
-                          : colorMode == "light"
-                            ? "red.500"
-                            : "red.300"
+                        ? colorMode == "light"
+                          ? "orange.500"
+                          : "orange.300"
+                        : colorMode == "light"
+                        ? "red.500"
+                        : "red.300"
                     }
                     fontWeight="semibold"
                   >

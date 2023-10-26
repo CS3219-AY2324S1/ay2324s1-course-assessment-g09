@@ -1,20 +1,25 @@
 'use client';
 import { useRouter } from 'next/router';
-import { FormControl, FormLabel, Button, Input, VStack, Box, Heading, Highlight, Select } from '@chakra-ui/react';
+import { FormControl, FormLabel, Button, Input, VStack, Box, Heading, Highlight, Select, Spinner } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react';
+import { useState } from 'react';
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
 const SignUp = () => {
     const router = useRouter();
     const toast = useToast();
+    const [submitStatus, setSubmitStatus] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+
+
         const form = event.target;
         const formData = new FormData(form);
-        if (formData.get("password") === formData.get("confirm_password")) {
+        if (formData.get("password") === formData.get("confirm_password") && !submitStatus) {
+            setSubmitStatus(true);
             try {
                 const response = await fetch(`${IP_ADDRESS}:3004/userauth/signup`, {
                     method: 'POST',
@@ -52,6 +57,15 @@ const SignUp = () => {
                 }
             } catch (error) {
                 console.log("err", error);
+                toast({
+                    position: 'bottom-left', render: () => (
+                        <Box color='white' bg='red.300' textAlign="center" padding="10px" rounded="md">
+                            {"Something went wrong..."}
+                        </Box>
+                    )
+                })
+            } finally {
+                setSubmitStatus(false);
             }
         } else {
 
@@ -101,8 +115,12 @@ const SignUp = () => {
                             <option value="admin">Admin</option>
                         </Select>
                     </FormControl>
+                    {
+                        !submitStatus
+                            ? (<Button type='submit' marginLeft="20vw">Signup</Button>)
+                            : (<Spinner marginLeft="23vw" />)
+                    }
 
-                    <Button type='submit' marginLeft="20vw">Signup</Button>
 
                 </VStack>
 

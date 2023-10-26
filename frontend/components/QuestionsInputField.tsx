@@ -28,8 +28,8 @@ const QuestionInputField = ({
   isCreate,
   setIsCreate,
   colorMode,
+  setQuestions,
 }) => {
-  const [question, setQuestions] = useState(null);
   const [error, setError] = useState(false);
 
   const [selectedComplexity, setSelectedComplexity] = useState("");
@@ -88,7 +88,6 @@ const QuestionInputField = ({
     });
 
     setIsCreate(true);
-
     fetchQuestions();
   };
 
@@ -130,7 +129,12 @@ const QuestionInputField = ({
   };
 
   return (
-    <Grid templateColumns="repeat(6, 1fr)" templateRows="repeat(2,1fr)" gap={2}>
+    <Grid
+      templateColumns="repeat(6, 1fr)"
+      templateRows="repeat(2,1fr)"
+      gap={2}
+      height="20%"
+    >
       <GridItem>
         {error ? (
           <Input

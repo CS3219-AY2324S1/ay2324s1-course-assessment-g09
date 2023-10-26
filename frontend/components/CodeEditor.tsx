@@ -14,14 +14,16 @@ import Editor from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
+import SaveHistoryButton from "./SaveHistoryButton";
 
-export default function CodeEditor({ socketRoom }) {
+export default function CodeEditor({ socketRoom, matchedUser }) {
   const editorRef = useRef(null);
   const [socket, setSocket] = useState(null);
   const isIncomingCode = useRef(false);
   const colorRef = useRef(null);
   const [language, setLanguage] = useState("javascript");
-
+  const [code, setCode] = useState("//some comments");
+  const [theme, setTheme] = useState("light");
   const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
   };
@@ -35,15 +37,17 @@ export default function CodeEditor({ socketRoom }) {
       return;
     }
     console.log("sent");
+    setCode(editorRef.current.getModel().getValue());
     socket?.emit("codeChange", event);
   };
 
   const handleThemeChange = (e) => {
-    window.monaco.editor.setTheme(e.target.value);
+    setTheme(e.target.value);
+    (window as any).monaco.editor.setTheme(e.target.value);
   };
 
   const handleLanguageChange = (e) => {
-    window.monaco.editor.setModelLanguage(
+    (window as any).monaco.editor.setModelLanguage(
       editorRef.current?.getModel(),
       e.target.value
     );
@@ -65,7 +69,7 @@ export default function CodeEditor({ socketRoom }) {
 
     socket.on("languageChange", (event) => {
       console.log("received", event);
-      window.monaco.editor.setModelLanguage(
+      (window as any).monaco.editor.setModelLanguage(
         editorRef.current?.getModel(),
         event
       );
@@ -81,7 +85,10 @@ export default function CodeEditor({ socketRoom }) {
       const editor = editorRef.current;
 
       // Specify the language ID (e.g., 'python' for Python)
-      monaco.editor.setModelLanguage(editor.getModel(), language);
+      (window as any).monaco.editor.setModelLanguage(
+        editor.getModel(),
+        language
+      );
 
       // Check if the action exists
       const formatAction = editor.getAction("editor.action.formatDocument");
@@ -130,13 +137,22 @@ export default function CodeEditor({ socketRoom }) {
           </Select>
         </GridItem>
         <GridItem>
-          <Button
-            onClick={() => alert(editorRef.current.getModel().getValue())}
-            width="100%"
-            colorScheme="green"
-          >
-            Get Code
-          </Button>
+          <SaveHistoryButton
+            code={code}
+            theme={theme}
+            language={language}
+            difficulty={"Easy"}
+            matchedUser={matchedUser}
+          />
+          {/* <Button
+						onClick={() =>
+							alert(editorRef.current.getModel().getValue())
+						}
+						width="100%"
+						colorScheme="green"
+					>
+						Save History
+					</Button> */}
         </GridItem>
         <GridItem>
           <Button onClick={handleFormat} width="100%" colorScheme="blue">

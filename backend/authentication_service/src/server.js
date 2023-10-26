@@ -22,7 +22,7 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cors({
   methods: ["GET", "POST"],
   credentials: true,
-  origin: "http://localhost"
+  origin: "http://localhost:3000"
 })); // WARN: Accepts any source origin!
 app.use(cookieParser());
 app.use(logger);
