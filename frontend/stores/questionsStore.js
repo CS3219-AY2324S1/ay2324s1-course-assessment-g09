@@ -6,11 +6,11 @@ const questionStr = create((set) => ({
 
     fetchQuestions: async () => {
         // Fetch the notes
-        const res = await axios.get('http://localhost:3001/questions');
+        const res = await axios.get('question_service/questions');
 
         // Set to state
-        set({questions: res.data.questions})
-        
+        set({ questions: res.data.questions })
+
     },
 }));
 

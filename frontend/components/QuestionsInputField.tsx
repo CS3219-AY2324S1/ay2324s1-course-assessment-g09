@@ -35,26 +35,13 @@ const QuestionInputField = ({
   const [selectedComplexity, setSelectedComplexity] = useState("");
 
   const fetchQuestions = async () => {
-    const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
+    const res = await axios.get(`question_service/questions`);
     setQuestions(res.data.qns);
   };
 
   const handleSubmit = async () => {
     try {
-      const res0 = await axios.get(
-        `${IP_ADDRESS}:3001/questions/get/${inputValues.qn_num}`
-      );
-
-      setError(true);
-      setInputValues({
-        ...inputValues,
-        qn_num: "",
-      });
-    } catch (error) {
-      const res = await axios.post(
-        `${IP_ADDRESS}:3001/questions/create`,
-        inputValues
-      );
+      const res = await axios.post(`question_service/admin/questions`, inputValues);
 
       console.log(res);
       setInputValues({
@@ -67,16 +54,21 @@ const QuestionInputField = ({
 
       setError(false);
       fetchQuestions();
+      setSelectedComplexity("");
+    } catch (error) {
+      console.log(error);
+      setError(true);
+      setInputValues({
+        ...inputValues,
+        qn_num: "",
+      });
     }
   };
 
   const handleUpdate = async () => {
     setError(false);
     const { qn_num } = inputValues;
-    await axios.post(
-      `${IP_ADDRESS}:3001/questions/update/${qn_num}`,
-      inputValues
-    );
+    await axios.put(`question_service/admin/questions/${qn_num}`, inputValues);
 
     setInputValues({
       edit_id: "",
@@ -209,10 +201,10 @@ const QuestionInputField = ({
               selectedComplexity == "Easy"
                 ? "green"
                 : selectedComplexity == "Medium"
-                ? "orange"
-                : selectedComplexity == "Hard"
-                ? "red"
-                : "gray"
+                  ? "orange"
+                  : selectedComplexity == "Hard"
+                    ? "red"
+                    : "gray"
             }
           >
             {selectedComplexity || "Select Complexity"}

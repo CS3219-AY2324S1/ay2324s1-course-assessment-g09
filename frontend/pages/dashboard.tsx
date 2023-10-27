@@ -22,7 +22,7 @@ const dashboard = () => {
   const [questions, setQuestions] = useState(null);
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
+      const res = await axios.get(`question_service/questions`);
 
       setQuestions(res.data.qns);
     } catch (error) {
@@ -59,7 +59,7 @@ const dashboard = () => {
     name: "",
   });
 
-  const [user, setUserRole] = useState("user");
+  const [user, setUserRole] = useState("admin");
 
   useEffect(() => {
     const login = JSON.parse(window.sessionStorage.getItem("login"));
@@ -67,7 +67,6 @@ const dashboard = () => {
     if (login && login.isLoggedIn) {
       setUserRole(login.role);
     }
-
   }, []);
 
   return (

@@ -79,6 +79,49 @@ services:
       SECRET_KEY: J7kPq2xRtVzLwY9fX6eG1sA4iB3oDmC8nU5hW0lZ
     # ports:
     #   - "3004:3004"
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo-db:/data/db
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongo:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  question-service:
+    container_name: question-service
+    image: question-service-img
+    environment:
+      RESTAPI_PORT: 3001
+      DB_SERVER: mongodb://mongo:27017
+      DB_PORT: 27017 # Must be the same as the port in DB_SERVER. For logging only.
+    restart: always
+    build:
+      context: ../backend/question_service/
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3001
+    depends_on:
+      - mongo
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://question-service:3001/questions"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 volumes:
   # Persistent data
   postgres-db:
+  mongo-db:

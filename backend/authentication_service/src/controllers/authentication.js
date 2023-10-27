@@ -21,7 +21,7 @@ authRouter.post("/signup", async (request, response) => {
 		console.log(body);
 		const { email, username, password, role } = userSchema.parse(body);
 
-		const pwHash = await bcrypt.hash(password, 17);
+		const pwHash = await bcrypt.hash(password, 6);
 
 		const result = await axios.post(
 			`http://${user_service}/users/createUser`,
