@@ -2,6 +2,14 @@ const axios = require("axios");
 const chromium = require('@sparticuz/chromium');
 const puppeteer = require('puppeteer-core');
 
+const checkDuplicateQnKey = async (questionId) => {
+    const existingQns = await axios.get(process.env.SERVER).then(response => response.data.qns);
+    const doesDuplicateExist = existingQns.map(qn => qn.qn_num).includes(questionId);
+    if (doesDuplicateExist) {
+        throw new Error(`Question with ID ${questionId} already exists.`);
+    };
+};
+
 const getBasicData = async (questionId) => {
     // Extract ID, Title, Difficulty and Question URL.
     const questionSrc = "https://leetcode.com/api/problems/all/";
@@ -45,7 +53,7 @@ const getMoreData = async (question) => {
         //Extract description
         const description = document.querySelector('.xFUwe').innerHTML;
         return {tags, description}
-    })
+    });
     question.category = data.tags;
     question.description = data.description;
 
@@ -68,6 +76,8 @@ const pushQuestion = async (question) => {
 }
 
 const scrape = async (questionId) => {
+    //console.log(`Scraping Question ${questionId}...`);
+    await checkDuplicateQnKey(questionId);
     const question = await getBasicData(questionId).then(data => getMoreData(data));
     //console.log(question);
     const questionTitle = await pushQuestion(question);
