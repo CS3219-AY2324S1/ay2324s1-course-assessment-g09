@@ -16,16 +16,12 @@ export default function VideoCall() {
 	const [callerSignal, setCallerSignal] = useState();
 	const [callAccepted, setCallAccepted] = useState(false);
 	const [callEnded, setCallEnded] = useState(false);
-	const [name, setName] = useState("");
-	const callerVideo = useRef(null);
-	const receiverVideo = useRef(null);
 	const connectionRef = useRef(null);
 
 	useEffect(() => {
 		socketManager.subscribeToEvent("callUser", (data) => {
 			setReceivingCall(true);
 			setCaller(data.from);
-			setName(data.name);
 			setCallerSignal(data.signal);
 		});
 	}, []);
@@ -55,7 +51,6 @@ export default function VideoCall() {
 				userToCall: idToCall,
 				signalData: data,
 				from: self,
-				name: name,
 			});
 		});
 		peer.on("stream", (stream) => {
@@ -95,7 +90,7 @@ export default function VideoCall() {
 
 	return (
 		<Box>
-			<Button onClick={getVideo} colorScheme="Blue">
+			<Button onClick={getVideo} colorScheme="blue">
 				Get Video
 			</Button>
 			{!callerStream ? null : (
