@@ -17,6 +17,7 @@ apiAuthRouter.get('/validate-user', async (request, response) => {
             return response.status(401).send();
         }
         console.log("decoded", decoded);
+        return response.status(201).send();
     });
 
 
@@ -26,7 +27,7 @@ apiAuthRouter.get('/validate-user', async (request, response) => {
     //     console.log(request.headers.authorization);
     // }
     // console.log("HUH? No error?");
-    return response.status(201).send();
+
 });
 
 module.exports = apiAuthRouter;

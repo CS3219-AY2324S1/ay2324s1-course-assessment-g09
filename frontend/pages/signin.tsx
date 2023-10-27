@@ -21,11 +21,13 @@ import {
   InputRightElement,
   IconButton,
   Icon,
+  Spinner
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import ToggleMode from "../components/ToggleMode";
 import { AiFillEye, AiFillEyeInvisible, AiOutlineMail } from "react-icons/ai";
 import { MdPassword } from "react-icons/md";
+
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
@@ -45,9 +47,15 @@ const SignUp = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const [viewPasswordField, setViewPasswordField] = useState("invisible");
 
+  const [submitStatus, setSubmitStatus] = useState(false);
+
   const color = colorMode == "light" ? "teal.200" : "teal.100";
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (submitStatus === true) {
+      return;
+    }
+    setSubmitStatus(true);
 
     const form = event.target;
     const formData = new FormData(form);
@@ -57,7 +65,7 @@ const SignUp = () => {
       // if (sessionStorage.getItem("login")) {
       //   eToken = JSON.parse(sessionStorage.getItem("login")).token;
       // }
-      const response = await fetch(`${IP_ADDRESS}:3004/userauth/signin`, {
+      const response = await fetch(`/auth_service/userauth/signin`, {
         method: "POST",
         headers: {
           // Authorization: eToken,
@@ -75,7 +83,8 @@ const SignUp = () => {
       if (response.ok) {
         sessionStorage.setItem("login", JSON.stringify({
           isLoggedIn: true,
-          email: result.email
+          email: result.email,
+          role: result.role
         }))
 
         toast({
@@ -109,9 +118,20 @@ const SignUp = () => {
           ),
         });
       }
+
     } catch (error) {
       console.log("err", error);
+      toast({
+        position: 'bottom-left', render: () => (
+          <Box color='white' bg='red.300' textAlign="center" padding="10px" rounded="md">
+            {"Something went wrong..."}
+          </Box>
+        )
+      })
+    } finally {
+      setSubmitStatus(false);
     }
+
   };
 
   const toggleView = () => {
@@ -199,13 +219,23 @@ const SignUp = () => {
               </InputGroup> */}
 
               <HStack>
+
                 <Link href="/signup" width="7vw">
                   <Button colorScheme="green">Create account</Button>
                 </Link>
+                <div>
+                  {
+                    !submitStatus
+                      ? (<Button type="submit" marginLeft="13vw" colorScheme="blue">
+                        Login
+                      </Button>)
+                      : (<Spinner marginLeft="16vw" />)
+                  }
+                </div>
 
-                <Button type="submit" marginLeft="13vw" colorScheme="blue">
+                {/* <Button type="submit" marginLeft="13vw" colorScheme="blue">
                   Login
-                </Button>
+                </Button> */}
               </HStack>
             </VStack>
           </form>

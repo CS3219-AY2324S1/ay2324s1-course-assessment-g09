@@ -89,7 +89,8 @@ const MatchingPage: React.FC = () => {
           }
         } else {
           // Handle other response status codes (e.g., 500 for server error)
-          setErrorMessage('An error occurred');
+          const data = await response.json();
+          setErrorMessage(data.message);
         }
       } catch (error) {
         // Handle network or other errors

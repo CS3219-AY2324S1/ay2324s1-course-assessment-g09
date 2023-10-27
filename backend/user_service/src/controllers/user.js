@@ -56,6 +56,7 @@ userRouter.get('/getUser', async (request, response) => {
     const query = `SELECT * FROM ${userAccountTable} ORDER BY id ASC`;
 
     db.query(query, (error, results) => {
+
         if (error) {
             const msg = { 'msg': error.message, 'users': null };
             return response.status(500).json(msg);
@@ -89,6 +90,7 @@ userRouter.get('/getUserByEmail', async (request, response) => {
         }
 
         const user = allUsers[0];
+        delete user.password; // Remove password 
         return response.status(200).json(user);
     })
 });

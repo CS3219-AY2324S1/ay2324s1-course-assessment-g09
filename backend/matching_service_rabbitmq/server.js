@@ -5,6 +5,7 @@ const { findMatch } = require('./rabbitmqMatchingController');
 
 // Initialize Express.js app and store in app variable
 const app = express();
+app.use(express.json()); // Add this line to enable JSON parsing middleware
 
 // Enable CORS
 app.use(cors());
