@@ -2,7 +2,7 @@ const {Question, Attributes} = require('./connectdb');
 
 const isCorrectSchema = (inputJSON) => Object.keys(inputJSON).every(key => key in Attributes);  
 
-const getQuestions = (request, response) => {
+const getQuestions = async (request, response) => {
   // Get questions. Users could filter by category, complexity, etc.
 
   const return_success = (result) => {
@@ -32,7 +32,38 @@ const getQuestions = (request, response) => {
                   .catch(handle_error);
 }
 
-const createQuestion = (request, response) => {
+const getRandomQuestion = async (request, response) => {
+  // Get questions. Users could filter by category, complexity, etc.
+
+  const random = items => items[Math.floor(Math.random()*items.length)]; 
+  const return_success = (result) => {
+    const question = random(result);
+    const msg = {'msg': `Questions retrieved.`, 'qn': question};
+    return response.status(200).json(msg);
+  };
+  const handle_error = (err) => {
+    const msg = {'msg': err.message, 'qn': null};
+    return response.status(500).json(msg);
+  };
+
+  if (!isCorrectSchema(request.body)) {
+    const msg = {'msg': 'Incorrect schema. Please ensure that the fields are spelled correctly.', 'qn': null};
+    return response.status(400).json(msg);
+  }
+  const isQnNumInvalid = ('qn_num' in request.body) && isNaN(parseInt(request.body['qn_num']));
+  if (isQnNumInvalid) {
+    const msg = {'msg': 'Question Number must be an integer.', 'qn': null};
+    return response.status(400).json(msg);
+  };
+  if ('qn_num' in request.body) {
+    request.body['qn_num'] = parseInt(request.body['qn_num']);
+  }
+  return Question.find(request.body)
+                  .then(return_success)
+                  .catch(handle_error);
+};
+
+const createQuestion = async (request, response) => {
   // Create questions from given details.
 
   const return_success = (result) => {
@@ -63,7 +94,7 @@ const createQuestion = (request, response) => {
                   .catch(handle_error);
 };
 
-const updateQuestion = (request, response) => {
+const updateQuestion = async (request, response) => {
   // Update questions from given details. Users could update any field(s).
 
   const return_success = (result) => {
@@ -107,7 +138,7 @@ const updateQuestion = (request, response) => {
                   .catch(handle_error);
 }
 
-const deleteQuestion = (request, response) => {
+const deleteQuestion = async (request, response) => {
 
   const return_success = (result) => {
     if (!result) {
@@ -140,6 +171,7 @@ const deleteQuestion = (request, response) => {
 module.exports = {
   createQuestion,
   getQuestions,
+  getRandomQuestion,
   updateQuestion,
   deleteQuestion,
 };

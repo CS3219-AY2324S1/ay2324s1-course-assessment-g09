@@ -19,6 +19,7 @@ app.use(cors()); // WARN: Accepts any source origin!
 
 // Main Endpoint /questions 
 app.get('/questions', questionmanager.getQuestions);
+app.get('/questions/random', questionmanager.getRandomQuestion);
 app.post('/questions', questionmanager.createQuestion);
 app.put('/questions/:qn_num', questionmanager.updateQuestion);
 app.delete('/questions/:qn_num', questionmanager.deleteQuestion);
