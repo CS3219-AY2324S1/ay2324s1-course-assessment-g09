@@ -84,21 +84,32 @@ const Question = ({
     fetchQuestions();
   };
 
+  useEffect(() => {
+    console.log(isOpen);
+  }, [isOpen]);
+
   const handleModal = (question, index) => {
-    console.log(index);
     setDescription(question.description);
     setTitle(question.title);
     setDifficulty(question.complexity);
     setCategory(question.category);
 
+    console.log(openQuestion);
     if (openQuestion === question) {
       if (isOpen) {
         onClose(); // Close the modal if it's open
       }
     } else {
+      console.log();
       setOpenQuestion(question);
       onOpen(); // Open the modal if it's closed
+      // console.log(isOpen);
     }
+  };
+
+  const handleClose = () => {
+    onClose();
+    setOpenQuestion(null);
   };
 
   const htmlContent = { __html: description };
@@ -247,7 +258,7 @@ const Question = ({
 
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleClose}
         size="5xl"
         motionPreset="slideInBottom"
       >
@@ -292,7 +303,7 @@ const Question = ({
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button colorScheme="blue" mr={3} onClick={handleClose}>
               Close
             </Button>
           </ModalFooter>
