@@ -10,14 +10,17 @@ provider:
     cors: true
   region: ap-southeast-1
   environment:
-    SERVER: peerprep-g091.ap-southeast-1.elasticbeanstalk.com
-    isDeployment: "true"
-  timeout: 30
+    SERVER: http://peerprep-g091.ap-southeast-1.elasticbeanstalk.com:3001/question
+  timeout: 60
 
 functions:
   scrapeQuestion:
+    package:
+      exclude:
+        - test/**
+        - node_modules/puppeteer/.local-chromium/**
     handler: src/serverless.handler
-    events: # Http invocatiom
+    events: # Http invocation
       - httpApi:
           method: get
           path: /scrapeQuestion/{id}
