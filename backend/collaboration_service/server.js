@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV != "production") {
+	require("dotenv").config();
+}
+
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -30,6 +34,6 @@ io.on("connection", (socket) => {
 	});
 });
 
-server.listen(8080, () => {
-	console.log("listening on PORT 8080");
+server.listen(process.env.PORT, () => {
+	console.log(`listening on PORT ${process.env.PORT}`);
 });

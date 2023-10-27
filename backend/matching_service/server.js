@@ -3,7 +3,7 @@ const { pairUser } = require("./modelController");
 const { io } = require("./socket");
 const { v4: uuidv4 } = require("uuid");
 
-amqp.connect("amqp://localhost", (err, conn) => {
+amqp.connect("amqp://rabbitmq", (err, conn) => {
 	if (err) {
 		throw err;
 	}
