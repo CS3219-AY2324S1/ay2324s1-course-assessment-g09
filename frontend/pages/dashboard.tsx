@@ -6,7 +6,7 @@ import {
   VStack,
   useColorMode,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Questions from "../components/Questions";
 import QuestionInputField from "../components/QuestionsInputField";
 import UserInputField from "../components/UserInputField";
@@ -59,7 +59,16 @@ const dashboard = () => {
     name: "",
   });
 
-  const [user, setUser] = useState("admin");
+  const [user, setUserRole] = useState("user");
+
+  useEffect(() => {
+    const login = JSON.parse(window.sessionStorage.getItem("login"));
+
+    if (login && login.isLoggedIn) {
+      setUserRole(login.role);
+    }
+
+  }, []);
 
   return (
     <Grid

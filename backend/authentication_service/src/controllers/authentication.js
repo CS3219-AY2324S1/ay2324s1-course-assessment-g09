@@ -61,11 +61,12 @@ authRouter.post('/signin', async (request, response) => {
 	// if already have token then don't return token
 	console.log("COOK", request.cookies);
 	if (request.cookies && Object.getPrototypeOf(request.cookies) !== null) {
-		jwt.verify(request.cookies.token, process.env.SECRET_KEY, function (err, decoded) {
-			if (!err) {
-				return response.status(200).send();
-			}
-		});
+		try {
+			const decoded = await jwt.verify(request.cookies.token, process.env.SECRET_KEY);
+			return response.status(200).send({ message: "lohin success" });
+		} catch (error) {
+			console.log("verify", error.message);
+		}
 	}
 
 	try {
@@ -94,7 +95,7 @@ authRouter.post('/signin', async (request, response) => {
 			secure: false,
 			httpOnly: true
 		});
-		return response.status(200).send({ message: "login success", email: myUser.email });//.json({ token: token, role: myUser.role });
+		return response.status(200).send({ message: "login success", email: myUser.email, role: myUser.role });//.json({ token: token, role: myUser.role });
 	} catch (error) {
 		if (error.response) {
 			if (error.response.status === 404) {

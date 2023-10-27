@@ -21,7 +21,7 @@ const SignUp = () => {
         if (formData.get("password") === formData.get("confirm_password") && !submitStatus) {
             setSubmitStatus(true);
             try {
-                const response = await fetch(`${IP_ADDRESS}:3004/userauth/signup`, {
+                const response = await fetch(`/auth_service/userauth/signup`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
