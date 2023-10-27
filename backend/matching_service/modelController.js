@@ -1,23 +1,42 @@
-const roomModel = require("./model").roomModel;
-
-async function createRoom(socketID, difficulty) {
-  await roomModel.create({ socketID: socketID, difficulty: difficulty });
+const userModel = require("./model").userModel;
+const { sendToQueue } = require("./publisher");
+async function createUser(difficulty, user, videoSocket, socketId) {
+	const [u, created] = await userModel.findOrCreate({
+		where: { socketId: socketId },
+		defaults: {
+			difficulty: difficulty,
+			user: user,
+			videoSocket: videoSocket,
+			socketId: socketId,
+		},
+	});
+	console.log(created);
 }
 
-async function checkRoom(socket, difficulty, io) {
-  const rooms = await roomModel.findAll({
-    where: { difficulty: difficulty },
-  });
-
-  if (rooms.length > 0) {
-    console.log("room found");
-    socket.join(socket.id);
-    io.emit("matched", rooms[0].socketID);
-    await roomModel.destroy({ where: { difficulty: difficulty } });
-  } else {
-    console.log("room not found");
-    createRoom(socket.id, difficulty);
-  }
+async function pairUser(difficulty, user, videoSocket, socketId) {
+	// console.log(difficulty, user, videoSocket);
+	await createUser(difficulty, user, videoSocket, socketId);
+	const users = await userModel.findAll({
+		where: { difficulty: difficulty },
+		order: [["createdAt", "ASC"]],
+	});
+	console.log("users", users);
+	if (users.length >= 2) {
+		const u1 = users[0].get({ plain: true });
+		const u2 = users[1].get({ plain: true });
+		const matchedInfo = {
+			u1: u1.user,
+			u2: u2.user,
+			v1: u1.videoSocket,
+			v2: u2.videoSocket,
+			s1: u1.socketId,
+			s2: u2.socketId,
+		};
+		console.log("matchedInfo", matchedInfo);
+		await userModel.destroy({ where: { id: u1.id } });
+		await userModel.destroy({ where: { id: u2.id } });
+		sendToQueue("matched_queue", JSON.stringify(matchedInfo));
+	}
 }
 
-exports.checkRoom = checkRoom;
+exports.pairUser = pairUser;

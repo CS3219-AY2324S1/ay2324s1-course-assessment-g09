@@ -10,10 +10,13 @@ import {
 import { useEffect, useState } from "react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import axios from "axios";
-import socketManager from "./Sockets/SocketManager";
-export default function MatchButton({ sendMatchedData, handleQuickStart }) {
-	const [difficulty, setDifficulty] = useState("Easy");
+import socketManager from "./Sockets/CommunicationSocketManager";
+import MatchsocketManager from "./Sockets/MatchSocketManager";
+import { useRouter } from "next/router";
 
+export default function MatchButton({ handleQuickStart }) {
+	const [difficulty, setDifficulty] = useState("Easy");
+	const router = useRouter();
 	const handleDifficultyChange = (e) => {
 		setDifficulty(e.target.value);
 		console.log(difficulty);
@@ -25,24 +28,23 @@ export default function MatchButton({ sendMatchedData, handleQuickStart }) {
 			const data = {
 				difficulty: difficulty,
 				// userId: JSON.parse(sessionStorage.getItem("login")).email,
-				userId: "test",
+				user: "test",
 				videoSocket: socketManager.getSocketId(),
 			};
-			const res = await axios
-				.post("http://localhost:1317/findMatch", data)
-				.then((res) => {
-					console.log(res.data);
-					const { matchedUser, matchedSocket, receiverVideoSocket } =
-						res.data;
-					sendMatchedData(
-						matchedSocket,
-						matchedUser,
-						receiverVideoSocket
-					);
-				});
+			MatchsocketManager.emitEvent("match", data);
 		} catch (error) {
 			console.log(error);
 		}
+		MatchsocketManager.subscribeToEvent("matched", (data) => {
+			const matchedUser = data.user;
+			const matchedVideoSocket = data.videoSocket;
+			const room = data.room;
+			console.log("matched", matchedUser, matchedVideoSocket, room);
+			socketManager.setMatchedSocketId(matchedVideoSocket);
+			MatchsocketManager.setMatchedUser(matchedUser);
+			MatchsocketManager.setMatchedRoom(room);
+			router.push("/collaboration");
+		});
 	};
 	return (
 		<Box>
