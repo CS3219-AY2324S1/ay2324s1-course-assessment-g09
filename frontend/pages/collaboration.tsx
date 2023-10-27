@@ -1,16 +1,26 @@
 "use client";
-import { Box, Flex, Grid, GridItem, HStack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Grid,
+  GridItem,
+  HStack,
+  Text,
+  useColorMode,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import CodeEditor from "../components/CodeEditor";
 import VideoCall from "../components/VideoCall";
-import MatchButton from "../components/MatchButton";
+import MatchsocketManager from "../components/Sockets/MatchSocketManager";
+import ToggleMode from "../components/ToggleMode";
 
 export default function Collaboration() {
   const router = useRouter();
-  const { matchedSocket, matchedUser, videoSocket } = router.query;
   const [questions, setQuestions] = useState([]);
-  // const [matchedSocket, setMatchedSocket] = useState(null);
+  const { colorMode, toggleColorMode } = useColorMode();
+  const room = MatchsocketManager.getMatchedRoom();
+  const matchedUser = MatchsocketManager.getMatchedUser();
   const selectedItem = {
     name: "Two Sum",
     content:
@@ -22,6 +32,9 @@ export default function Collaboration() {
   return (
     <Box>
       {/* {matchedSocket ? ( */}
+      <Flex justifyContent="flex-end" mt={2} width="100%" height="5%">
+        <ToggleMode colorMode={colorMode} toggleColorMode={toggleColorMode} />
+      </Flex>
       <Box>
         <Grid templateColumns="repeat(2, 1fr)" gap={5} h="80vh">
           <GridItem display="flex" flex="1">
@@ -35,7 +48,7 @@ export default function Collaboration() {
             </Box>
           </GridItem>
           <GridItem display="flex" flex="1">
-            <CodeEditor socketRoom={matchedSocket} matchedUser={matchedUser} />
+            <CodeEditor socketRoom={room} matchedUser={matchedUser} />
           </GridItem>
         </Grid>
       </Box>
@@ -44,4 +57,5 @@ export default function Collaboration() {
       )} */}
     </Box>
   );
+
 }

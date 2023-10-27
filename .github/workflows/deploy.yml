@@ -1,7 +1,8 @@
 name: Deployment to AWS Elastic Beanstalk
-on:
+on: 
   push:
-    branches: [ master ]
+    branches:
+      - master
 env:
   AWS_REGION : ap-southeast-1
 permissions:
