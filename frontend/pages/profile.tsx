@@ -126,23 +126,24 @@ const profile = ({ colorMode, userMode }) => {
     }
   }, [minutes]);
 
-  const handleLogout = async () => {
-    axios
-      .post(
-        `${IP_ADDRESS}:3004/userauth/signout`,
-        {},
-        { withCredentials: true }
-      )
-      .then((response) => {
-        if (response.statusText === "OK") {
-          router.push("/signin");
-          window.sessionStorage.removeItem("login");
-        }
-      })
-      .catch((error) => {
-        console.log("signout", error);
-      });
-  };
+
+	const handleLogout = async () => {
+		axios
+			.post(
+				`/auth_service/userauth/signout`,
+				{},
+				{ withCredentials: true }
+			)
+			.then((response) => {
+				if (response.statusText === "OK") {
+					router.push("/signin");
+					window.sessionStorage.removeItem("login");
+				}
+			})
+			.catch((error) => {
+				console.log("signout", error);
+			});
+	};
 
   return (
     <VStack>
@@ -229,46 +230,47 @@ const profile = ({ colorMode, userMode }) => {
               A Match has been found!
             </AlertDialogHeader>
 
-            <AlertDialogBody>
-              <Center mt={5}>
-                <CircularProgress
-                  value={timerValue}
-                  color={
-                    countdown >= 3
-                      ? colorMode == "light"
-                        ? "green.500"
-                        : "green.300"
-                      : countdown > 1
-                      ? colorMode == "light"
-                        ? "orange.500"
-                        : "orange.300"
-                      : colorMode == "light"
-                      ? "red.500"
-                      : "red.300"
-                  }
-                  size="70px"
-                >
-                  <CircularProgressLabel
-                    color={
-                      countdown >= 3
-                        ? colorMode == "light"
-                          ? "green.500"
-                          : "green.300"
-                        : countdown > 1
-                        ? colorMode == "light"
-                          ? "orange.500"
-                          : "orange.300"
-                        : colorMode == "light"
-                        ? "red.500"
-                        : "red.300"
-                    }
-                    fontWeight="semibold"
-                  >
-                    {countdown}
-                  </CircularProgressLabel>
-                </CircularProgress>
-              </Center>
-            </AlertDialogBody>
+
+						<AlertDialogBody>
+							<Center mt={5}>
+								<CircularProgress
+									value={timerValue}
+									color={
+										countdown >= 3
+											? colorMode == "light"
+												? "green.500"
+												: "green.300"
+											: countdown > 1
+												? colorMode == "light"
+													? "orange.500"
+													: "orange.300"
+												: colorMode == "light"
+													? "red.500"
+													: "red.300"
+									}
+									size="70px"
+								>
+									<CircularProgressLabel
+										color={
+											countdown >= 3
+												? colorMode == "light"
+													? "green.500"
+													: "green.300"
+												: countdown > 1
+													? colorMode == "light"
+														? "orange.500"
+														: "orange.300"
+													: colorMode == "light"
+														? "red.500"
+														: "red.300"
+										}
+										fontWeight="semibold"
+									>
+										{countdown}
+									</CircularProgressLabel>
+								</CircularProgress>
+							</Center>
+						</AlertDialogBody>
 
             <AlertDialogFooter>
               <Button colorScheme="green" onClick={onClose}>
