@@ -54,42 +54,15 @@ const QuestionInputField = ({
 
       setError(false);
       fetchQuestions();
+      setSelectedComplexity("");
     } catch (error) {
+      console.log(error);
       setError(true);
       setInputValues({
         ...inputValues,
         qn_num: "",
       });
     }
-
-    // try {
-    //   const res0 = await axios.get(`${IP_ADDRESS}:3001/questions/`, {
-    //     params: {
-    //       qn_num: inputValues.qn_num,
-    //     },
-    //   });
-    //   console.log(inputValues.qn_num, res0);
-
-    //   setError(true);
-    //   setInputValues({
-    //     ...inputValues,
-    //     qn_num: "",
-    //   });
-    // } catch (error) {
-    //   const res = await axios.post(`${IP_ADDRESS}:3001/questions`, inputValues);
-
-    //   console.log(res);
-    //   setInputValues({
-    //     qn_num: "",
-    //     title: "",
-    //     description: "",
-    //     category: "",
-    //     complexity: "",
-    //   });
-
-    //   setError(false);
-    //   fetchQuestions();
-    // }
   };
 
   const handleUpdate = async () => {
