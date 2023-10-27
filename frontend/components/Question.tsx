@@ -80,25 +80,36 @@ const Question = ({
     category,
     complexity,
   }) => {
-    await axios.delete(`${IP_ADDRESS}:3001/questions/${qn_num}`);
+    await axios.delete(`question_service/admin/questions/${qn_num}`);
     fetchQuestions();
   };
 
+  useEffect(() => {
+    console.log(isOpen);
+  }, [isOpen]);
+
   const handleModal = (question, index) => {
-    console.log(index);
     setDescription(question.description);
     setTitle(question.title);
     setDifficulty(question.complexity);
     setCategory(question.category);
 
+    console.log(openQuestion);
     if (openQuestion === question) {
       if (isOpen) {
         onClose(); // Close the modal if it's open
       }
     } else {
+      console.log();
       setOpenQuestion(question);
       onOpen(); // Open the modal if it's closed
+      // console.log(isOpen);
     }
+  };
+
+  const handleClose = () => {
+    onClose();
+    setOpenQuestion(null);
   };
 
   const htmlContent = { __html: description };
@@ -130,8 +141,8 @@ const Question = ({
                   ? "gray.300"
                   : "gray.700"
                 : colorMode == "light"
-                ? "gray.400"
-                : "gray.800"
+                  ? "gray.400"
+                  : "gray.800"
             }
           >
             <GridItem key={`grid_item_id_${question.qn_num}`} colSpan={1}>
@@ -205,8 +216,8 @@ const Question = ({
                     question.complexity == "Easy"
                       ? "green"
                       : question.complexity == "Medium"
-                      ? "orange"
-                      : "red"
+                        ? "orange"
+                        : "red"
                   }
                   fontWeight="bold"
                 >
@@ -247,7 +258,7 @@ const Question = ({
 
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleClose}
         size="5xl"
         motionPreset="slideInBottom"
       >
@@ -261,8 +272,8 @@ const Question = ({
                 String(difficulty).toLowerCase() == "easy"
                   ? "green"
                   : String(difficulty).toLowerCase() == "medium"
-                  ? "orange"
-                  : "red"
+                    ? "orange"
+                    : "red"
               }
             >
               {difficulty}
@@ -292,7 +303,7 @@ const Question = ({
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button colorScheme="blue" mr={3} onClick={handleClose}>
               Close
             </Button>
           </ModalFooter>

@@ -8,6 +8,7 @@ const express = require('express');
 const bodyparser = require('body-parser'); // Middleware
 const cors = require('cors'); // Middleware
 const questionmanager = require('./questionmanager');
+const adminQuestionRouter = require('./controllers/questionadmin');
 
 // Create an express app
 const app = express();
@@ -18,6 +19,7 @@ app.use(bodyparser.urlencoded({ extended: true })); // Parse URL-encoded body
 app.use(cors()); // WARN: Accepts any source origin!    
 
 // Main Endpoint /questions 
+app.use('/admin/questions', adminQuestionRouter);
 app.get('/questions', questionmanager.getQuestions);
 app.get('/questions/random', questionmanager.getRandomQuestion);
 app.post('/questions', questionmanager.createQuestion);
