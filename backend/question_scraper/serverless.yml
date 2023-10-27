@@ -10,7 +10,7 @@ provider:
     cors: true
   region: ap-southeast-1
   environment:
-    SERVER: http://peerprep-g091.ap-southeast-1.elasticbeanstalk.com:3001/question
+    SERVER: http://peerprep-g091.ap-southeast-1.elasticbeanstalk.com:3001/questions
   timeout: 60
 
 functions:
@@ -22,5 +22,5 @@ functions:
     handler: src/serverless.handler
     events: # Http invocation
       - httpApi:
-          method: get
+          method: post
           path: /scrapeQuestion/{id}

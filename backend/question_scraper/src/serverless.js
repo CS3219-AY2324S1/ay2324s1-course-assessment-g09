@@ -6,7 +6,6 @@ module.exports.handler = async (event) => {
     if (isNaN(questionId)) {
       throw new Error('Question Number must be an integer.');
     };
-    
     const questionTitle = await scraper.scrape(questionId);
     const msg = `Question '${questionTitle}' Successfully Scraped and Pushed to Question Service`;
     const response = {
