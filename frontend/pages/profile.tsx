@@ -126,10 +126,10 @@ const profile = ({ colorMode }) => {
 		}
 	}, [minutes]);
 
-  const handleLogout = async () => {
+	const handleLogout = async () => {
 		axios
 			.post(
-				`${IP_ADDRESS}:3004/userauth/signout`,
+				`/auth_service/userauth/signout`,
 				{},
 				{ withCredentials: true }
 			)
@@ -239,12 +239,12 @@ const profile = ({ colorMode }) => {
 												? "green.500"
 												: "green.300"
 											: countdown > 1
-											? colorMode == "light"
-												? "orange.500"
-												: "orange.300"
-											: colorMode == "light"
-											? "red.500"
-											: "red.300"
+												? colorMode == "light"
+													? "orange.500"
+													: "orange.300"
+												: colorMode == "light"
+													? "red.500"
+													: "red.300"
 									}
 									size="70px"
 								>
@@ -255,12 +255,12 @@ const profile = ({ colorMode }) => {
 													? "green.500"
 													: "green.300"
 												: countdown > 1
-												? colorMode == "light"
-													? "orange.500"
-													: "orange.300"
-												: colorMode == "light"
-												? "red.500"
-												: "red.300"
+													? colorMode == "light"
+														? "orange.500"
+														: "orange.300"
+													: colorMode == "light"
+														? "red.500"
+														: "red.300"
 										}
 										fontWeight="semibold"
 									>
