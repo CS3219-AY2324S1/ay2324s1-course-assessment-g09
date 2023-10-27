@@ -156,7 +156,6 @@ export default function CodeEditor({ socketRoom, matchedUser }) {
 						theme={theme}
 						language={language}
 						difficulty={"Easy"}
-						matchedUser={matchedUser}
 					/>
 					{/* <Button
 						onClick={() =>
