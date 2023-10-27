@@ -2,6 +2,7 @@ const amqp = require("amqplib/callback_api");
 const { pairUser } = require("./modelController");
 const { io } = require("./socket");
 const { v4: uuidv4 } = require("uuid");
+
 amqp.connect("amqp://localhost", (err, conn) => {
 	if (err) {
 		throw err;
@@ -23,6 +24,7 @@ amqp.connect("amqp://localhost", (err, conn) => {
 			{ noAck: true }
 		);
 	});
+
 	conn.createChannel((err, ch) => {
 		if (err) {
 			throw err;

@@ -40,6 +40,7 @@ const createQuestion = (request, response) => {
     return response.status(200).json(msg);
   };
   const handle_error = (err) => {
+    //Primarily to catch Duplicate Question Number
     const msg = {'msg': err.message, 'qn_num': null};
     return response.status(500).json(msg);
   }; 
