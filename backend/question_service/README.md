@@ -54,7 +54,25 @@ HTTP Body (optional): {
     "qns": [{..}, {..}, ...]}
 ```
 
-3. Update a Question
+3. Read a Random Question
+
+Reads a Random Question from all Questions and its components. 
+
+Note: You may filter questions by one or more components of a Question in the HTTP Request. Question Name, Title, Description, Category and Complexity can be specified as filters.
+
+```
+GET http://<domain>:3001/questions/random
+HTTP Body (optional): {
+    "category": "Array",
+    "complexity": "Easy"
+}
+
+=> Return Value: {
+    "msg": "X questions retrieved.",
+    "qns": [{..}, {..}, ...]}
+```
+
+4. Update a Question
 
 Update the Question of a specific Question Number.
 
@@ -72,7 +90,7 @@ HTTP Body: {
 }
 ```
 
-4. Delete a Question.
+5. Delete a Question.
 
 Delete a specific Question.
 
