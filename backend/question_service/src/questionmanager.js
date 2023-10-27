@@ -2,10 +2,25 @@ const {Question, Attributes} = require('./connectdb');
 
 const isCorrectSchema = (inputJSON) => Object.keys(inputJSON).every(key => key in Attributes);  
 
+const random = (arr, n) => {
+  var result = new Array(n),
+      len = arr.length,
+      taken = new Array(len);
+  if (n > len)
+      return arr;
+  while (n--) {
+      var x = Math.floor(Math.random() * len);
+      result[n] = arr[x in taken ? taken[x] : x];
+      taken[x] = --len in taken ? taken[len] : len;
+  }
+
+  return result.sort((a,b) => a.qn_num - b.qn_num);
+}
+
 const getQuestions = async (request, response) => {
   // Get questions. Users could filter by category, complexity, etc.
 
-  const return_success = (result) => {
+  const return_success = result => {
     const numQns = result.length;
     const msg = {'msg': `${numQns} questions retrieved.`, 'qns': result};
     return response.status(200).json(msg);
@@ -15,12 +30,20 @@ const getQuestions = async (request, response) => {
     return response.status(500).json(msg);
   };
 
+  // 1. Check valid Schema.
+  const isNumQnInvalid = request.params.num_qn && isNaN(parseInt(request.params.num_qn));
+  if (isNumQnInvalid) {
+    const msg = {'msg': 'Question Number must be an integer.', 'qn_num': null};
+    return response.status(400).json(msg);
+  };
+  const num_qn = parseInt(request.params.num_qn);
+
   if (!isCorrectSchema(request.body)) {
     const msg = {'msg': 'Incorrect schema. Please ensure that the fields are spelled correctly.', 'qns': null};
     return response.status(400).json(msg);
   }
-  const isQnNumInvalid = ('qn_num' in request.body) && isNaN(parseInt(request.body['qn_num']));
-  if (isQnNumInvalid) {
+  const isQnNumInvalid_Body = ('qn_num' in request.body) && isNaN(parseInt(request.body['qn_num']));
+  if (isQnNumInvalid_Body) {
     const msg = {'msg': 'Question Number must be an integer.', 'qns': null};
     return response.status(400).json(msg);
   };
@@ -28,6 +51,7 @@ const getQuestions = async (request, response) => {
     request.body['qn_num'] = parseInt(request.body['qn_num']);
   }
   return Question.find(request.body)
+                  .then(data => isNaN(num_qn) ? data : random(data, num_qn))
                   .then(return_success)
                   .catch(handle_error);
 }
