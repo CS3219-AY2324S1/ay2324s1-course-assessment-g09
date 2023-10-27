@@ -57,4 +57,5 @@ export default function Collaboration() {
       )} */}
     </Box>
   );
+
 }
