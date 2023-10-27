@@ -21,7 +21,6 @@ export default function Collaboration() {
 
 	return (
 		<Box>
-			{/* {matchedSocket ? ( */}
 			<Box>
 				<Grid templateColumns="repeat(2, 1fr)" gap={5} h="80vh">
 					<GridItem display="flex" flex="1">
@@ -42,9 +41,6 @@ export default function Collaboration() {
 					</GridItem>
 				</Grid>
 			</Box>
-			{/* ) : (
-        <MatchButton sendMatchedSocket={receiveMatchedSocket} />
-      )} */}
 		</Box>
 	);
 }

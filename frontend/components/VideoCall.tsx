@@ -33,8 +33,6 @@ export default function VideoCall() {
 				audio: true,
 			});
 			setcallerStream(callerStream);
-			// callerVideo.current.srcObject = callerStream;
-			// console.log(callerVideo.current.srcObject);
 		} catch (err) {
 			console.log(err);
 		}
