@@ -126,7 +126,7 @@ const profile = ({ colorMode }) => {
 		}
 	}, [minutes]);
 
-	const handleLogout = async () => {
+  const handleLogout = async () => {
 		axios
 			.post(
 				`${IP_ADDRESS}:3004/userauth/signout`,
