@@ -1,12 +1,12 @@
 # Question Scraper
 
-This Serverless Function scrapes 1 question from Leetcode to insert into the deployed Question Service.
+This Serverless Function scrapes a question from Leetcode to insert into the deployed Question Service.
 
-HTTP Status 200 means the operation completed successfully. Or else, other HTTP Statuses mean the operation faced some error.
+HTTP Status 200 means the operation completed successfully. Or else, HTTP Status 500 mean the operation faced some error.
 
 ## How to use?
 
-POST https://ile08ybrn8.execute-api.ap-southeast-1.amazonaws.com/scrapeQuestion/<question_num>
+POST https://30dfcbhob1.execute-api.ap-southeast-1.amazonaws.com/scrapeQuestion/<question_num>
 
 Question Scraper will scrape the Leetcode question belonging to this <question_num>.
 
@@ -18,8 +18,8 @@ For example. <question_num> of 1 represents "1. Two Sum".
 
 1. ```serverless login```: Connect to AWS account and Serverless Dashboard. 
 2. ```npm install```: Install dependencies
-2. ```serverless invoke local --function scrapeQuestion```: Test the Serverless Function locally. Remember to switch to the local version of Puppeteer.
-3. ```serverless remove --stage dev --region ap-southeast-1```: Deploy the Serverless Function to AWS Lambda. Avoid changing the 'stage' and 'region', as it may initialise additional resources and incur more $$.
+2. ```serverless invoke local --function scrapeQuestion```: Test the Serverless Function locally. Note: Remember to switch to the local version of Puppeteer.
+3. ```serverless deploy --stage dev --region ap-southeast-1```: Deploy the Serverless Function to AWS Lambda. Avoid changing the 'stage' and 'region', as it may initialise additional resources and incur more $$.
 
 After running deploy, you should see output similar to:
 
@@ -31,7 +31,7 @@ Deploying question-scraper to stage development (ap-southeast-1)
 ✔ Service deployed to stack question-scraper-development (92s)
 
 dashboard: ***
-endpoint: GET - https://ile08ybrn8.execute-api.ap-southeast-1.amazonaws.com/scrapeQuestion/{id}
+endpoint: POST - https://30dfcbhob1.execute-api.ap-southeast-1.amazonaws.com/scrapeQuestion/<question_num>
 functions:
   scrapeQuestion: question-scraper-development-scrapeQuestion (70 MB)
 ```

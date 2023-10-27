@@ -1,18 +1,20 @@
 const Sequelize = require("sequelize");
 
-const sequelize = new Sequelize({
-    dialect: "sqlite",
-    Storage:":memory:"
+const db = new Sequelize({
+	dialect: "sqlite",
+	Storage: ":memory:",
+	logging: false,
 });
 
 const checkConnection = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log("Connection has been established successfully.");
-    } catch (error) {
-        console.error("Unable to connect to the database:", error.message);
-    }
+	try {
+		await db.authenticate();
+		console.log("Connection has been established successfully.");
+	} catch (error) {
+		console.error("Unable to connect to the database:", error.message);
+	}
 };
 checkConnection();
 
-exports.sequelize = sequelize;
+exports.db = db;
+exports.Sequelize = Sequelize;

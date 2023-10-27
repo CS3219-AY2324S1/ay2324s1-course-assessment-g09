@@ -1,5 +1,6 @@
-**/.env
 **/node_modules
 **/data
 backend/user_service/.env-local
 /auth_dev
+backend/authentication_service/.env
+backend/history_service/.env
