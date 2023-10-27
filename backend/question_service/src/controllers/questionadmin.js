@@ -1,12 +1,12 @@
 const express = require('express');
-const { Question, Attributes } = require('./connectdb');
+const { Question, Attributes } = require('../connectdb');
 
 const isCorrectSchema = (inputJSON) => Object.keys(inputJSON).every(key => key in Attributes);
 
 const adminQuestionRouter = express.Router();
 
 // PATH: /admin/questions/getall
-adminQuestionRouter.get('/getall', async (request, response) => {
+adminQuestionRouter.get('/', async (request, response) => {
     // Get questions. Users could filter by category, complexity, etc.
 
     const return_success = (result) => {
