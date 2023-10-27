@@ -17,11 +17,17 @@ app.use(bodyparser.json()); // Parse JSON body
 app.use(bodyparser.urlencoded({ extended: true })); // Parse URL-encoded body
 // Configure CORS for future security configs.
 app.use(cors()); // WARN: Accepts any source origin!    
+app.use((request, response, next) => {
+    if (request.params.qn_num) { request.params.qn_num = parseInt(request.params.qn_num); }
+    if (request.body.qn_num) { request.body.qn_num = parseInt(request.body.qn_num); }
+    //if (request.body.category) { request.body.category = (request.body.category).split(','); }
+    next();
+});
 
 // Main Endpoint /questions 
 app.use('/admin/questions', adminQuestionRouter);
 app.get('/questions', questionmanager.getQuestions);
-app.get('/questions/:num_qn', questionmanager.getQuestions);
+app.get('/questions/:qn_num', questionmanager.getQuestions);
 app.post('/questions', questionmanager.createQuestion);
 app.put('/questions/:qn_num', questionmanager.updateQuestion);
 app.delete('/questions/:qn_num', questionmanager.deleteQuestion);

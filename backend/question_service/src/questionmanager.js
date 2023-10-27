@@ -1,6 +1,13 @@
-const { Question, Attributes } = require('./connectdb');
+const { Question, Attributes, Category, Complexity } = require('./connectdb');
 
-const isCorrectSchema = (inputJSON) => Object.keys(inputJSON).every(key => key in Attributes);
+const isCorrectSchema = request => {
+  const checkQnNumParams = request.params.qn_num ? !isNaN(request.params.qn_num) : true;
+  const checkKeySchema = Object.keys(request.body).every(key => key in Attributes);
+  const checkQnNumBody = request.body.qn_num ? !isNaN(request.body.qn_num) : true;
+  const checkCategoryEnum = request.body.category ? (request.body.category).every(category => Category.includes(category)) : true;
+  const checkComplexityEnum = request.body.complexity ? Complexity.includes(request.body.complexity) : true;
+  return checkQnNumParams && checkKeySchema && checkQnNumBody && checkCategoryEnum && checkComplexityEnum;
+};
 
 const random = (arr, n) => {
   var result = new Array(n),
@@ -13,7 +20,6 @@ const random = (arr, n) => {
       result[n] = arr[x in taken ? taken[x] : x];
       taken[x] = --len in taken ? taken[len] : len;
   }
-
   return result.sort((a,b) => a.qn_num - b.qn_num);
 }
 
@@ -31,61 +37,15 @@ const getQuestions = async (request, response) => {
   };
 
   // 1. Check valid Schema.
-  const isNumQnInvalid = request.params.num_qn && isNaN(parseInt(request.params.num_qn));
-  if (isNumQnInvalid) {
-    const msg = {'msg': 'Question Number must be an integer.', 'qn_num': null};
-    return response.status(400).json(msg);
-  };
-  const num_qn = parseInt(request.params.num_qn);
-
-  if (!isCorrectSchema(request.body)) {
+  if (!isCorrectSchema(request)) {
     const msg = { 'msg': 'Incorrect schema. Please ensure that the fields are spelled correctly.', 'qns': null };
     return response.status(400).json(msg);
   }
-  const isQnNumInvalid_Body = ('qn_num' in request.body) && isNaN(parseInt(request.body['qn_num']));
-  if (isQnNumInvalid_Body) {
-    const msg = {'msg': 'Question Number must be an integer.', 'qns': null};
-    return response.status(400).json(msg);
-  };
-  if ('qn_num' in request.body) {
-    request.body['qn_num'] = parseInt(request.body['qn_num']);
-  }
   return Question.find(request.body)
-                  .then(data => isNaN(num_qn) ? data : random(data, num_qn))
+                  .then(data => request.params.qn_num ? random(data, request.params.qn_num) : data)
                   .then(return_success)
                   .catch(handle_error);
 }
-
-const getRandomQuestion = async (request, response) => {
-  // Get questions. Users could filter by category, complexity, etc.
-
-  const random = items => items[Math.floor(Math.random() * items.length)];
-  const return_success = (result) => {
-    const question = random(result);
-    const msg = { 'msg': `Questions retrieved.`, 'qn': question };
-    return response.status(200).json(msg);
-  };
-  const handle_error = (err) => {
-    const msg = { 'msg': err.message, 'qn': null };
-    return response.status(500).json(msg);
-  };
-
-  if (!isCorrectSchema(request.body)) {
-    const msg = { 'msg': 'Incorrect schema. Please ensure that the fields are spelled correctly.', 'qn': null };
-    return response.status(400).json(msg);
-  }
-  const isQnNumInvalid = ('qn_num' in request.body) && isNaN(parseInt(request.body['qn_num']));
-  if (isQnNumInvalid) {
-    const msg = { 'msg': 'Question Number must be an integer.', 'qn': null };
-    return response.status(400).json(msg);
-  };
-  if ('qn_num' in request.body) {
-    request.body['qn_num'] = parseInt(request.body['qn_num']);
-  }
-  return Question.find(request.body)
-    .then(return_success)
-    .catch(handle_error);
-};
 
 const createQuestion = async (request, response) => {
   // Create questions from given details.
@@ -100,33 +60,29 @@ const createQuestion = async (request, response) => {
     return response.status(500).json(msg);
   };
 
-  const { title, description, category, complexity } = request.body; //Extract attribs from request.
-  const isAttributePresent = request.body.qn_num && title && description && category && complexity;
+  const { qn_num, title, description, category, complexity } = request.body; //Extract attribs from request.
+  const isAttributePresent = qn_num && title && description && category && complexity;
   if (!isAttributePresent) {
     const msg = { 'msg': `All fields must be filled.`, 'qn_num': null };
     return response.status(400).json(msg);
   }
-  const isQnNumInvalid = ('qn_num' in request.body) && isNaN(parseInt(request.body.qn_num));
-  if (isQnNumInvalid) {
-    const msg = { 'msg': 'Question Number must be an integer.', 'qn_num': null };
+  if (!isCorrectSchema(request)) {
+    const msg = { 'msg': 'Incorrect schema. Please ensure that the fields are spelled correctly.', 'qns': null };
     return response.status(400).json(msg);
-  };
-  const qn_num = parseInt(request.body.qn_num);
-  const new_qn = { qn_num, title, description, category, complexity };
-  return Question.create(new_qn)
-    .then(return_success)
-    .catch(handle_error);
+  }
+  return Question.create(request.body)
+                  .then(return_success)
+                  .catch(handle_error);
 };
 
 const updateQuestion = async (request, response) => {
   // Update questions from given details. Users could update any field(s).
-
   const return_success = (result) => {
     if (!result) {
-      const msg = { 'msg': `Question ${qn_num} does not exist.`, 'qn_num': null };
+      const msg = { 'msg': `Question ${ request.params.qn_num } does not exist.`, 'qn_num': null };
       return response.status(404).json(msg);
     } else {
-      const msg = { 'msg': 'Question updated.', 'qn_num': qn_num };
+      const msg = { 'msg': 'Question updated.', 'qn_num': request.params.qn_num };
       return response.status(200).json(msg);
     }
   };
@@ -135,29 +91,11 @@ const updateQuestion = async (request, response) => {
     return response.status(500).json(msg);
   };
 
-  // 1. Check valid Schema.
-  const isQnNumInvalid = isNaN(parseInt(request.params.qn_num));
-  if (isQnNumInvalid) {
-    const msg = { 'msg': 'Question Number must be an integer.', 'qn_num': null };
-    return response.status(400).json(msg);
-  };
-  const qn_num = parseInt(request.params.qn_num);
-
-  if (!isCorrectSchema(request.body)) {
+  if (!isCorrectSchema(request)) {
     const msg = { 'msg': 'Incorrect schema. Please ensure that all fields are valid.', 'qns': null };
     return response.status(400).json(msg);
   }
-  // 2. Parse Question Number as integer
-  const isQnNumInvalid_Body = ('qn_num' in request.body) && isNaN(parseInt(request.body.qn_num));
-  if (isQnNumInvalid_Body) {
-    const msg = { 'msg': 'Question Number must be an integer.', 'qn_num': null };
-    return response.status(400).json(msg);
-  };
-  if ('qn_num' in request.body) {
-    request.body['qn_num'] = parseInt(request.body['qn_num']);
-  }
-  // 3. Update Questions
-  return Question.findOneAndUpdate({ "qn_num": qn_num }, request.body)
+  return Question.findOneAndUpdate({'qn_num': request.params.qn_num }, request.body)
     .then(return_success)
     .catch(handle_error);
 }
@@ -166,10 +104,10 @@ const deleteQuestion = async (request, response) => {
 
   const return_success = (result) => {
     if (!result) {
-      const msg = { 'msg': `Question with qn_num ${qn_num} does not exist.`, 'qn_num': null };
+      const msg = { 'msg': `Question with qn_num ${ request.params.qn_num } does not exist.`, 'qn_num': null };
       return response.status(404).json(msg);
     } else {
-      const msg = { 'msg': 'Question deleted.', 'qn_num': qn_num };
+      const msg = { 'msg': 'Question deleted.', 'qn_num': request.params.qn_num };
       return response.status(200).json(msg);
     }
   };
@@ -180,14 +118,12 @@ const deleteQuestion = async (request, response) => {
 
   // Delete questions from given question number.
   // 1. Check valid Schema.
-  const isQnNumInvalid = isNaN(parseInt(request.params.qn_num));
-  if (isQnNumInvalid) {
-    const msg = { 'msg': 'Question Number must be an integer.', 'qn_num': null };
+  if (!isCorrectSchema(request)) {
+    const msg = { 'msg': 'Incorrect schema. Please ensure that all fields are valid.', 'qns': null };
     return response.status(400).json(msg);
-  };
-  const qn_num = parseInt(request.params.qn_num);
+  }
   //1. Delete questions.
-  return Question.findOneAndDelete({ "qn_num": qn_num })
+  return Question.findOneAndDelete({ 'qn_num': request.params.qn_num })
     .then(return_success)
     .catch(handle_error);
 };
@@ -195,7 +131,6 @@ const deleteQuestion = async (request, response) => {
 module.exports = {
   createQuestion,
   getQuestions,
-  getRandomQuestion,
   updateQuestion,
   deleteQuestion,
 };
