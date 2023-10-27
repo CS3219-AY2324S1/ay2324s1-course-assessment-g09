@@ -22,7 +22,7 @@ const dashboard = () => {
   const [questions, setQuestions] = useState(null);
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get(`${IP_ADDRESS}:3001/questions`);
+      const res = await axios.get(`question_service/questions`);
 
       setQuestions(res.data.qns);
     } catch (error) {
