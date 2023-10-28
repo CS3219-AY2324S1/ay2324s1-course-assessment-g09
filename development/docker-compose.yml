@@ -21,7 +21,7 @@ services:
 
   user-service:
     container_name: user-service_auth_dev
-    image: user-service-img
+    image: wkdouze/user-service-img
     environment:
       # To hide
       RESTAPI_PORT: 3002
@@ -40,34 +40,26 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--no-verbose",
-          "--tries=1",
-          "--spider",
-          "http://localhost:3002/users/getall",
-          "||",
-          "exit",
-          "1"
-        ]
-      interval: 60s
+      test: curl --fail http://localhost:3002/users/getUser || exit 1
+      interval: 10s
       retries: 5
-      start_period: 20s
-      timeout: 10s
+      start_period: 30s
+      timeout: 40s
   gateway:
     container_name: apigateway_auth_dev
-    image: apigateway-img
+    image: wkdouze/apigateway-img
     restart: always
     build:
       context: ../gateway/
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-  auth_service:
+    depends_on:
+      user-service:
+        condition: service_healthy
+  auth-service:
     container_name: auth_service_auth_dev
-    image: auth-service-img
+    image: wkdouze/auth-service-img
     restart: always
     build:
       context: ../backend/authentication_service/
@@ -96,7 +88,7 @@ services:
 
   question-service:
     container_name: question-service
-    image: question-service-img
+    image: wkdouze/question-service-img
     environment:
       RESTAPI_PORT: 3001
       DB_SERVER: mongodb://mongo:27017
@@ -121,7 +113,21 @@ services:
       timeout: 10s
       retries: 5
       start_period: 40s
+  frontend:
+    container_name: frontend
+    image: wkdouze/frontend-img
+    restart: always
+    environment:
+      NEXT_PUBLIC_IP_ADDRESS: http://localhost
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3005:3005"
+
 volumes:
   # Persistent data
   postgres-db:
   mongo-db:
+
+
