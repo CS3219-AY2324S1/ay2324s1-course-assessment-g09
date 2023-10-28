@@ -19,7 +19,7 @@ authRouter.post("/signup", async (request, response) => {
 	try {
 		const body = request.body;
 		console.log(body);
-		const { email, username, password, role } = userSchema.parse(body);
+		const { email, name, username, password, role } = userSchema.parse(body);
 
 		const pwHash = await bcrypt.hash(password, 6);
 
@@ -27,6 +27,7 @@ authRouter.post("/signup", async (request, response) => {
 			`http://${user_service}/users/createUser`,
 			{
 				email: email,
+				name: name,
 				username: username,
 				password: pwHash,
 				role: role,

@@ -36,6 +36,7 @@ const initialiseDB = () => {
             "id" SERIAL NOT NULL,
             "email" TEXT NOT NULL,
             "username" TEXT,
+            "name" TEXT,
             "role" TEXT NOT NULL,
             "password" TEXT NOT NULL,
             "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -60,8 +61,8 @@ const initialiseDB = () => {
         }
         console.log(`Initialisation: Initialised Users table.`);
         if (process.env.NODE_ENV != "production") {
-            const values = ["admin@peerprep.com", "admin", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"];
-            const adminQuery = `INSERT INTO ${userAccountTable} (email, username, role, password) VALUES ($1, $2, $3, $4);`;
+            const values = ["admin@peerprep.com", "admin", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"];
+            const adminQuery = `INSERT INTO ${userAccountTable} (email, username, name, role, password) VALUES ($1, $2, $3, $4, $5);`;
             db.query(adminQuery, values, (error, results) => {
                 if (error) {
                     console.log('Initialisation: Error initialising Admin account.');
