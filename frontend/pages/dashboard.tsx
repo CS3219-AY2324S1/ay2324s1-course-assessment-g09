@@ -15,6 +15,7 @@ import History from "../components/History";
 import Profile from "./profile";
 import QuestionProgress from "./questionProgress";
 import axios from "axios";
+import QuestionsComponent from "../components/QuestionsComponent";
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
@@ -114,26 +115,16 @@ const dashboard = () => {
               fetchQuestions={fetchQuestions}
             />
           ) : (
-            <>
-              <QuestionInputField
-                inputValues={questionInputValues}
-                setInputValues={setQuestionInputValues}
-                isCreate={isCreateQuestion}
-                setIsCreate={setIsCreateQuestion}
-                colorMode={colorMode}
-                setQuestions={setQuestions}
-              />
-              <Questions
-                inputValues={questionInputValues}
-                setInputValues={setQuestionInputValues}
-                isCreate={isCreateQuestion}
-                setIsCreate={setIsCreateQuestion}
-                colorMode={colorMode}
-                userMode={user}
-                questions={questions}
-                fetchQuestions={fetchQuestions}
-              />
-            </>
+            <QuestionsComponent
+              questionInputValues={questionInputValues}
+              setQuestionInputValues={setQuestionInputValues}
+              isCreateQuestion={isCreateQuestion}
+              setIsCreateQuestion={setIsCreateQuestion}
+              setQuestions={setQuestions}
+              user={user}
+              questions={questions}
+              fetchQuestions={fetchQuestions}
+            />
           )}
         </VStack>
       </GridItem>
