@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Question from "./Question";
 import questionStr from "../stores/questionsStore";
 import { Box, Flex } from "@chakra-ui/react";
@@ -14,9 +14,15 @@ const Questions = ({
   questions,
   fetchQuestions,
 }) => {
+  const [complexity, setComplexity] = useState("");
+
   return (
     <Box width="100%" height="100%">
-      <QuestionsHeader userMode={userMode} />
+      <QuestionsHeader
+        userMode={userMode}
+        complexity={complexity}
+        setComplexity={setComplexity}
+      />
       {/* <div style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}> */}
       <Question
         inputValues={inputValues}
@@ -27,6 +33,7 @@ const Questions = ({
         userMode={userMode}
         questions={questions}
         fetchQuestions={fetchQuestions}
+        selectedComplexity={complexity}
       />
       {/* </div> */}
     </Box>

@@ -32,6 +32,7 @@ const Question = ({
   userMode,
   questions,
   fetchQuestions,
+  selectedComplexity,
 }) => {
   // const [questions, setQuestions] = useState(null);
   const [description, setDescription] = useState(null);
@@ -128,7 +129,8 @@ const Question = ({
         },
       }}
     >
-      {questions &&
+      {selectedComplexity == "" &&
+        questions &&
         questions.map((question, index) => (
           <Grid
             templateColumns={
@@ -141,8 +143,8 @@ const Question = ({
                   ? "gray.300"
                   : "gray.700"
                 : colorMode == "light"
-                  ? "gray.400"
-                  : "gray.800"
+                ? "gray.400"
+                : "gray.800"
             }
           >
             <GridItem key={`grid_item_id_${question.qn_num}`} colSpan={1}>
@@ -216,8 +218,8 @@ const Question = ({
                     question.complexity == "Easy"
                       ? "green"
                       : question.complexity == "Medium"
-                        ? "orange"
-                        : "red"
+                      ? "orange"
+                      : "red"
                   }
                   fontWeight="bold"
                 >
@@ -256,6 +258,141 @@ const Question = ({
           </Grid>
         ))}
 
+      {selectedComplexity != "" &&
+        questions &&
+        questions
+          .filter((qns) => qns.complexity == selectedComplexity)
+          .map((question, index) => (
+            <Grid
+              templateColumns={
+                userMode == "admin" ? "repeat(13, 1fr)" : "repeat(11, 1fr)"
+              }
+              key={`grid_${question.qn_num}`}
+              backgroundColor={
+                index % 2 === 0
+                  ? colorMode == "light"
+                    ? "gray.300"
+                    : "gray.700"
+                  : colorMode == "light"
+                  ? "gray.400"
+                  : "gray.800"
+              }
+            >
+              <GridItem key={`grid_item_id_${question.qn_num}`} colSpan={1}>
+                <Flex
+                  justifyContent="flex-start"
+                  alignItems="center"
+                  height="100%"
+                  key={`flex_id_${question.qn_num}`}
+                  fontSize={{ lg: "md", xl: "md", "2xl": "lg" }}
+                  pl={2}
+                >
+                  {question.qn_num}
+                </Flex>
+              </GridItem>
+              <GridItem
+                key={`grid_item_title${question.title}`}
+                onClick={() => handleModal(question, index)}
+                colSpan={4}
+              >
+                <Flex
+                  justifyContent="flex-start"
+                  pl={2}
+                  alignItems="center"
+                  height="100%"
+                  key={`flex_title_${question.title}`}
+                >
+                  <Text
+                    _hover={{
+                      color: colorMode == "light" ? "teal.500" : "teal.300",
+                      fontWeight: "extrabold",
+                      cursor: "pointer",
+                    }}
+                    fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
+                    fontWeight="semibold"
+                    my={2}
+                  >
+                    {question.title}
+                  </Text>
+                </Flex>
+              </GridItem>
+              <GridItem
+                key={`grid_item_category_${question.category}`}
+                colSpan={4}
+              >
+                <Flex
+                  justifyContent="flex-start"
+                  pl={2}
+                  alignItems="center"
+                  height="100%"
+                  key={`flex_category_${question.category}`}
+                  fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
+                >
+                  {question.category}
+                </Flex>
+              </GridItem>
+              <GridItem
+                key={`grid_item_complexity_${question.complexity}`}
+                colSpan={2}
+              >
+                <Flex
+                  justifyContent="flex-start"
+                  pl={2}
+                  alignItems="center"
+                  height="100%"
+                  key={`flex_complexity_${question.complexity}`}
+                  fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
+                >
+                  <Badge
+                    variant="outline"
+                    colorScheme={
+                      question.complexity == "Easy"
+                        ? "green"
+                        : question.complexity == "Medium"
+                        ? "orange"
+                        : "red"
+                    }
+                    fontWeight="bold"
+                  >
+                    {question.complexity}
+                  </Badge>
+                </Flex>
+              </GridItem>
+              {userMode == "admin" && (
+                <GridItem colSpan={2}>
+                  <Flex
+                    justifyContent="center"
+                    alignItems="center"
+                    height="100%"
+                  >
+                    <Button
+                      size="sm"
+                      my={1}
+                      bgColor={
+                        colorMode === "light" ? "purple.100" : "purple.200"
+                      }
+                      color="black"
+                      mx={1}
+                      onClick={() => handleEdit(question)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      my={1}
+                      bgColor={colorMode === "light" ? "pink.200" : "pink.300"}
+                      color="black"
+                      mx={1}
+                      onClick={() => deleteQuestion(question)}
+                    >
+                      Delete
+                    </Button>
+                  </Flex>
+                </GridItem>
+              )}
+            </Grid>
+          ))}
+
       <Modal
         isOpen={isOpen}
         onClose={handleClose}
@@ -272,8 +409,8 @@ const Question = ({
                 String(difficulty).toLowerCase() == "easy"
                   ? "green"
                   : String(difficulty).toLowerCase() == "medium"
-                    ? "orange"
-                    : "red"
+                  ? "orange"
+                  : "red"
               }
             >
               {difficulty}

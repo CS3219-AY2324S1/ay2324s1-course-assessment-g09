@@ -1,7 +1,40 @@
-import { Grid, GridItem, Flex, Text } from "@chakra-ui/react";
-import React from "react";
+import {
+  Grid,
+  GridItem,
+  Flex,
+  Text,
+  Icon,
+  Menu,
+  Box,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  useColorMode,
+} from "@chakra-ui/react";
+import React, { useState } from "react";
+import { BsFilter } from "react-icons/bs";
+const QuestionsHeader = ({ userMode, complexity, setComplexity }) => {
+  const { colorMode } = useColorMode();
 
-const QuestionsHeader = ({ userMode }) => {
+  const handleChangeComplexity = (chosenComplexity) => {
+    setComplexity(chosenComplexity);
+  };
+
+  const complexityColor = {
+    Easy: {
+      light: "grren.500",
+      dark: "green.300",
+    },
+    Medium: {
+      light: "orange.500",
+      dark: "orange.300",
+    },
+    Hard: {
+      light: "red.500",
+      dark: "red.300",
+    },
+  };
+
   return (
     <Grid
       templateColumns={
@@ -32,10 +65,52 @@ const QuestionsHeader = ({ userMode }) => {
         </Flex>
       </GridItem>
       <GridItem borderBottom="1px solid" colSpan={2}>
-        <Flex justifyContent="flex-start">
-          <Text fontWeight="bold" pl={2} pb={1}>
-            Complexity
+        <Flex justifyContent="flex-start" alignItems="center">
+          <Text
+            fontWeight="bold"
+            pl={2}
+            pb={1}
+            textColor={complexity && complexityColor[complexity][colorMode]}
+          >
+            Complexity {complexity}
           </Text>
+          <Menu>
+            <MenuButton as={Box}>
+              <Icon as={BsFilter} boxSize="20px" ml={2} />
+            </MenuButton>
+            <MenuList>
+              <MenuItem
+                fontWeight="semibold"
+                onClick={() => handleChangeComplexity("")}
+              >
+                None
+              </MenuItem>
+              <MenuItem
+                // textColor={colorMode == "light" ? "green.500" : "green.300"}
+                textColor={complexityColor["Easy"][colorMode]}
+                fontWeight="semibold"
+                onClick={() => handleChangeComplexity("Easy")}
+              >
+                Easy
+              </MenuItem>
+              <MenuItem
+                // textColor={colorMode == "light" ? "orange.500" : "orange.300"}
+                textColor={complexityColor["Medium"][colorMode]}
+                fontWeight="semibold"
+                onClick={() => handleChangeComplexity("Medium")}
+              >
+                Medium
+              </MenuItem>
+              <MenuItem
+                // textColor={colorMode == "light" ? "red.500" : "red.300"}
+                textColor={complexityColor["Hard"][colorMode]}
+                fontWeight="semibold"
+                onClick={() => handleChangeComplexity("Hard")}
+              >
+                Hard
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </Flex>
       </GridItem>
       {userMode == "admin" && (
@@ -52,3 +127,34 @@ const QuestionsHeader = ({ userMode }) => {
 };
 
 export default QuestionsHeader;
+
+{
+  /* <Menu>
+          <MenuButton
+            as={Button}
+            width="100%"
+            colorScheme={
+              selectedComplexity == "Easy"
+                ? "green"
+                : selectedComplexity == "Medium"
+                  ? "orange"
+                  : selectedComplexity == "Hard"
+                    ? "red"
+                    : "gray"
+            }
+          >
+            {selectedComplexity || "Select Complexity"}
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => handleComplexityOption("Easy")}>
+              Easy
+            </MenuItem>
+            <MenuItem onClick={() => handleComplexityOption("Medium")}>
+              Medium
+            </MenuItem>
+            <MenuItem onClick={() => handleComplexityOption("Hard")}>
+              Hard
+            </MenuItem>
+          </MenuList>
+        </Menu> */
+}
