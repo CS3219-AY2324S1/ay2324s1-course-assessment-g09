@@ -10,7 +10,7 @@ class SocketManager {
 	}
 
 	private initialize() {
-		this.socket = io("http://localhost:6927/");
+		this.socket = io("http://localhost:8004/");
 
 		this.socket.on("connect", () => {
 			this.socketId = this.socket?.id || null;
@@ -52,5 +52,5 @@ class SocketManager {
 	}
 }
 
-const MatchsocketManager = new SocketManager();
-export default MatchsocketManager;
+const matchSocketManager = new SocketManager();
+export default matchSocketManager;

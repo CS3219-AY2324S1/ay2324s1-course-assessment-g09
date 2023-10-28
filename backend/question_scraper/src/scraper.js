@@ -48,7 +48,7 @@ const getMoreData = async (question) => {
     const data = await page.evaluate(() => {  
         //Extract tags          
         const tagElems = document.querySelectorAll('a.mr-4');
-        const tags = Array.from(tagElems).map(element => element.textContent).toString(); //Use JSON.parse to convert from String to Array.
+        const tags = Array.from(tagElems).map(element => element.textContent);//.toString(); //Use JSON.parse to convert from String to Array.
 
         //Extract description
         const description = document.querySelector('.xFUwe').innerHTML;
