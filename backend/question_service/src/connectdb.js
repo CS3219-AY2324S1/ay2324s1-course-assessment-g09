@@ -29,17 +29,22 @@ const createQnModel = () => {
         type: String,
         required: true,
     },
-    category: {
+    category: [{
         type: String,
         required: true,
-    },
+        validate: cat => Category.includes(cat),
+    }],
     complexity: {
         type: String,
+        enum: Complexity,
         required: true,
     }
   });
   return mg.model('question', qnSchema);
 };
+
+const Category = ["Array", "String", "Hash Table", "Dynamic Programming", "Math", "Sorting", "Greedy", "Depth-First Search", "Binary Search", "Database", "Breadth-First Search", "Tree", "Matrix", "Two Pointers", "Bit Manipulation", "Binary Tree", "Heap (Priority Queue)", "Stack", "Prefix Sum", "Graph", "Simulation", "Design", "Counting", "Backtracking", "Sliding Window", "Union Find", "Linked List", "Ordered Set", "Enumeration", "Monotonic Stack", "Trie", "Recursion", "Divide and Conquer", "Number Theory", "Bitmask", "Queue", "Binary Search Tree", "Memoization", "Segment Tree", "Geometry", "Topological Sort", "Binary Indexed Tree", "Game Theory", "Hash Function", "Shortest Path", "Combinatorics", "Interactive", "String Matching", "Data Stream", "Rolling Hash", "Brainteaser", "Randomized", "Monotonic Queue", "Merge Sort", "Iterator", "Concurrency", "Doubly-Linked List", "Probability and Statistics", "Quickselect", "Bucket Sort", "Suffix Array", "Minimum Spanning Tree", "Counting Sort", "Shell", "Line Sweep", "Reservoir Sampling", "Strongly Connected Component", "Eulerian Circuit", "Radix Sort", "Rejection Sampling", "Biconnected Component"];
+const Complexity = ['Easy', 'Medium', 'Hard'];
 
 connectToDB();
 const Question = createQnModel();
@@ -47,5 +52,7 @@ const Attributes = Question.schema.paths;
 
 module.exports = {
     Question,
-    Attributes
+    Attributes,
+    Category,
+    Complexity
 };

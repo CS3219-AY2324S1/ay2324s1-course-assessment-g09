@@ -1,8 +1,8 @@
 version: "3"
 services:
-    communication-service:
-        container_name: communication-service
-        image: communication-service-img
+    collaboration-service:
+        container_name: collaboration-service
+        image: collaboration-service-img
         restart: always
         build: .
         ports:

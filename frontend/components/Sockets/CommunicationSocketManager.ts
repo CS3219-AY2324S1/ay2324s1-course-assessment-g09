@@ -9,7 +9,7 @@ class SocketManager {
 	}
 
 	private initialize() {
-		this.socket = io("http://localhost:5000/");
+		this.socket = io("http://localhost:8002/");
 
 		this.socket.on("connect", () => {
 			this.socketId = this.socket?.id || null;

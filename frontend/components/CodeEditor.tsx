@@ -1,21 +1,22 @@
 "use client";
 import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Select,
+
+	Box,
+	Button,
+	Grid,
+	GridItem,
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuList,
+	Select,
 } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import SaveHistoryButton from "./SaveHistoryButton";
+
 
 export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
   const editorRef = useRef(null);
@@ -53,59 +54,63 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
     }
   };
 
-  const handleLanguageChange = (e) => {
-    (window as any).monaco.editor.setModelLanguage(
-      editorRef.current?.getModel(),
-      e.target.value
-    );
-    setLanguage(e.target.value);
-    socket?.emit("languageChange", e.target.value);
-  };
 
-  useEffect(() => {
-    const socket = io("http://localhost:8080");
-    setSocket(socket);
+	const handleLanguageChange = (e) => {
+		(window as any).monaco.editor.setModelLanguage(
+			editorRef.current?.getModel(),
+			e.target.value
+		);
+		setLanguage(e.target.value);
+		socket?.emit("languageChange", e.target.value);
+	};
 
-    socket?.emit("joinRoom", socketRoom);
+	useEffect(() => {
+		const socket = io("http://localhost:8001");
+		setSocket(socket);
 
-    socket.on("codeChange", (event) => {
-      isIncomingCode.current = true;
-      console.log("received", event);
-      editorRef.current.getModel()?.applyEdits(event.changes);
-    });
+		socket?.emit("joinRoom", socketRoom);
 
-    socket.on("languageChange", (event) => {
-      console.log("received", event);
-      (window as any).monaco.editor.setModelLanguage(
-        editorRef.current?.getModel(),
-        event
-      );
-      setLanguage(event);
-    });
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+		socket.on("codeChange", (event) => {
+			isIncomingCode.current = true;
+			console.log("received", event);
+			editorRef.current.getModel()?.applyEdits(event.changes);
+		});
 
-  const handleFormat = () => {
-    if (editorRef.current) {
-      const editor = editorRef.current;
+		socket.on("languageChange", (event) => {
+			console.log("received", event);
+			(window as any).monaco.editor.setModelLanguage(
+				editorRef.current?.getModel(),
+				event
+			);
+			setLanguage(event);
+		});
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
 
-      // Specify the language ID (e.g., 'python' for Python)
-      (window as any).monaco.editor.setModelLanguage(
-        editor.getModel(),
-        language
-      );
+	const handleFormat = () => {
+		if (editorRef.current) {
+			const editor = editorRef.current;
 
-      // Check if the action exists
-      const formatAction = editor.getAction("editor.action.formatDocument");
+			// Specify the language ID (e.g., 'python' for Python)
+			(window as any).monaco.editor.setModelLanguage(
+				editor.getModel(),
+				language
+			);
 
-      if (formatAction) {
-        // Execute the format action
-        formatAction.run();
-      }
-    }
-  };
+			// Check if the action exists
+			const formatAction = editor.getAction(
+				"editor.action.formatDocument"
+			);
+
+			if (formatAction) {
+				// Execute the format action
+				formatAction.run();
+			}
+		}
+	};
+
 
   return (
     <Grid templateColumns="repeat(4, 1fr)" gap={5} height="100%" width="100%">
@@ -146,6 +151,7 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
           matchedUser={matchedUser}
         />
         {/* <Button
+
 						onClick={() =>
 							alert(editorRef.current.getModel().getValue())
 						}
@@ -171,4 +177,5 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
       </GridItem>
     </Grid>
   );
+
 }

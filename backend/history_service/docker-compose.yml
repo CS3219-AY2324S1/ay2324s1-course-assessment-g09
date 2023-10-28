@@ -1,0 +1,45 @@
+version: "3"
+services:
+    mongo-history:
+        container_name: mongo-history
+        image: mongo:latest
+        restart: always
+        volumes:
+            - mongo-history-db:/data/db
+        ports:
+            - ${DB_PORT}:${DB_PORT}
+        healthcheck:
+            test: echo 'db.runCommand("ping").ok' | mongo-historysh mongo-history:${DB_PORT}/test --quiet
+            interval: 10s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
+
+    history-service:
+        container_name: history-service
+        image: history-service-img
+        environment:
+            RESTAPI_PORT: ${RESTAPI_PORT}
+            DB_SERVER: mongodb://mongo-history:${DB_PORT}
+            DB_PORT: ${DB_PORT} # Must be the same as the port in DB_SERVER. For logging only.
+        restart: always
+        build: .
+        ports:
+            - ${RESTAPI_PORT}:${RESTAPI_PORT}
+        depends_on:
+            - mongo-history
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "curl",
+                    "-f",
+                    "http://history-service:${RESTAPI_PORT}/getAllHistory",
+                ]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
+
+volumes: # Persistent data
+    mongo-history-db:

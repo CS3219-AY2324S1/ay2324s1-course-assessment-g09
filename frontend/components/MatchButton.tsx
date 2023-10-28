@@ -27,10 +27,11 @@ export default function MatchButton({ handleQuickStart }) {
 		try {
 			const data = {
 				difficulty: difficulty,
-				// userId: JSON.parse(sessionStorage.getItem("login")).email,
-				user: "test",
+				user: JSON.parse(sessionStorage.getItem("login")).email,
+				// user: "test",
 				videoSocket: socketManager.getSocketId(),
 			};
+			console.log(data);
 			MatchsocketManager.emitEvent("match", data);
 		} catch (error) {
 			console.log(error);

@@ -64,40 +64,51 @@ export default function VideoCall({ videoOn, setVideoOn }) {
     connectionRef.current = peer;
   };
 
-  const answerCall = async () => {
-    setCallAccepted(true);
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream: callerStream,
-    });
-    peer.on("signal", (data) => {
-      console.log(data);
-      socketManager.emitEvent("answerCall", { signal: data, to: caller });
-    });
-    peer.on("stream", (stream) => {
-      setReceiverStream(stream);
-    });
-    peer.signal(callerSignal);
-    connectionRef.current = peer;
-  };
+
+	const toggleCamera = () => {
+		callerStream.getVideoTracks()[0].enabled =
+			!callerStream.getVideoTracks()[0].enabled;
+	};
+
+	const answerCall = async () => {
+		setCallAccepted(true);
+		const peer = new Peer({
+			initiator: false,
+			trickle: false,
+			stream: callerStream,
+		});
+		peer.on("signal", (data) => {
+			console.log(data);
+			socketManager.emitEvent("answerCall", { signal: data, to: caller });
+		});
+		peer.on("stream", (stream) => {
+			setReceiverStream(stream);
+		});
+		peer.signal(callerSignal);
+		connectionRef.current = peer;
+	};
+
 
   const leaveCall = () => {
     setCallEnded(true);
     connectionRef.current.destroy();
   };
 
-  return (
-    <Box my={2}>
-      <Button onClick={getVideo} colorScheme="blue" mr={2}>
-        Get Video
-      </Button>
-      {!callerStream ? null : (
-        <Box>
-          <VideoComponent stream={callerStream} isLocal={true} />
-          <VideoComponent stream={receiverStream} isLocal={false} />
-        </Box>
-      )}
+
+	return (
+		<Box>
+			<Button onClick={toggleCamera} colorScheme="blue">
+				Toggle Camera
+			</Button>
+			<Button onClick={getVideo} colorScheme="blue">
+				Get Video
+			</Button>
+			{!callerStream ? null : (
+				<Box>
+					<VideoComponent stream={callerStream} isLocal={true} />
+					<VideoComponent stream={receiverStream} isLocal={false} />
+				</Box>
+			)}
 
       <Button onClick={callUser} colorScheme="purple" mr={2}>
         Call
