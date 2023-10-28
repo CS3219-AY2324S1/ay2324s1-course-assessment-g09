@@ -63,6 +63,11 @@ export default function VideoCall() {
 		connectionRef.current = peer;
 	};
 
+	const toggleCamera = () => {
+		callerStream.getVideoTracks()[0].enabled =
+			!callerStream.getVideoTracks()[0].enabled;
+	};
+
 	const answerCall = async () => {
 		setCallAccepted(true);
 		const peer = new Peer({
@@ -88,6 +93,9 @@ export default function VideoCall() {
 
 	return (
 		<Box>
+			<Button onClick={toggleCamera} colorScheme="blue">
+				Toggle Camera
+			</Button>
 			<Button onClick={getVideo} colorScheme="blue">
 				Get Video
 			</Button>
