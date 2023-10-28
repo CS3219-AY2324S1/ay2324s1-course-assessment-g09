@@ -1,61 +1,153 @@
 "use client";
 import {
+  Badge,
   Box,
   Flex,
   Grid,
   GridItem,
   HStack,
+  Heading,
   Text,
   useColorMode,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { useRouter } from "next/router";
 import CodeEditor from "../components/CodeEditor";
-import VideoCall from "../components/VideoCall";
 import MatchsocketManager from "../components/Sockets/MatchSocketManager";
 import ToggleMode from "../components/ToggleMode";
+import VideoCall from "../components/VideoCall";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { complex } from "framer-motion";
 
 export default function Collaboration() {
   const router = useRouter();
-  const [questions, setQuestions] = useState([]);
+
   const { colorMode, toggleColorMode } = useColorMode();
+  const [content, setContent] = useState("");
+  const [title, setTitle] = useState("");
+  const [complexity, setComplexity] = useState("");
+
   const room = MatchsocketManager.getMatchedRoom();
   const matchedUser = MatchsocketManager.getMatchedUser();
-  const selectedItem = {
-    name: "Two Sum",
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis rutrum nisl nibh, nec vestibulum odio pretium vel. Proin quis est dignissim elit tristique luctus sed eget tellus. Sed dapibus consequat semper. Nulla fringilla vulputate libero eu convallis. Aenean nec justo nulla. Pellentesque vel porttitor risus. Mauris porta, dui in venenatis auctor, turpis lorem egestas arcu, in maximus sem metus non turpis. Etiam laoreet mauris a diam tincidunt suscipit. Maecenas hendrerit urna vel congue ultrices. Praesent venenatis enim metus, et posuere nisi semper ut. Praesent porttitor placerat tellus nec pharetra. In hac habitasse platea dictumst. Phasellus lorem libero, venenatis in mauris vel, gravida vehicula nibh. Duis vestibulum congue velit, eu pretium orci sollicitudin nec. Curabitur augue elit, dictum vel nisl mattis, suscipit auctor justo. Aenean tempus volutpat lorem, a ultrices ipsum convallis sit amet. Vestibulum rutrum ut est id blandit. Cras ex leo, suscipit eget nulla eu, viverra faucibus neque. Aliquam arcu elit, imperdiet quis blandit vitae, rhoncus nec orci. Fusce sit amet dui sed lorem tempor molestie vitae sed nunc. Vestibulum blandit aliquam euismod. Maecenas sit amet sollicitudin nibh, eu elementum nulla. Pellentesque nisl magna, ultrices eu fringilla quis, ornare et est.",
-    createdAt: "2022-10-22 20:19:50.236312+00:00",
-    updatedAt: "2022-10-22 20:19:50.236312+00:00",
+
+  const [videoOn, setVideoOn] = useState(false);
+  const fetchRandomQuestions = async () => {
+    try {
+      const res = await axios.get(`question_service/questions/random`);
+      console.log(res.data);
+      let desc = res.data.qn.description;
+      setTitle(res.data.qn.title);
+      setComplexity(res.data.qn.complexity);
+
+      desc = desc.replace(/<code>/g, "");
+      desc = desc.replace(/<\/code>/g, "");
+
+      setContent(desc);
+      setTitle(res.data.qns[6].title);
+      setComplexity(res.data.qns[6].complexity);
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
   };
 
+  useEffect(() => {
+    fetchRandomQuestions();
+  }, []);
+
   return (
-    <Box>
-      {/* {matchedSocket ? ( */}
-      <Flex justifyContent="flex-end" mt={2} width="100%" height="5%">
+    <Box height="100vh" display="flex" flexDirection="column">
+      <HStack justifyContent="center" width="100%" height="5%">
         <ToggleMode colorMode={colorMode} toggleColorMode={toggleColorMode} />
-      </Flex>
-      <Box>
-        <Grid templateColumns="repeat(2, 1fr)" gap={5} h="80vh">
-          <GridItem display="flex" flex="1">
-            <Box flexDirection="column">
-              {selectedItem && (
-                <Box flex={1} alignSelf="top">
-                  <Text>{selectedItem.content}</Text>
+      </HStack>
+
+      <Grid
+        flex="1"
+        templateColumns="repeat(2, 1fr)"
+        templateRows="repeat(10, 1fr)"
+        gap={5}
+        height="95%"
+        width="100%"
+      >
+        {/* Questions */}
+        <GridItem
+          height="100%"
+          rowSpan={videoOn ? 5 : 9}
+          overflowY="auto"
+          css={{
+            "&::-webkit-scrollbar": {
+              width: "0.25em",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor:
+                colorMode == "light"
+                  ? "RGBA(0, 0, 0, 0.7)"
+                  : "RGBA(255, 255, 255, 0.48)",
+            },
+          }}
+        >
+          <Box flexDirection="column">
+            {content && (
+              <Box flex={1} alignSelf="top">
+                <Heading as="h5">
+                  {title}{" "}
+                  <Badge
+                    fontSize="lg"
+                    colorScheme={
+                      complexity == "Easy"
+                        ? "green"
+                        : complexity == "Medium"
+                        ? "orange"
+                        : "red"
+                    }
+                  >
+                    {complexity}
+                  </Badge>
+                </Heading>
+                <Box>
+                  <div
+                    style={{
+                      overflowWrap: "break-word",
+                    }}
+                  >
+                    <style>
+                      {`
+      div > pre {
+        white-space: pre-wrap;
+        white-space: -moz-pre-wrap;
+        white-space: -pre-wrap;
+        white-space: -o-pre-wrap;
+        word-wrap: break-word;
+      }
+    `}
+                    </style>
+                    <div dangerouslySetInnerHTML={{ __html: content }}></div>
+                  </div>
                 </Box>
-              )}
-              <VideoCall />
-            </Box>
-          </GridItem>
-          <GridItem display="flex" flex="1">
-            <CodeEditor socketRoom={room} matchedUser={matchedUser} />
-          </GridItem>
+              </Box>
+            )}
+          </Box>
+        </GridItem>
+
+        {/* Editor */}
+        <GridItem height="100%" overflowY="hidden" rowSpan={10}>
+          <CodeEditor
+            socketRoom={room}
+            matchedUser={matchedUser}
+            colorMode={colorMode}
+          />
+        </GridItem>
+
+        <GridItem rowSpan={videoOn ? 5 : 1}>
+          <VideoCall videoOn={videoOn} setVideoOn={setVideoOn} />
+        </GridItem>
+      </Grid>
+
+      {/* <Box>
+        <Grid templateColumns="repeat(2, 1fr)" gap={5} h="80vh">
+          <GridItem display="flex" flex="1"></GridItem>
+          <GridItem display="flex" flex="1"></GridItem>
         </Grid>
-      </Box>
-      {/* ) : (
-        <MatchButton sendMatchedSocket={receiveMatchedSocket} />
-      )} */}
+      </Box> */}
     </Box>
   );
-
 }
