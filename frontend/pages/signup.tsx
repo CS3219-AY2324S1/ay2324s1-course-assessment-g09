@@ -28,6 +28,7 @@ const SignUp = () => {
                     },
                     body: JSON.stringify({
                         username: formData.get("username"),
+                        name: formData.get("name"),
                         email: formData.get("email"),
                         password: formData.get("password"),
                         role: formData.get("role")
@@ -97,8 +98,12 @@ const SignUp = () => {
                         <Input name="email" type="email" placeholder='john@peerprep.com' />
                     </FormControl>
                     <FormControl>
+                        <FormLabel>Name</FormLabel>
+                        <Input name="name" type="text" placeholder='john tan' />
+                    </FormControl>
+                    <FormControl>
                         <FormLabel>Username</FormLabel>
-                        <Input name="username" type="text" placeholder='john tan' />
+                        <Input name="username" type="text" placeholder='johnxyz' />
                     </FormControl>
                     <FormControl>
                         <FormLabel>Password</FormLabel>

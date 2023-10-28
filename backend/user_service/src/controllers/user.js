@@ -15,16 +15,12 @@ const userAccountTable = require('../utility/db').userAccountTable;
 //     role: z.string().min(1, 'Role required')
 // })
 
-const tokenDetails = {
-    secret: process.env.SECRET_KEY,
-    duration: '1800s',
-};
 
 userRouter.post('/createUser', async (request, response) => {
     try {
         const body = request.body;
 
-        const { email, username, password, role } = userSchema.parse(body);
+        const { email, name, username, password, role } = userSchema.parse(body);
 
         const query = `SELECT * FROM ${userAccountTable} WHERE email = $1 OR username = $2`;
         const queryResult = await db.query(query, [email, username]);
@@ -34,8 +30,8 @@ userRouter.post('/createUser', async (request, response) => {
         }
 
         // const pwHash = await bcrypt.hash(password, 17);
-        const insertQuery = `INSERT INTO ${userAccountTable} (email, username, role, password) VALUES ($1, $2, $3, $4)`;
-        const insertResult = await db.query(insertQuery, [email, username, role, password]);
+        const insertQuery = `INSERT INTO ${userAccountTable} (email, name, username, role, password) VALUES ($1, $2, $3, $4, $5)`;
+        const insertResult = await db.query(insertQuery, [email, name, username, role, password]);
 
         if (insertResult.rowCount != 1) {
             throw new Error('Unsuccessful insert into database');
@@ -118,6 +114,7 @@ userRouter.get('/getUserById', async (request, response) => {
         }
 
         const user = allUsers[0]; //In theory, if id is a PK, users should only have 1 row.
+        delete user.password; // Remove password 
         const msg = { 'msg': `User retrieved with ID ${userId}.`, 'user': user };
         return response.status(200).json(msg);
     })
@@ -126,12 +123,12 @@ userRouter.get('/getUserById', async (request, response) => {
 userRouter.put('/updateUser', async (request, response) => {
     try {
         const body = request.body;
-        const { id, email, username, password, role } = userSchema.parse(body);
+        const { id, email, name, username, password, role } = userSchema.parse(body);
 
         const pwHash = await bcrypt.hash(password, 17);
 
-        const updateQuery = `UPDATE ${userAccountTable} SET email=$1, username=$2, role=$3, password=$4 WHERE id=$6`;
-        const queryResult = await db.query(updateQuery, [email, username, role, pwHash, id]);
+        const updateQuery = `UPDATE ${userAccountTable} SET email=$1, name=$2, username=$3, role=$4, password=$5 WHERE id=$6`;
+        const queryResult = await db.query(updateQuery, [email, name, username, role, pwHash, id]);
         if (queryResult.rows.length != 1) {
             throw new Error('Unsuccessful update into database');
         }
