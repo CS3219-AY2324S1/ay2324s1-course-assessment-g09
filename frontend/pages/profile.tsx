@@ -18,6 +18,8 @@ import {
   CircularProgressLabel,
   Box,
   Center,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import router, { useRouter } from "next/router";
@@ -126,90 +128,121 @@ const profile = ({ colorMode, userMode }) => {
     }
   }, [minutes]);
 
-  const handleLogout = async () => {
-    axios
-      .post(`/auth_service/userauth/signout`, {}, { withCredentials: true })
-      .then((response) => {
-        if (response.statusText === "OK") {
-          router.push("/signin");
-          window.sessionStorage.removeItem("login");
-        }
-      })
-      .catch((error) => {
-        console.log("signout", error);
-      });
-  };
-
   return (
-    <VStack>
-      <WrapItem>
+    <Grid width="100%" height="100%" templateColumns="repeat(4, 1fr)">
+      {/* Avatar */}
+      <GridItem
+        display="flex"
+        colSpan={1}
+        rowSpan={2}
+        justifyContent="center"
+        mt={2}
+      >
         <Avatar
           size={{ lg: "lg", xl: "lg", "2xl": "xl" }}
           name="Wilson Ng"
-          bg={colorMode == "light" ? "cyan.500" : "cyan.700"}
+          bg={colorMode == "light" ? "blue.500" : "blue.400"}
+          m={2}
         />
-      </WrapItem>
-      <Text
-        fontSize={{ lg: "xl", xl: "xl", "2xl": "2xl" }}
-        color={colorMode == "light" ? "black" : "white"}
-        fontWeight="semibold"
+      </GridItem>
+
+      {/* Name */}
+      <GridItem
+        colSpan={3}
+        display="flex"
+        justifyContent="flex-start"
+        alignItems="flex-end"
+        height="100%"
       >
-        Wilson Ng Jing An
-      </Text>
-      <Text
-        fontSize={{ lg: "md", xl: "md", "2xl": "lg" }}
-        color={colorMode == "light" ? "black" : "white"}
-        fontFamily="monospace"
-        fontWeight="bold"
-      >
-        @wilsonngja{" "}
-        <Badge
-          variant="outline"
-          colorScheme="purple"
-          fontSize={{ lg: "md", xl: "md", "2xl": "lg" }}
+        <Text
+          fontSize={{ lg: "xl", xl: "lg", "2xl": "2xl" }}
+          color={colorMode == "light" ? "black" : "white"}
+          fontWeight="semibold"
+          ml={2}
         >
-          {userMode}
-        </Badge>
-      </Text>
-      <Divider />
-      <HStack mt={{ lg: 2, xl: 4, "2xl": 5 }}>
-        {inQueue ? (
-          <>
-            <Button onClick={handleLeaveQueue} colorScheme="orange">
+          Wilson Ng Jing An
+        </Text>
+      </GridItem>
+
+      {/* Username */}
+      <GridItem colSpan={3} display="flex" justifyContent="flex-start">
+        <HStack ml={2}>
+          <Text
+            fontSize={{ lg: "lg", xl: "lg", "2xl": "xl" }}
+            color={colorMode == "light" ? "black" : "white"}
+            fontFamily="monospace"
+            fontWeight="bold"
+            mt={1}
+          >
+            @wilsonngja{" "}
+          </Text>
+          <Badge
+            variant="outline"
+            colorScheme={userMode.toLowerCase() === "user" ? "green" : "red"}
+            fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
+          >
+            {userMode}
+          </Badge>
+        </HStack>
+      </GridItem>
+
+      {inQueue ? (
+        <GridItem
+          colSpan={4}
+          display="flex"
+          width="100%"
+          alignItems="center"
+          justifyContent="center"
+          my={2}
+        >
+          <HStack align="center" justify="center">
+            <Button
+              onClick={handleLeaveQueue}
+              colorScheme="orange"
+              size={{ lg: "xs", xl: "sm", "2xl": "lg" }}
+            >
               Leave Queue
             </Button>
-            <Text fontSize="xl" fontWeight="bold" ml={5}>
+            <Text
+              fontSize={{ lg: "lg", xl: "xl", "2xl": "2xl" }}
+              fontWeight="bold"
+              ml={5}
+            >
               {String(minutes).padStart(2, "0")}:
               {String(seconds).padStart(2, "0")}
             </Text>
-          </>
-        ) : (
-          <>
-            {/* <Button
-              colorScheme="purple"
-              size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
-              onClick={handleQuickStart}
-            >
-              Quick Start
-            </Button> */}
+          </HStack>
+        </GridItem>
+      ) : (
+        <>
+          <GridItem
+            colSpan={2}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            my={2}
+            ml={2}
+          >
             <MatchButton handleQuickStart={handleQuickStart} />
+          </GridItem>
+          <GridItem
+            colSpan={2}
+            display="flex"
+            alignItems="center"
+            my={2}
+            justifyContent="center"
+          >
             <Button
               colorScheme="blue"
-              size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
+              size={{ lg: "xs", xl: "sm", "2xl": "lg" }}
+              width="90%"
+              mx={2}
             >
               Custom Room
             </Button>
-            <Button
-              colorScheme="red"
-              size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
-              onClick={handleLogout}
-            >
-              Log Out{" "}
-            </Button>
-          </>
-        )}
-      </HStack>
-
+          </GridItem>
+        </>
+      )}
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
@@ -282,7 +315,7 @@ const profile = ({ colorMode, userMode }) => {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
-    </VStack>
+    </Grid>
   );
 };
 

@@ -1,4 +1,4 @@
-import { useColorMode } from "@chakra-ui/react";
+import { Box, Flex, VStack, useColorMode } from "@chakra-ui/react";
 import React, { useState } from "react";
 import QuestionInputField from "./QuestionsInputField";
 import Questions from "./Questions";
@@ -16,26 +16,31 @@ const QuestionsComponent = ({
   const { colorMode } = useColorMode();
 
   return (
-    <>
-      <QuestionInputField
-        inputValues={questionInputValues}
-        setInputValues={setQuestionInputValues}
-        isCreate={isCreateQuestion}
-        setIsCreate={setIsCreateQuestion}
-        colorMode={colorMode}
-        setQuestions={setQuestions}
-      />
-      <Questions
-        inputValues={questionInputValues}
-        setInputValues={setQuestionInputValues}
-        isCreate={isCreateQuestion}
-        setIsCreate={setIsCreateQuestion}
-        colorMode={colorMode}
-        userMode={user}
-        questions={questions}
-        fetchQuestions={fetchQuestions}
-      />
-    </>
+    <Flex height="100%" width="100%" flexDirection="column" p={2}>
+      <Box width="100%" height="25%">
+        <QuestionInputField
+          inputValues={questionInputValues}
+          setInputValues={setQuestionInputValues}
+          isCreate={isCreateQuestion}
+          setIsCreate={setIsCreateQuestion}
+          colorMode={colorMode}
+          setQuestions={setQuestions}
+        />
+      </Box>
+
+      <Box width="100%" height="75%">
+        <Questions
+          inputValues={questionInputValues}
+          setInputValues={setQuestionInputValues}
+          isCreate={isCreateQuestion}
+          setIsCreate={setIsCreateQuestion}
+          colorMode={colorMode}
+          userMode={user}
+          questions={questions}
+          fetchQuestions={fetchQuestions}
+        />
+      </Box>
+    </Flex>
   );
 };
 

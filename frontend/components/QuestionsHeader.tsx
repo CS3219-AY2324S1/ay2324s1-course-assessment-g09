@@ -41,7 +41,7 @@ const QuestionsHeader = ({ userMode, complexity, setComplexity }) => {
         userMode == "admin" ? "repeat(13, 1fr)" : "repeat(11, 1fr)"
       }
       width="100%"
-      marginTop={5}
+      height="fit-content"
     >
       <GridItem borderBottom="1px solid" colSpan={1}>
         <Flex justifyContent="flex-start">

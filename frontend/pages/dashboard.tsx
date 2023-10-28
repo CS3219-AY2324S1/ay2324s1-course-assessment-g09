@@ -6,16 +6,15 @@ import {
   VStack,
   useColorMode,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import History from "../components/History";
 import Questions from "../components/Questions";
-import QuestionInputField from "../components/QuestionsInputField";
+import QuestionsComponent from "../components/QuestionsComponent";
 import UserInputField from "../components/UserInputField";
 import Users from "../components/Users";
-import History from "../components/History";
 import Profile from "./profile";
 import QuestionProgress from "./questionProgress";
-import axios from "axios";
-import QuestionsComponent from "../components/QuestionsComponent";
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
@@ -84,10 +83,10 @@ const dashboard = () => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        rowSpan={2}
         boxShadow="xl"
         width="100%"
         height="100%"
+        rowSpan={1}
       >
         <Profile colorMode={colorMode} userMode={user} />
       </GridItem>
@@ -102,8 +101,8 @@ const dashboard = () => {
         height="100%"
         width="100%"
       >
-        <VStack m={5} height="100%">
-          {user == "user" ? (
+        {user == "user" ? (
+          <Box height="100%" width="100%" px={2}>
             <Questions
               inputValues={questionInputValues}
               setInputValues={setQuestionInputValues}
@@ -114,19 +113,19 @@ const dashboard = () => {
               questions={questions}
               fetchQuestions={fetchQuestions}
             />
-          ) : (
-            <QuestionsComponent
-              questionInputValues={questionInputValues}
-              setQuestionInputValues={setQuestionInputValues}
-              isCreateQuestion={isCreateQuestion}
-              setIsCreateQuestion={setIsCreateQuestion}
-              setQuestions={setQuestions}
-              user={user}
-              questions={questions}
-              fetchQuestions={fetchQuestions}
-            />
-          )}
-        </VStack>
+          </Box>
+        ) : (
+          <QuestionsComponent
+            questionInputValues={questionInputValues}
+            setQuestionInputValues={setQuestionInputValues}
+            isCreateQuestion={isCreateQuestion}
+            setIsCreateQuestion={setIsCreateQuestion}
+            setQuestions={setQuestions}
+            user={user}
+            questions={questions}
+            fetchQuestions={fetchQuestions}
+          />
+        )}
       </GridItem>
 
       {/* User Portion */}
@@ -137,7 +136,7 @@ const dashboard = () => {
         justifyContent="center"
         alignItems="flex-start"
         boxShadow="xl"
-        rowSpan={3}
+        rowSpan={4}
         width="100%"
         height="100%"
       >
