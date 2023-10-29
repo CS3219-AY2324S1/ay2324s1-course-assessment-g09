@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 COPY .env .env
 
-ENV PORT=${PORT}
+
 # Install dependencies
 COPY package*.json /usr/src/app/
 RUN npm ci # Install dependencies of CONSISTENT version to ensure reliability
@@ -15,6 +15,6 @@ RUN npm ci # Install dependencies of CONSISTENT version to ensure reliability
 COPY . /usr/src/app
 
 
-EXPOSE ${PORT}
+EXPOSE 8001
 
 CMD [ "npm", "run", "start"]
