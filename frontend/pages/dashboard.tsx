@@ -94,7 +94,7 @@ const dashboard = () => {
       {/* Question Storage Entry */}
       <GridItem
         colSpan={3}
-        rowSpan={3}
+        rowSpan={5}
         bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         boxShadow="xl"
@@ -102,7 +102,7 @@ const dashboard = () => {
         width="100%"
       >
         {user == "user" ? (
-          <Box height="100%" width="100%" px={2}>
+          <Box height="100%" width="100%" p={2}>
             <Questions
               inputValues={questionInputValues}
               setInputValues={setQuestionInputValues}
@@ -128,7 +128,22 @@ const dashboard = () => {
         )}
       </GridItem>
 
-      {/* User Portion */}
+      {/* Circular Progress to show how many question is completed */}
+      <GridItem
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
+        borderRadius="xl"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        boxShadow="xl"
+        height="100%"
+        width="100%"
+        rowSpan={1}
+      >
+        <QuestionProgress colorMode={colorMode} />
+      </GridItem>
+
+      {/* User Portion/ History */}
       <GridItem
         bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
@@ -136,7 +151,7 @@ const dashboard = () => {
         justifyContent="center"
         alignItems="flex-start"
         boxShadow="xl"
-        rowSpan={4}
+        rowSpan={3}
         width="100%"
         height="100%"
       >
@@ -161,52 +176,8 @@ const dashboard = () => {
             setIsCreate={setIsCreateUser}
             colorMode={colorMode}
           />
+          <History />
         </Flex>
-      </GridItem>
-
-      {/* Circular Progress to show how many question is completed */}
-      <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
-        borderRadius="xl"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        boxShadow="xl"
-        height="100%"
-        width="100%"
-      >
-        <QuestionProgress colorMode={colorMode} />
-      </GridItem>
-
-      {/* Placeholder */}
-      <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
-        borderRadius="xl"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        boxShadow="xl"
-        colStart={2}
-        height="100%"
-        width="100%"
-      >
-        <Box>Placeholder 1</Box>
-      </GridItem>
-
-      {/* User Entry Table */}
-      <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
-        borderRadius="xl"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        boxShadow="xl"
-        colStart={3}
-        rowStart={4}
-        colSpan={2}
-        rowSpan={2}
-      >
-        <History />
       </GridItem>
     </Grid>
   );

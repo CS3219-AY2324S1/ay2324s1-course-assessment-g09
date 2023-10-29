@@ -17,7 +17,7 @@ const QuestionsComponent = ({
 
   return (
     <Flex height="100%" width="100%" flexDirection="column" p={2}>
-      <Box width="100%" height="25%">
+      <Box width="100%" height="10%">
         <QuestionInputField
           inputValues={questionInputValues}
           setInputValues={setQuestionInputValues}
@@ -28,7 +28,7 @@ const QuestionsComponent = ({
         />
       </Box>
 
-      <Box width="100%" height="75%">
+      <Box width="100%" height="90%" mt={8}>
         <Questions
           inputValues={questionInputValues}
           setInputValues={setQuestionInputValues}
