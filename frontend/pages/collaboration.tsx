@@ -2,22 +2,19 @@
 import {
   Badge,
   Box,
-  Flex,
   Grid,
   GridItem,
   HStack,
   Heading,
-  Text,
   useColorMode,
 } from "@chakra-ui/react";
+import axios from "axios";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import CodeEditor from "../components/CodeEditor";
 import MatchsocketManager from "../components/Sockets/MatchSocketManager";
 import ToggleMode from "../components/ToggleMode";
 import VideoCall from "../components/VideoCall";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { complex } from "framer-motion";
 
 export default function Collaboration() {
   const router = useRouter();

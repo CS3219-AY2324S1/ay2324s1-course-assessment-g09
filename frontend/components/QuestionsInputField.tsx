@@ -41,7 +41,10 @@ const QuestionInputField = ({
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post(`question_service/admin/questions`, inputValues);
+      const res = await axios.post(
+        `question_service/admin/questions`,
+        inputValues
+      );
 
       console.log(res);
       setInputValues({
@@ -125,8 +128,9 @@ const QuestionInputField = ({
       templateColumns="repeat(6, 1fr)"
       templateRows="repeat(2,1fr)"
       gap={2}
-      height="20%"
+      height="100%"
     >
+      {/* ID */}
       <GridItem>
         {error ? (
           <Input
@@ -139,7 +143,9 @@ const QuestionInputField = ({
             _placeholder={{
               color: colorMode == "light" ? "red.500" : "red.300",
             }}
-            fontSize={{ lg: "sm", xl: "sm", "2xl": "lg" }}
+
+            // size={{ lg: "2xl", xl: "3xl", "2xl": "4xl" }}
+            // fontSize={{ lg: "sm", xl: "sm", "2xl": "lg" }}
           />
         ) : (
           <Input
@@ -152,6 +158,8 @@ const QuestionInputField = ({
           />
         )}
       </GridItem>
+
+      {/* Title */}
       <GridItem>
         <Input
           placeholder="Title"
@@ -162,6 +170,8 @@ const QuestionInputField = ({
           fontSize={{ lg: "sm", xl: "sm", "2xl": "lg" }}
         />
       </GridItem>
+
+      {/* Description */}
       <GridItem
         rowSpan={2}
         colSpan={3}
@@ -182,6 +192,8 @@ const QuestionInputField = ({
           fontSize={{ lg: "sm", xl: "sm", "2xl": "lg" }}
         />
       </GridItem>
+
+      {/* Category */}
       <GridItem rowStart={2}>
         <Input
           placeholder="Category"
@@ -192,6 +204,8 @@ const QuestionInputField = ({
           fontSize={{ lg: "sm", xl: "sm", "2xl": "lg" }}
         />
       </GridItem>
+
+      {/* Complexity */}
       <GridItem rowStart={2}>
         <Menu>
           <MenuButton
@@ -201,10 +215,10 @@ const QuestionInputField = ({
               selectedComplexity == "Easy"
                 ? "green"
                 : selectedComplexity == "Medium"
-                  ? "orange"
-                  : selectedComplexity == "Hard"
-                    ? "red"
-                    : "gray"
+                ? "orange"
+                : selectedComplexity == "Hard"
+                ? "red"
+                : "gray"
             }
           >
             {selectedComplexity || "Select Complexity"}
@@ -223,6 +237,7 @@ const QuestionInputField = ({
         </Menu>
       </GridItem>
 
+      {/* Create/Update&Cancel Button */}
       {isCreate ? (
         <GridItem
           rowSpan={2}

@@ -1,7 +1,4 @@
-import { HStack, Icon, IconButton } from "@chakra-ui/react";
-import React from "react";
-import { AiOutlineUser } from "react-icons/ai";
-import { MdQuestionAnswer } from "react-icons/md";
+import { HStack, IconButton } from "@chakra-ui/react";
 import { BsFillMoonFill, BsFillSunFill } from "react-icons/bs";
 
 const ToggleMode = ({ colorMode, toggleColorMode }) => {
