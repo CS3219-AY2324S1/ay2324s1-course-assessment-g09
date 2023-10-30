@@ -6,16 +6,15 @@ import {
   VStack,
   useColorMode,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import History from "../components/History";
 import Questions from "../components/Questions";
-import QuestionInputField from "../components/QuestionsInputField";
+import QuestionsComponent from "../components/QuestionsComponent";
 import UserInputField from "../components/UserInputField";
 import Users from "../components/Users";
-import History from "../components/History";
 import Profile from "./profile";
 import QuestionProgress from "./questionProgress";
-import axios from "axios";
-import QuestionsComponent from "../components/QuestionsComponent";
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
@@ -84,10 +83,10 @@ const dashboard = () => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        rowSpan={2}
         boxShadow="xl"
         width="100%"
         height="100%"
+        rowSpan={1}
       >
         <Profile colorMode={colorMode} userMode={user} />
       </GridItem>
@@ -95,15 +94,15 @@ const dashboard = () => {
       {/* Question Storage Entry */}
       <GridItem
         colSpan={3}
-        rowSpan={3}
+        rowSpan={5}
         bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
         boxShadow="xl"
         height="100%"
         width="100%"
       >
-        <VStack m={5} height="100%">
-          {user == "user" ? (
+        {user == "user" ? (
+          <Box height="100%" width="100%" p={2}>
             <Questions
               inputValues={questionInputValues}
               setInputValues={setQuestionInputValues}
@@ -114,22 +113,37 @@ const dashboard = () => {
               questions={questions}
               fetchQuestions={fetchQuestions}
             />
-          ) : (
-            <QuestionsComponent
-              questionInputValues={questionInputValues}
-              setQuestionInputValues={setQuestionInputValues}
-              isCreateQuestion={isCreateQuestion}
-              setIsCreateQuestion={setIsCreateQuestion}
-              setQuestions={setQuestions}
-              user={user}
-              questions={questions}
-              fetchQuestions={fetchQuestions}
-            />
-          )}
-        </VStack>
+          </Box>
+        ) : (
+          <QuestionsComponent
+            questionInputValues={questionInputValues}
+            setQuestionInputValues={setQuestionInputValues}
+            isCreateQuestion={isCreateQuestion}
+            setIsCreateQuestion={setIsCreateQuestion}
+            setQuestions={setQuestions}
+            user={user}
+            questions={questions}
+            fetchQuestions={fetchQuestions}
+          />
+        )}
       </GridItem>
 
-      {/* User Portion */}
+      {/* Circular Progress to show how many question is completed */}
+      <GridItem
+        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
+        borderRadius="xl"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        boxShadow="xl"
+        height="100%"
+        width="100%"
+        rowSpan={1}
+      >
+        <QuestionProgress colorMode={colorMode} />
+      </GridItem>
+
+      {/* User Portion/ History */}
       <GridItem
         bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
         borderRadius="xl"
@@ -162,52 +176,8 @@ const dashboard = () => {
             setIsCreate={setIsCreateUser}
             colorMode={colorMode}
           />
+          <History />
         </Flex>
-      </GridItem>
-
-      {/* Circular Progress to show how many question is completed */}
-      <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
-        borderRadius="xl"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        boxShadow="xl"
-        height="100%"
-        width="100%"
-      >
-        <QuestionProgress colorMode={colorMode} />
-      </GridItem>
-
-      {/* Placeholder */}
-      <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
-        borderRadius="xl"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        boxShadow="xl"
-        colStart={2}
-        height="100%"
-        width="100%"
-      >
-        <Box>Placeholder 1</Box>
-      </GridItem>
-
-      {/* User Entry Table */}
-      <GridItem
-        bgColor={colorMode == "light" ? "gray.300" : "gray.700"}
-        borderRadius="xl"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        boxShadow="xl"
-        colStart={3}
-        rowStart={4}
-        colSpan={2}
-        rowSpan={2}
-      >
-        <History />
       </GridItem>
     </Grid>
   );

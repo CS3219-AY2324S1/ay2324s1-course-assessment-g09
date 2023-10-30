@@ -41,7 +41,7 @@ const QuestionsHeader = ({ userMode, complexity, setComplexity }) => {
         userMode == "admin" ? "repeat(13, 1fr)" : "repeat(11, 1fr)"
       }
       width="100%"
-      marginTop={5}
+      height="fit-content"
     >
       <GridItem borderBottom="1px solid" colSpan={1}>
         <Flex justifyContent="flex-start">
@@ -127,34 +127,3 @@ const QuestionsHeader = ({ userMode, complexity, setComplexity }) => {
 };
 
 export default QuestionsHeader;
-
-{
-  /* <Menu>
-          <MenuButton
-            as={Button}
-            width="100%"
-            colorScheme={
-              selectedComplexity == "Easy"
-                ? "green"
-                : selectedComplexity == "Medium"
-                  ? "orange"
-                  : selectedComplexity == "Hard"
-                    ? "red"
-                    : "gray"
-            }
-          >
-            {selectedComplexity || "Select Complexity"}
-          </MenuButton>
-          <MenuList>
-            <MenuItem onClick={() => handleComplexityOption("Easy")}>
-              Easy
-            </MenuItem>
-            <MenuItem onClick={() => handleComplexityOption("Medium")}>
-              Medium
-            </MenuItem>
-            <MenuItem onClick={() => handleComplexityOption("Hard")}>
-              Hard
-            </MenuItem>
-          </MenuList>
-        </Menu> */
-}

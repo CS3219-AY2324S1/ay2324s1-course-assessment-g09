@@ -1,24 +1,21 @@
 import {
+  Badge,
+  Box,
   Button,
   Flex,
   Grid,
   GridItem,
   Modal,
-  StepNumber,
-  useDisclosure,
-  Text,
   ModalBody,
-  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Box,
-  Center,
-  Badge,
+  Text,
+  useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import axios, { isCancel } from "axios";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import CategoryTag from "./CategoryTag";
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
@@ -42,20 +39,6 @@ const Question = ({
   const [title, setTitle] = useState(null);
   const [openQuestion, setOpenQuestion] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // const fetchQuestions = async () => {
-  //   try {
-  //     const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
-
-  //     setQuestions(res.data.qns);
-  //   } catch (error) {
-  //     console.log("ERROR: ", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchQuestions();
-  // }, []);
 
   const handleEdit = async ({
     qn_num,
@@ -117,7 +100,9 @@ const Question = ({
 
   return (
     <Box
-      height={userMode == "user" ? "80%" : "55%"}
+      flexDirection="column"
+      height="100%"
+      // height={userMode == "user" ? "90%" : "100%"}
       overflowY="auto"
       css={{
         "&::-webkit-scrollbar": {
