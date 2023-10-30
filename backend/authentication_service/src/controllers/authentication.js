@@ -78,7 +78,6 @@ authRouter.post('/signin', async (request, response) => {
 
 		const params = new url.URLSearchParams({ email: email });
 
-		// const result = await axios.get(`http://localhost:3002/users/getUserByEmail?${params}`);
 		const result = await axios.get(`http://${user_service}/auth/getUserByEmail?${params}`);
 
 		const myUser = result.data;
