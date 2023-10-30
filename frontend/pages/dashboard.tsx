@@ -66,6 +66,7 @@ const dashboard = () => {
     const login = JSON.parse(window.sessionStorage.getItem("login"));
 
     if (login && login.isLoggedIn) {
+      console.log(login);
       setUserRole(login.role);
     }
   }, []);
