@@ -31,7 +31,7 @@ export default function Collaboration() {
   const fetchRandomQuestions = async () => {
     try {
       const res = await axios.get(`question_service/questions/random`);
-      console.log(res.data);
+      // console.log(res.data);
       let desc = res.data.qn.description;
       setTitle(res.data.qn.title);
       setComplexity(res.data.qn.complexity);
@@ -52,7 +52,7 @@ export default function Collaboration() {
   }, []);
 
   return (
-    <Box height="100vh" display="flex" flexDirection="column">
+    <Box height="100vh" display="flex" flexDirection="column" mx={4}>
       <HStack justifyContent="center" width="100%" height="5%">
         <ToggleMode colorMode={colorMode} toggleColorMode={toggleColorMode} />
       </HStack>
@@ -62,8 +62,9 @@ export default function Collaboration() {
         templateColumns="repeat(2, 1fr)"
         templateRows="repeat(10, 1fr)"
         gap={5}
-        height="95%"
+        height="85%"
         width="100%"
+        my="auto"
       >
         {/* Questions */}
         <GridItem
@@ -126,7 +127,7 @@ export default function Collaboration() {
         </GridItem>
 
         {/* Editor */}
-        <GridItem height="100%" overflowY="hidden" rowSpan={10}>
+        <GridItem height="90%" overflowY="hidden" rowSpan={10} my="auto">
           <CodeEditor
             socketRoom={room}
             matchedUser={matchedUser}

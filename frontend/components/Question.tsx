@@ -73,7 +73,13 @@ const Question = ({
   }, [isOpen]);
 
   const handleModal = (question, index) => {
-    setDescription(question.description);
+    let desc = question.description;
+    console.log(desc);
+    desc = desc.replace(/<code>/g, "");
+    desc = desc.replace(/<\/code>/g, "");
+    console.log(desc);
+
+    setDescription(desc);
     setTitle(question.title);
     setDifficulty(question.complexity);
     setCategory(question.category);
@@ -96,7 +102,7 @@ const Question = ({
     setOpenQuestion(null);
   };
 
-  const htmlContent = { __html: description };
+  // const htmlContent = { __html: description };
 
   return (
     <Box
@@ -406,6 +412,7 @@ const Question = ({
           <ModalBody
             maxHeight="60vh"
             overflowY="auto"
+            mx={5}
             css={{
               "&::-webkit-scrollbar": {
                 width: "0.25em",
@@ -419,9 +426,23 @@ const Question = ({
             }}
           >
             <div
-              dangerouslySetInnerHTML={htmlContent}
-              style={{ overflowWrap: "anywhere" }}
-            />
+              style={{
+                overflowWrap: "break-word",
+              }}
+            >
+              <style>
+                {`
+      div > pre {
+        white-space: pre-wrap;
+        white-space: -moz-pre-wrap;
+        white-space: -pre-wrap;
+        white-space: -o-pre-wrap;
+        word-wrap: break-word;
+      }
+    `}
+              </style>
+              <div dangerouslySetInnerHTML={{ __html: description }}></div>
+            </div>
           </ModalBody>
 
           <ModalFooter>
