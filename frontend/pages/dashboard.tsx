@@ -23,6 +23,7 @@ const dashboard = () => {
   const fetchQuestions = async () => {
     try {
       const res = await axios.get(`question_service/questions`);
+      console.log(res);
 
       setQuestions(res.data.qns);
     } catch (error) {

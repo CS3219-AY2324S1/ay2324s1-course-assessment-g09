@@ -15,23 +15,41 @@ spec:
         app: user-service
     spec:
       containers:
-      - name: user-service
-        image: wkdouze/user-service-img
-        ports:
-        - containerPort: 3002
-        env:
-        - name: DB_DATABASE
-          value: postgres
-        - name: DB_PASSWORD
-          value: postgres
-        - name: DB_PORT
-          value: "5432"
-        - name: DB_SERVER
-          value: postgres
-        - name: DB_USERNAME
-          value: postgres
-        - name: RESTAPI_PORT
-          value: "3002"
+        - name: user-service
+          image: wkdouze/user-service-img
+          ports:
+            - containerPort: 3002
+          env:
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: user-DB_DATABASE
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: postgres-PASSWORD
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: user-DB_PORT
+            - name: DB_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: user-DB_SERVER
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: postgres-USER
+            - name: RESTAPI_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: user-RESTAPI_PORT
 ---
 apiVersion: v1
 kind: Service
@@ -43,4 +61,3 @@ spec:
   ports:
     - port: 3002
       targetPort: 3002
-  

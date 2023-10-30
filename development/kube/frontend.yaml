@@ -15,13 +15,16 @@ spec:
         app: frontend
     spec:
       containers:
-      - name: frontend
-        image: wkdouze/frontend-img
-        ports:
-        - containerPort: 3005
-        env:
-        - name: NEXT_PUBLIC_IP_ADDRESS
-          value: http://localhost
+        - name: frontend
+          image: wkdouze/frontend-img
+          ports:
+            - containerPort: 3005
+          env:
+            - name: NEXT_PUBLIC_IP_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: frontend-NEXT_PUBLIC_IP_ADDRESS
 ---
 apiVersion: v1
 kind: Service

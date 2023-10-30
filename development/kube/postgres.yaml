@@ -15,17 +15,26 @@ spec:
         app: postgres
     spec:
       containers:
-      - name: postgre
-        image: postgres:latest
-        ports:
-        - containerPort: 5432
-        env:
+        - name: postgre
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
             - name: POSTGRES_DB
-              value: postgres
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: postgres-DB
             - name: POSTGRES_PASSWORD
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: postgres-PASSWORD
             - name: POSTGRES_USER
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: postgres-PASSWORD
 ---
 apiVersion: v1
 kind: Service

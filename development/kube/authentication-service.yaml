@@ -15,17 +15,26 @@ spec:
         app: auth-service
     spec:
       containers:
-      - name: auth-service
-        image: wkdouze/auth-service-img
-        ports:
-        - containerPort: 3004
-        env:
-        - name: RESTAPI_PORT
-          value: "3004"
-        - name: SECRET_KEY
-          value: J7kPq2xRtVzLwY9fX6eG1sA4iB3oDmC8nU5hW0lZ
-        - name: USER_SERVICE
-          value: user-service:3002
+        - name: auth-service
+          image: wkdouze/auth-service-img
+          ports:
+            - containerPort: 3004
+          env:
+            - name: RESTAPI_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: auth-RESTAPI_PORT
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: auth-SECRET_KEY
+            - name: USER_SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: auth-USER_SERVICE
 ---
 apiVersion: v1
 kind: Service
