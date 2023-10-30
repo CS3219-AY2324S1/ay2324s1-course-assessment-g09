@@ -10,8 +10,8 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - postgres-db:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
+    # ports:
+    #   - '5432:5432'
     restart: always
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
@@ -124,10 +124,96 @@ services:
       dockerfile: Dockerfile
     # ports:
     #   - "3005:3005"
-
+  collaboration-service:
+    container_name: collaboration-service
+    image: wkdouze/collaboration-service-img
+    restart: always
+    environment:
+      PORT: 8001
+    # ports:
+    #   - "8001:8001"
+    build:
+      context: ../backend/collaboration_service
+      dockerfile: Dockerfile
+  matching-service:
+    container_name: matching-service
+    image: wkdouze/matching-service-img
+    restart: always
+    environment:
+      PORT: 8004
+    # ports:
+    #   - "8004:8004"
+    depends_on:
+      - rabbitmq
+    build:
+      context: ../backend/matching_service
+      dockerfile: Dockerfile
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.12.6-management
+    # ports:
+    #   - "5672:5672"
+    #   - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+  communication-service:
+    container_name: communication-service
+    image: wkdouze/communication-service-img
+    restart: always
+    build:
+      context: ../backend/communication_service
+      dockerfile: Dockerfile
+    # ports:
+    #   - "8002:8002"
+    environment:
+      PORT: 8002
+  history-service:
+    container_name: history-service
+    image: wkdouze/history-service-img
+    environment:
+      RESTAPI_PORT: 8003
+      DB_SERVER: mongodb://mongo-history:27018
+      DB_PORT: 27018 # Must be the same as the port in DB_SERVER. For logging only.
+    restart: always
+    build:
+      context: ../backend/history_service
+      dockerfile: Dockerfile
+    # ports:
+    #   - "8003:8003"
+    depends_on:
+      - mongo-history
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://history-service:8003/getAllHistory"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+  mongo-history:
+    container_name: mongo-history
+    image: mongo:latest
+    restart: always
+    command: mongod --port 27018
+    volumes:
+      - mongo-history-db:/data/db
+    # ports:
+    #   - "27018:27018"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo-historysh mongo-history:27018/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 volumes:
   # Persistent data
   postgres-db:
   mongo-db:
+  mongo-history-db:
 
 
