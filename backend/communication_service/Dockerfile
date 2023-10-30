@@ -13,6 +13,6 @@ RUN npm ci # Install dependencies of CONSISTENT version to ensure reliability
 COPY . /usr/src/app
 
 
-EXPOSE 8002
+# EXPOSE 8002
 
 CMD [ "npm", "run", "start"]

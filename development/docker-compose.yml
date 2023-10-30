@@ -10,8 +10,8 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - postgres-db:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
+    # ports:
+    #   - '5432:5432'
     restart: always
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
@@ -130,8 +130,8 @@ services:
     restart: always
     environment:
       PORT: 8001
-    ports:
-      - "8001:8001"
+    # ports:
+    #   - "8001:8001"
     build:
       context: ../backend/collaboration_service
       dockerfile: Dockerfile
@@ -141,8 +141,8 @@ services:
     restart: always
     environment:
       PORT: 8004
-    ports:
-      - "8004:8004"
+    # ports:
+    #   - "8004:8004"
     depends_on:
       - rabbitmq
     build:
@@ -151,9 +151,9 @@ services:
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.12.6-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
+    # ports:
+    #   - "5672:5672"
+    #   - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -164,8 +164,8 @@ services:
     build:
       context: ../backend/communication_service
       dockerfile: Dockerfile
-    ports:
-      - "8002:8002"
+    # ports:
+    #   - "8002:8002"
     environment:
       PORT: 8002
   history-service:
@@ -179,8 +179,8 @@ services:
     build:
       context: ../backend/history_service
       dockerfile: Dockerfile
-    ports:
-      - "8003:8003"
+    # ports:
+    #   - "8003:8003"
     depends_on:
       - mongo-history
     healthcheck:
@@ -202,8 +202,8 @@ services:
     command: mongod --port 27018
     volumes:
       - mongo-history-db:/data/db
-    ports:
-      - "27018:27018"
+    # ports:
+    #   - "27018:27018"
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo-historysh mongo-history:27018/test --quiet
       interval: 10s
