@@ -6,6 +6,7 @@ import {
 	MenuItem,
 	MenuList,
 	HStack,
+	useColorMode,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
