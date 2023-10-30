@@ -5,6 +5,8 @@ class SocketManager {
 	private socketId: string | null = null;
 	private room: string | null = null;
 	private matchedUser: string | null = null;
+	private matchedDifficulty: string | null = null;
+
 	constructor() {
 		this.initialize();
 	}
@@ -41,6 +43,15 @@ class SocketManager {
 
 	public getMatchedUser(): string | null {
 		return this.matchedUser;
+	}
+
+	public setMatchedDifficulty(d: string | null) {
+		console.log("set matched difficulty", d);
+		this.matchedDifficulty = d;
+	}
+
+	public getMatchedDifficulty(): string | null {
+		return this.matchedDifficulty;
 	}
 
 	public subscribeToEvent(eventName: any, callback: any) {

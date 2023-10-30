@@ -26,6 +26,7 @@ export default function MatchButton({ handleQuickStart }) {
 		handleQuickStart();
 		try {
 			const data = {
+				condition: "",
 				difficulty: difficulty,
 				user: JSON.parse(sessionStorage.getItem("login")).email,
 				// user: "test",

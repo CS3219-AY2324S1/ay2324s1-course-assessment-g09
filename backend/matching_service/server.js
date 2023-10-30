@@ -1,5 +1,5 @@
 const amqp = require("amqplib/callback_api");
-const { pairUser } = require("./modelController");
+const { pairUserByDifficulty } = require("./modelController");
 const { io } = require("./socket");
 const { v4: uuidv4 } = require("uuid");
 
@@ -16,10 +16,24 @@ amqp.connect("amqp://rabbitmq", (err, conn) => {
 		ch.consume(
 			queueName,
 			(msg) => {
-				const { difficulty, user, videoSocket, socketId } = JSON.parse(
-					msg.content.toString()
-				);
-				pairUser(difficulty, user, videoSocket, socketId);
+				const { condition, difficulty, user, videoSocket, socketId } =
+					JSON.parse(msg.content.toString());
+				if (condition == "") {
+					pairUserByDifficulty(
+						difficulty,
+						user,
+						videoSocket,
+						socketId
+					);
+				} else {
+					customPair(
+						condition,
+						difficulty,
+						user,
+						videoSocket,
+						socketId
+					);
+				}
 			},
 			{ noAck: true }
 		);
@@ -34,17 +48,21 @@ amqp.connect("amqp://rabbitmq", (err, conn) => {
 		ch.consume(
 			queueName,
 			(msg) => {
-				const { u1, u2, v1, v2, s1, s2 } = JSON.parse(
-					msg.content.toString()
-				);
+				const { condition, difficulty, u1, u2, v1, v2, s1, s2 } =
+					JSON.parse(msg.content.toString());
 				console.log("matched", u1, u2, v1, v2, s1, s2);
-				const roomId = uuidv4();
+				let roomId = uuidv4();
+				if (condition != "") {
+					roomId = condition;
+				}
 				io.to(s1).emit("matched", {
+					difficulty: difficulty,
 					user: u2,
 					videoSocket: v2,
 					roomId: roomId,
 				});
 				io.to(s2).emit("matched", {
+					difficulty: difficulty,
 					user: u1,
 					videoSocket: v1,
 					roomId: roomId,
