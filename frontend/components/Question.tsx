@@ -73,6 +73,7 @@ const Question = ({
   }, [isOpen]);
 
   const handleModal = (question, index) => {
+    console.log(question);
     let desc = question.description;
     console.log(desc);
     desc = desc.replace(/<code>/g, "");
@@ -80,9 +81,10 @@ const Question = ({
     console.log(desc);
 
     setDescription(desc);
+    console.log(desc);
     setTitle(question.title);
     setDifficulty(question.complexity);
-    setCategory(question.category);
+    setCategory(question.category[0]);
 
     console.log(openQuestion);
     if (openQuestion === question) {
