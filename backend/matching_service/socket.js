@@ -13,7 +13,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
 	cors: {
-		origin: "http://localhost:3000",
+		origin: process.env.ORIGIN,
 		methods: ["GET", "POST"],
 	},
 });
@@ -21,11 +21,12 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
 	console.log("a user connected:", socket.id);
 	socket.on("match", (data) => {
-		const { difficulty, user, videoSocket } = data;
+		const { condition, difficulty, user, videoSocket } = data;
 		console.log("match", data);
 		sendToQueue(
 			"matching_queue",
 			JSON.stringify({
+				condition,
 				difficulty,
 				user,
 				videoSocket,

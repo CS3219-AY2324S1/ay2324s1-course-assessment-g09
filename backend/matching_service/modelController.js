@@ -1,5 +1,8 @@
 const userModel = require("./model").userModel;
+const customModel = require("./model").customModel;
 const { sendToQueue } = require("./publisher");
+const io = require("./socket").io;
+
 async function createUser(difficulty, user, videoSocket, socketId) {
 	const [u, created] = await userModel.findOrCreate({
 		where: { socketId: socketId },
@@ -13,18 +16,20 @@ async function createUser(difficulty, user, videoSocket, socketId) {
 	console.log(created);
 }
 
-async function pairUser(difficulty, user, videoSocket, socketId) {
-	// console.log(difficulty, user, videoSocket);
+async function pairUserByDifficulty(difficulty, user, videoSocket, socketId) {
 	await createUser(difficulty, user, videoSocket, socketId);
 	const users = await userModel.findAll({
-		where: { difficulty: difficulty },
+		where: { condition: condition },
 		order: [["createdAt", "ASC"]],
 	});
+
 	console.log("users", users);
 	if (users.length >= 2) {
 		const u1 = users[0].get({ plain: true });
 		const u2 = users[1].get({ plain: true });
 		const matchedInfo = {
+			condition: condition,
+			difficulty: u1.difficulty,
 			u1: u1.user,
 			u2: u2.user,
 			v1: u1.videoSocket,
@@ -39,4 +44,52 @@ async function pairUser(difficulty, user, videoSocket, socketId) {
 	}
 }
 
-exports.pairUser = pairUser;
+async function createCustom(
+	condition,
+	difficulty,
+	user,
+	videoSocket,
+	socketId
+) {
+	await customModel
+		.create({
+			condition: condition,
+			difficulty: difficulty,
+			user: user,
+			videoSocket: videoSocket,
+			socketId: socketId,
+		})
+		.catch((err) => {
+			io.to(socketId).emit(
+				"error",
+				"Custom room name already exists, please try another name!"
+			);
+		});
+}
+async function customPair(condition, difficulty, user, videoSocket, socketId) {
+	if (difficulty != "") {
+		await createCustom(condition, difficulty, user, videoSocket, socketId);
+	} else {
+		const users = await customModel.findAll({
+			where: { condition: condition },
+			order: [["createdAt", "ASC"]],
+		});
+		if (users.length == 1) {
+			const matchedInfo = {
+				condition: condition,
+				difficulty: users[0].difficulty,
+				u1: users[0].user,
+				u2: user,
+				v1: users[0].videoSocket,
+				v2: videoSocket,
+				s1: users[0].socketId,
+				s2: socketId,
+			};
+			console.log("matchedInfo", matchedInfo);
+			await customModel.destroy({ where: { condition: condition } });
+			sendToQueue("matched_queue", JSON.stringify(matchedInfo));
+		}
+	}
+}
+exports.pairUserByDifficulty = pairUserByDifficulty;
+exports.customPair = customPair;
