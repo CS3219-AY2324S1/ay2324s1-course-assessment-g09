@@ -19,7 +19,7 @@ export default function CreateCustomRoom() {
 	const [difficulty, setDifficulty] = useState("Easy");
 	const handleCreateCustom = () => {
 		matchSocketManager.emitEvent("match", {
-			condtion: roomName,
+			condition: roomName,
 			difficulty: difficulty,
 			user: JSON.parse(sessionStorage.getItem("login")).email,
 			videoSocket: socketManager.getSocketId(),

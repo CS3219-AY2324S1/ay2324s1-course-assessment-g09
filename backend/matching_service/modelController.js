@@ -51,7 +51,7 @@ async function createCustom(
 	videoSocket,
 	socketId
 ) {
-	const [u, created] = await customModel
+	await customModel
 		.create({
 			condition: condition,
 			difficulty: difficulty,

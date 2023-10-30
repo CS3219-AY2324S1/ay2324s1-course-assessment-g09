@@ -9,7 +9,7 @@ export default function JoinCustomRoom() {
 	const [roomName, setRoomName] = useState("");
 	const handleJoinCustom = () => {
 		matchSocketManager.emitEvent("match", {
-			condtion: roomName,
+			condition: roomName,
 			difficulty: "",
 			user: JSON.parse(sessionStorage.getItem("login")).email,
 			videoSocket: socketManager.getSocketId(),

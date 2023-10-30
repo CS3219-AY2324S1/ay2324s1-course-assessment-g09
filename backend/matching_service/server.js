@@ -1,5 +1,5 @@
 const amqp = require("amqplib/callback_api");
-const { pairUserByDifficulty } = require("./modelController");
+const { pairUserByDifficulty, customPair } = require("./modelController");
 const { io } = require("./socket");
 const { v4: uuidv4 } = require("uuid");
 
