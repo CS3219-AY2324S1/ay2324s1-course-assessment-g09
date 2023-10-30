@@ -1,7 +1,7 @@
 const amqp = require("amqplib/callback_api");
 
 const sendToQueue = (queueName, msg) => {
-	amqp.connect("amqp://rabbitmq", (err, conn) => {
+	amqp.connect(process.env.RABBITMQ, (err, conn) => {
 		if (err) {
 			throw err;
 		}
