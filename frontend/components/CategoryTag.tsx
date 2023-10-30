@@ -7,7 +7,7 @@ const CategoryTag = ({ categoryTag }) => {
   return (
     <Box>
       {tags.map((tag, index) => (
-        <Badge key={index} mr={2} mt={2}>
+        <Badge colorScheme="cyan" key={index} mr={2} mt={2}>
           {tag}
         </Badge>
       ))}
