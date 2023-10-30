@@ -150,11 +150,7 @@ const Question = ({
                 {question.qn_num}
               </Flex>
             </GridItem>
-            <GridItem
-              key={`grid_item_title${question.title}`}
-              onClick={() => handleModal(question, index)}
-              colSpan={4}
-            >
+            <GridItem key={`grid_item_title${question.title}`} colSpan={4}>
               <Flex
                 justifyContent="flex-start"
                 pl={2}
@@ -168,6 +164,7 @@ const Question = ({
                     fontWeight: "extrabold",
                     cursor: "pointer",
                   }}
+                  onClick={() => handleModal(question, index)}
                   fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
                   fontWeight="semibold"
                   my={2}
