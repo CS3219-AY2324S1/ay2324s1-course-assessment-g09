@@ -97,9 +97,7 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 			);
 
 			// Check if the action exists
-			const formatAction = editor.getAction(
-				"editor.action.formatDocument"
-			);
+			const formatAction = editor.getAction("editor.action.formatDocument");
 
 			if (formatAction) {
 				// Execute the format action
@@ -109,12 +107,7 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 	};
 
 	return (
-		<Grid
-			templateColumns="repeat(4, 1fr)"
-			gap={5}
-			height="100%"
-			width="100%"
-		>
+		<Grid templateColumns="repeat(4, 1fr)" gap={5} height="100%" width="100%">
 			<GridItem>
 				<Menu>
 					<MenuButton as={Button} width="100%">
@@ -127,10 +120,7 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 							: "Java"}
 					</MenuButton>
 					<MenuList>
-						<MenuItem
-							onClick={handleLanguageChange}
-							value="javascript"
-						>
+						<MenuItem onClick={handleLanguageChange} value="javascript">
 							Javascript
 						</MenuItem>
 						<MenuItem onClick={handleLanguageChange} value="python">
