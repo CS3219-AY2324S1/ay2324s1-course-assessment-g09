@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
+  name: postgres-deployment
   labels:
     app: postgres
 spec:
@@ -15,7 +15,7 @@ spec:
         app: postgres
     spec:
       containers:
-        - name: postgre
+        - name: postgre-container
           image: postgres:latest
           ports:
             - containerPort: 5432
