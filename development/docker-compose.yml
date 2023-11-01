@@ -14,7 +14,7 @@ services:
     #   - '5432:5432'
     restart: always
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -102,13 +102,7 @@ services:
     depends_on:
       - mongo
     healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-f",
-          "http://question-service:3001/questions"
-        ]
+      test: ["CMD", "curl", "-f", "http://question-service:3001/questions"]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -184,13 +178,7 @@ services:
     depends_on:
       - mongo-history
     healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-f",
-          "http://history-service:8003/getAllHistory"
-        ]
+      test: ["CMD", "curl", "-f", "http://history-service:8003/getAllHistory"]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -215,5 +203,3 @@ volumes:
   postgres-db:
   mongo-db:
   mongo-history-db:
-
-
