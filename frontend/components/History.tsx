@@ -40,7 +40,7 @@ export default function History() {
 		const fetchHistory = async () => {
 			try {
 				const res = await axios.get(
-					`http://localhost:8003/history/get/${user}`
+					`/history_service/history/get/${user}`
 				);
 
 				setHistory(
