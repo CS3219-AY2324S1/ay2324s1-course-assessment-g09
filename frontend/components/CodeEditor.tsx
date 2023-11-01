@@ -62,7 +62,7 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 	};
 
 	useEffect(() => {
-		const socket = io("http://localhost:8001");
+		const socket = io({path: "/collaboration_service/socket.io/"});
 		setSocket(socket);
 
 		socket?.emit("joinRoom", socketRoom);

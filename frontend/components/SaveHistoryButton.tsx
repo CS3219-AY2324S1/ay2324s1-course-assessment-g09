@@ -26,7 +26,7 @@ export default function SaveHistoryButton({
 			code,
 		};
 		const res = await axios
-			.post("http://localhost:8003/history/create", data)
+			.post("/history_service/history/create", data)
 			.then((res) => console.log(res.data))
 			.then(() => router.push("/"))
 			.catch((err) => console.log(err));

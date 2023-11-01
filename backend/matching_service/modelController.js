@@ -19,7 +19,7 @@ async function createUser(difficulty, user, videoSocket, socketId) {
 async function pairUserByDifficulty(difficulty, user, videoSocket, socketId) {
 	await createUser(difficulty, user, videoSocket, socketId);
 	const users = await userModel.findAll({
-		where: { condition: condition },
+		where: { difficulty: difficulty },
 		order: [["createdAt", "ASC"]],
 	});
 
@@ -28,7 +28,7 @@ async function pairUserByDifficulty(difficulty, user, videoSocket, socketId) {
 		const u1 = users[0].get({ plain: true });
 		const u2 = users[1].get({ plain: true });
 		const matchedInfo = {
-			condition: condition,
+			condition: "",
 			difficulty: u1.difficulty,
 			u1: u1.user,
 			u2: u2.user,
