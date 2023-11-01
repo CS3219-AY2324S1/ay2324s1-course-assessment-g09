@@ -15,7 +15,9 @@ const User = ({
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${IP_ADDRESS}:3002/users/getall`);
+      // const res = await axios.get(`${IP_ADDRESS}:3002/users/getall`);
+      const res = await axios.get(`user_service/users/getUser`);
+      console.log(res);
       setUsers(res.data.users);
     } catch (error) {
       console.log("ERROR: ", error);
@@ -24,7 +26,7 @@ const User = ({
 
   useEffect(() => {
     fetchUsers();
-  });
+  }, []);
 
   const handleEdit = async ({ _id, id, name }) => {
     setUserInputValues({
@@ -35,11 +37,11 @@ const User = ({
     setIsCreate(false);
   };
 
-  const handleDelete = async ({ id, name }) => {
-    console.log(id, name);
+  const handleDelete = async ({ username, name }) => {
+    console.log(username, name);
     try {
-      await axios.post(`${IP_ADDRESS}:3002/users/delete/${id}`, {
-        id,
+      await axios.post(`user_service/users/getUser`, {
+        username,
         name,
       });
       if (users.LENGTH > 0) {
@@ -54,21 +56,33 @@ const User = ({
   return (
     <>
       {users &&
-        users.map((user) => (
-          <Grid templateColumns="repeat(3, 1fr)" key={`grid_${user.id}`}>
-            <GridItem border="1px solid" key={`grid_item_id_${user.id}`}>
+        users.map((user, index) => (
+          <Grid
+            templateColumns="repeat(3, 1fr)"
+            key={`grid_${user.username}`}
+            backgroundColor={
+              index % 2 === 0
+                ? colorMode == "light"
+                  ? "gray.300"
+                  : "gray.700"
+                : colorMode == "light"
+                ? "gray.400"
+                : "gray.800"
+            }
+          >
+            <GridItem key={`grid_item_id_${user.username}`} pl={2}>
               <Flex
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="center"
                 height="100%"
-                key={`flex_id_${user.id}`}
+                key={`flex_id_${user.username}`}
               >
-                {user.id}
+                {user.username}
               </Flex>
             </GridItem>
-            <GridItem border="1px solid" key={`grid_item_title${user.name}`}>
+            <GridItem key={`grid_item_title${user.name}`} pl={2}>
               <Flex
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="center"
                 height="100%"
                 key={`flex_title_${user.name}`}
@@ -77,7 +91,7 @@ const User = ({
               </Flex>
             </GridItem>
 
-            <GridItem border="1px solid">
+            <GridItem pl={2}>
               <Flex justifyContent="center" alignItems="center" height="100%">
                 <Button
                   size="sm"

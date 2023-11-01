@@ -9,7 +9,9 @@ class SocketManager {
 	}
 
 	private initialize() {
-		this.socket = io("http://localhost:8002/");
+		this.socket = io({
+			path: "/communication_service/socket.io/"
+		});
 
 		this.socket.on("connect", () => {
 			this.socketId = this.socket?.id || null;
