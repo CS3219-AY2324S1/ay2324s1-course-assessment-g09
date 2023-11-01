@@ -19,7 +19,7 @@ async function createUser(difficulty, user, videoSocket, socketId) {
 async function pairUserByDifficulty(difficulty, user, videoSocket, socketId) {
 	await createUser(difficulty, user, videoSocket, socketId);
 	const users = await userModel.findAll({
-		where: { condition: condition },
+		where: { difficulty: difficulty },
 		order: [["createdAt", "ASC"]],
 	});
 
@@ -28,7 +28,7 @@ async function pairUserByDifficulty(difficulty, user, videoSocket, socketId) {
 		const u1 = users[0].get({ plain: true });
 		const u2 = users[1].get({ plain: true });
 		const matchedInfo = {
-			condition: condition,
+			condition: "",
 			difficulty: u1.difficulty,
 			u1: u1.user,
 			u2: u2.user,
@@ -60,10 +60,7 @@ async function createCustom(
 			socketId: socketId,
 		})
 		.catch((err) => {
-			io.to(socketId).emit(
-				"error",
-				"Custom room name already exists, please try another name!"
-			);
+			io.to(socketId).emit("error", err);
 		});
 }
 async function customPair(condition, difficulty, user, videoSocket, socketId) {
@@ -88,8 +85,20 @@ async function customPair(condition, difficulty, user, videoSocket, socketId) {
 			console.log("matchedInfo", matchedInfo);
 			await customModel.destroy({ where: { condition: condition } });
 			sendToQueue("matched_queue", JSON.stringify(matchedInfo));
+		} else {
+			io.to(socketId).emit("error", "Room does not exist");
 		}
 	}
 }
+
+async function removeFromUser(socketId) {
+	await userModel.destroy({ where: { socketId: socketId } });
+}
+
+async function removeFromCustom(condition) {
+	await customModel.destroy({ where: { condition: condition } });
+}
 exports.pairUserByDifficulty = pairUserByDifficulty;
 exports.customPair = customPair;
+exports.removeFromUser = removeFromUser;
+exports.removeFromCustom = removeFromCustom;

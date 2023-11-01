@@ -6,24 +6,29 @@ import {
 	MenuButton,
 	MenuItem,
 	MenuList,
+	Text,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import matchSocketManager from "./Sockets/MatchSocketManager";
 import socketManager from "./Sockets/CommunicationSocketManager";
+import { set } from "zod";
 
 export default function CreateCustomRoom() {
 	const router = useRouter();
 	const [roomName, setRoomName] = useState("");
 	const [difficulty, setDifficulty] = useState("Easy");
+	const [roomExists, setRoomExists] = useState(false);
 	const handleCreateCustom = () => {
+		setRoomExists(false);
 		matchSocketManager.emitEvent("match", {
 			condition: roomName,
 			difficulty: difficulty,
 			user: JSON.parse(sessionStorage.getItem("login")).email,
 			videoSocket: socketManager.getSocketId(),
 		});
+
 		matchSocketManager.subscribeToEvent("matched", (data) => {
 			const matchedUser = data.user;
 			const matchedVideoSocket = data.videoSocket;
@@ -35,6 +40,11 @@ export default function CreateCustomRoom() {
 			matchSocketManager.setMatchedUser(matchedUser);
 			matchSocketManager.setMatchedRoom(room);
 			router.push("/collaboration");
+		});
+
+		matchSocketManager.subscribeToEvent("error", (data) => {
+			setRoomExists(true);
+			console.log("error", data);
 		});
 	};
 
@@ -70,7 +80,8 @@ export default function CreateCustomRoom() {
 				</MenuList>
 			</Menu>
 			<Input onChange={(e) => setRoomName(e.target.value)} />
-
+			(roomExists &&
+			<Text>Please choose another name, the room already exist</Text>)
 			<Button onClick={handleCreateCustom}>Create and join room</Button>
 		</Box>
 	);

@@ -1,5 +1,10 @@
 const amqp = require("amqplib/callback_api");
-const { pairUserByDifficulty, customPair } = require("./modelController");
+const {
+	pairUserByDifficulty,
+	customPair,
+	removeFromCustom,
+	removeFromUser,
+} = require("./modelController");
 const { io } = require("./socket");
 const { v4: uuidv4 } = require("uuid");
 
@@ -19,20 +24,9 @@ amqp.connect(process.env.RABBITMQ, (err, conn) => {
 				const { condition, difficulty, user, videoSocket, socketId } =
 					JSON.parse(msg.content.toString());
 				if (condition == "") {
-					pairUserByDifficulty(
-						difficulty,
-						user,
-						videoSocket,
-						socketId
-					);
+					pairUserByDifficulty(difficulty, user, videoSocket, socketId);
 				} else {
-					customPair(
-						condition,
-						difficulty,
-						user,
-						videoSocket,
-						socketId
-					);
+					customPair(condition, difficulty, user, videoSocket, socketId);
 				}
 			},
 			{ noAck: true }
@@ -48,8 +42,9 @@ amqp.connect(process.env.RABBITMQ, (err, conn) => {
 		ch.consume(
 			queueName,
 			(msg) => {
-				const { condition, difficulty, u1, u2, v1, v2, s1, s2 } =
-					JSON.parse(msg.content.toString());
+				const { condition, difficulty, u1, u2, v1, v2, s1, s2 } = JSON.parse(
+					msg.content.toString()
+				);
 				console.log("matched", u1, u2, v1, v2, s1, s2);
 				let roomId = uuidv4();
 				if (condition != "") {
@@ -70,5 +65,22 @@ amqp.connect(process.env.RABBITMQ, (err, conn) => {
 			},
 			{ noAck: true }
 		);
+
+		conn.createChannel((err, ch) => {
+			let queueName = "leave_queue";
+			ch.assertQueue(queueName, { durable: false });
+			ch.consume(
+				queueName,
+				(msg) => {
+					const { condition, socketId } = JSON.parse(msg.content.toString());
+					if (condition == "") {
+						removeFromUser(socketId);
+					} else {
+						removeFromCustom(condition, socketId);
+					}
+				},
+				{ noAck: true }
+			);
+		});
 	});
 });
