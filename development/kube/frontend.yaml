@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-service-deployment
+  name: frontend-deployment
   labels:
     app: frontend
 spec:
@@ -15,7 +15,7 @@ spec:
         app: frontend
     spec:
       containers:
-        - name: frontend
+        - name: frontend-container
           image: wkdouze/frontend-img
           ports:
             - containerPort: 3005

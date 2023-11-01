@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service-deployment
+  name: user-deployment
   labels:
-    app: user-service
+    app: user
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user-service
+      app: user
   template:
     metadata:
       labels:
-        app: user-service
+        app: user
     spec:
       containers:
-        - name: user-service
+        - name: user-container
           image: wkdouze/user-service-img
           ports:
             - containerPort: 3002
@@ -57,7 +57,7 @@ metadata:
   name: user-service
 spec:
   selector:
-    app: user-service
+    app: user
   ports:
     - port: 3002
       targetPort: 3002

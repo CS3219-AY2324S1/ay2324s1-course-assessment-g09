@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: question-service-deployment
+  name: question-deployment
   labels:
-    app: question-service
+    app: question
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: question-service
+      app: question
   template:
     metadata:
       labels:
-        app: question-service
+        app: question
     spec:
       containers:
-        - name: question-service
+        - name: question-container
           image: wkdouze/question-service-img
           ports:
             - containerPort: 3001
@@ -42,7 +42,7 @@ metadata:
   name: question-service
 spec:
   selector:
-    app: question-service
+    app: question
   ports:
     - port: 3001
       targetPort: 3001

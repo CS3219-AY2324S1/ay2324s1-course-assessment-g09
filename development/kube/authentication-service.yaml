@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-service-deployment
+  name: auth-deployment
   labels:
-    app: auth-service
+    app: auth
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth-service
+      app: auth
   template:
     metadata:
       labels:
-        app: auth-service
+        app: auth
     spec:
       containers:
-        - name: auth-service
+        - name: auth-container
           image: wkdouze/auth-service-img
           ports:
             - containerPort: 3004
@@ -42,7 +42,7 @@ metadata:
   name: auth-service
 spec:
   selector:
-    app: auth-service
+    app: auth
   ports:
     - port: 3004
       targetPort: 3004
