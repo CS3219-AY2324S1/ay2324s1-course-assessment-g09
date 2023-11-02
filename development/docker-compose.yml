@@ -137,6 +137,9 @@ services:
     restart: always
     environment:
       PORT: 8004
+      RABBITMQ: "amqp://rabbitmq"
+      ORIGIN: "http://gateway:3000"
+
     # ports:
     #   - "8004:8004"
     depends_on:
