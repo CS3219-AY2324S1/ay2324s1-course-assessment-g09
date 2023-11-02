@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matching-deployment
+  labels:
+    app: matching
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matching
+  template:
+    metadata:
+      labels:
+        app: matching
+    spec:
+      containers:
+        - name: matching-container
+          image: wkdouze/matching-service-img
+          ports:
+            - containerPort: 8004
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: matching-PORT
+            - name: RABBITMQ
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: matching-RABBITMQ
+            - name: ORIGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: matching-ORIGIN
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matching-service
+spec:
+  selector:
+    app: matching
+  ports:
+    - port: 8004
+      targetPort: 8004
