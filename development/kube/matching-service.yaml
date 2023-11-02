@@ -34,7 +34,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: config
-                  key: matching-ORIGIN
+                  key: ORIGIN
 ---
 apiVersion: v1
 kind: Service

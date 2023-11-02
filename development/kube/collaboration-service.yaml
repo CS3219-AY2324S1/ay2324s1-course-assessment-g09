@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collaboration-deployment
+  labels:
+    app: collaboration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collaboration
+  template:
+    metadata:
+      labels:
+        app: collaboration
+    spec:
+      containers:
+        - name: collaboration-container
+          image: wkdouze/collaboration-service-img
+          ports:
+            - containerPort: 8001
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: collaboration-PORT
+            - name: ORIGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: ORIGIN
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: collaboration-service
+spec:
+  selector:
+    app: collaboration
+  ports:
+    - port: 8001
+      targetPort: 8001
