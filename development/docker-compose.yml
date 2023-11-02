@@ -68,7 +68,9 @@ services:
       # To hide
       RESTAPI_PORT: 3004
       USER_SERVICE: user-service:3002
-      SECRET_KEY: J7kPq2xRtVzLwY9fX6eG1sA4iB3oDmC8nU5hW0lZ
+      SECRET_KEY: /run/secrets/secret_key
+    secrets:
+      - secret_key
 
   mongo:
     container_name: mongo
@@ -114,8 +116,7 @@ services:
     build:
       context: ../frontend
       dockerfile: Dockerfile
-    # ports:
-    #   - "3005:3005"
+
   collaboration-service:
     container_name: collaboration-service
     image: wkdouze/collaboration-service-img
@@ -123,8 +124,7 @@ services:
     environment:
       PORT: 8001
       ORIGIN: 'http://gateway:3000'
-    # ports:
-    #   - "8001:8001"
+
     build:
       context: ../backend/collaboration_service
       dockerfile: Dockerfile
@@ -176,8 +176,6 @@ services:
     build:
       context: ../backend/history_service
       dockerfile: Dockerfile
-    # ports:
-    #   - "8003:8003"
     depends_on:
       - mongo-history
     healthcheck:
@@ -205,3 +203,7 @@ volumes:
   postgres-db:
   mongo-db:
   mongo-history-db:
+
+secrets:
+  secret_key:
+    file: secret.txt

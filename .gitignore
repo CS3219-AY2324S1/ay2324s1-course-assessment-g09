@@ -5,5 +5,5 @@ backend/user_service/.env-local
 backend/authentication_service/.env
 backend/history_service/.env
 secret.yaml
-
+secret.txt
 
