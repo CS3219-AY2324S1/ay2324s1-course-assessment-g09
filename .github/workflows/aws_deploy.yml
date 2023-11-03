@@ -3,14 +3,41 @@ on:
   push:
     branches:
       - master
+
 env:
   AWS_REGION : ap-southeast-1
-  ROLE_TO_ASSUME: arn:aws:iam::920185736846:role/GitHubAction-AssumeRoleWithAction # Get from Choon Yong  
+  ROLE_TO_ASSUME: arn:aws:iam::920185736846:role/GitHubAction-AssumeRoleWithAction # Get from Choon Yong
 
-jobs:    
-  deploy:  
+jobs: 
+  login:
     runs-on: ubuntu-latest
-    
+    permissions: # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+      id-token: write
+      contents: read  
+    outputs:
+      registry: ${{ steps.login-ecr.outputs.registry }}
+      aws-session-token: ${{ steps.creds.outputs.aws-session-token }}
+    steps:
+      # AWS Authentication
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          output-credentials: true
+        # Sanity Check
+      - name: Sts GetCallerIdentity (Sanity Check)
+        run: |
+          aws sts get-caller-identity
+      # Login to ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+  
+  build:
+    runs-on: ubuntu-latest
     strategy: # Define image parameters for a For Loop
       matrix:
         image_parameters: [ 
@@ -18,53 +45,30 @@ jobs:
           { Name: question-service, Path: './backend/question_service' }, 
           { Name: frontend, Path: './frontend' }  
         ]
-
-    permissions: # These permissions are needed to interact with GitHub's OIDC Token endpoint.
-      id-token: write
-      contents: read
-    
     steps:
-    # Initialisation
-    - name: Check out code
-      uses: actions/checkout@v4
+      # Initialisation
+      - name: Check out code
+        uses: actions/checkout@v4
+      # Building images
+      - name : Build, tag, and push image to Amazon ECR ( ${{ matrix.image_parameters.Name }} )
+        env:
+          ECR_REGISTRY: ${{ needs.login.outputs.registry }}
+          ECR_REPOSITORY: ${{ matrix.image_parameters.Name }}
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ${{ matrix.image_parameters.Path }}
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    # AWS Authentication
-    - name: Configure AWS credentials
-      id: creds
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: ${{ env.ROLE_TO_ASSUME }}
-        aws-region: ${{ env.AWS_REGION }}
-        role-session-name: GitHub_to_AWS_via_FederatedOIDC
-        output-credentials: true
-        
-    # Sanity Check
-    - name: Sts GetCallerIdentity (Sanity Check)
-      run: |
-        aws sts get-caller-identity
-
-    # Login to ECR
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
-
-    # Building images
-    - name : Build, tag, and push image to Amazon ECR ( ${{ matrix.image_parameters.Name }} )
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ matrix.image_parameters.Name }}
-        IMAGE_TAG: latest
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ${{ matrix.image_parameters.Path }}
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
+  deploy:  
+    runs-on: ubuntu-latest
+    steps:
     # Deployment
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v21
       with:
         aws_access_key: ${{ env.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-        aws_session_token: ${{ steps.creds.outputs.aws-session-token }}
+        aws_session_token: ${{ needs.login.outputs.aws-session-token }}
         application_name: PeerPrep
         environment_name: PeerPrep-env
         version_label: 15-1 #To manually iterate
