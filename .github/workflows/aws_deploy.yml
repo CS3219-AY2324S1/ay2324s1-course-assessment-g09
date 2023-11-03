@@ -6,22 +6,20 @@ on:
 env:
   AWS_REGION : ap-southeast-1
   ROLE_TO_ASSUME: arn:aws:iam::920185736846:role/GitHubAction-AssumeRoleWithAction # Get from Choon Yong  
-parameters:
-- name: image_parameters
-  type: object
-  default:
-  - { Name: user-service, Path: './backend/user_service' }
-  - { Name: question-service, Path: './backend/question_service' }
-  - { Name: frontend, Path: './frontend' }
-permissions:
-  id-token: write   # This is required for requesting the JWT
-  contents: read    # This is required for actions/checkout
 
-jobs:
+jobs:    
   deploy:  
     runs-on: ubuntu-latest
+    
+    strategy: # Define image parameters for a For Loop
+      matrix:
+        image_parameters: [ 
+          { Name: user-service, Path: './backend/user_service' }, 
+          { Name: question-service, Path: './backend/question_service' }, 
+          { Name: frontend, Path: './frontend' }  
+        ]
+    
     steps:
-
     # Initialisation
     - name: Check out code
       uses: actions/checkout@v4
@@ -32,8 +30,8 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: ${{ env.ROLE_TO_ASSUME }}
-        role-session-name: GitHub_to_AWS_via_FederatedOIDC
         aws-region: ${{ env.AWS_REGION }}
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
         output-credentials: true
         
     # Sanity Check
@@ -47,15 +45,14 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2
 
     # Building images
-    - ${{ each image in parameters.image_parameters }}:
-      - name : Build, tag, and push image to Amazon ECR ( ${{ image.Name }} )
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ image.Name }}
-          IMAGE_TAG: latest
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ${{ image.Path }}
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    - name : Build, tag, and push image to Amazon ECR ( ${{ matrix.image_parameters.Name }} )
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ matrix.image_parameters.Name }}
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ${{ matrix.image_parameters.Path }}
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
     # Deployment
     - name: Deploy to EB
