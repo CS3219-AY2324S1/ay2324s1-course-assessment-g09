@@ -17,8 +17,9 @@ import { IoMdAdd } from "react-icons/io";
 import { GiCancel } from "react-icons/gi";
 
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dotenv from "dotenv";
+import CategoryCheckbox from "./CategoryCheckbox";
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
@@ -29,6 +30,9 @@ const QuestionInputField = ({
   setIsCreate,
   colorMode,
   setQuestions,
+  selectedCategory,
+  setSelectedCategory,
+  handleCheckboxChange,
 }) => {
   const [error, setError] = useState(false);
 
@@ -49,16 +53,16 @@ const QuestionInputField = ({
         qn_num: Number(inputValues.qn_num),
         title: inputValues.title,
         description: inputValues.description,
-        category: inputValues.category.split(","),
+        category: selectedCategory,
         complexity: inputValues.complexity,
       });
 
       console.log(res);
+      setSelectedCategory([]);
       setInputValues({
         qn_num: "",
         title: "",
         description: "",
-        category: "",
         complexity: "",
       });
 
@@ -78,17 +82,23 @@ const QuestionInputField = ({
   const handleUpdate = async () => {
     setError(false);
     const { qn_num } = inputValues;
-    await axios.put(`question_service/admin/questions/${qn_num}`, inputValues);
+    await axios.put(`question_service/admin/questions/${qn_num}`, {
+      qn_num: Number(inputValues.qn_num),
+      title: inputValues.title,
+      description: inputValues.description,
+      category: selectedCategory,
+      complexity: inputValues.complexity,
+    });
 
     setInputValues({
       edit_id: "",
       qn_num: "",
       title: "",
       description: "",
-      category: "",
       complexity: "",
     });
 
+    setSelectedCategory([]);
     setIsCreate(true);
     fetchQuestions();
   };
@@ -119,7 +129,7 @@ const QuestionInputField = ({
       String(inputValues.qn_num).trim() !== "" &&
       inputValues.title.trim() !== "" &&
       inputValues.description.trim() !== "" &&
-      inputValues.category.trim() !== "" &&
+      selectedCategory.length &&
       inputValues.complexity.trim() !== ""
     );
   };
@@ -202,14 +212,18 @@ const QuestionInputField = ({
 
       {/* Category */}
       <GridItem rowStart={2}>
-        <Input
+        <CategoryCheckbox
+          selectedCategory={selectedCategory}
+          handleCheckboxChange={handleCheckboxChange}
+        />
+        {/* <Input
           placeholder="Category"
           variant="filled"
           name="category"
           value={inputValues.category}
           onChange={handleInputChange}
           fontSize={{ lg: "sm", xl: "sm", "2xl": "lg" }}
-        />
+        /> */}
       </GridItem>
 
       {/* Complexity */}

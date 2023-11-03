@@ -74,6 +74,20 @@ const dashboard = () => {
     }
   }, []);
 
+  const [selectedCategory, setSelectedCategory] = useState([]);
+
+  useEffect(() => {
+    console.log(selectedCategory);
+  }, [selectedCategory]);
+
+  const handleCheckboxChange = (changedCategory: any) => {
+    setSelectedCategory((previouslySelectedCategory) =>
+      previouslySelectedCategory.includes(changedCategory)
+        ? previouslySelectedCategory.filter((item) => item !== changedCategory)
+        : [...previouslySelectedCategory, changedCategory]
+    );
+  };
+
   return (
     <Grid
       templateColumns="repeat(4, 1fr)"
@@ -117,6 +131,8 @@ const dashboard = () => {
               userMode={user}
               questions={questions}
               fetchQuestions={fetchQuestions}
+              setSelectedCategory={setSelectedCategory}
+              selectedCategory={selectedCategory}
             />
           </Box>
         ) : (
@@ -129,6 +145,9 @@ const dashboard = () => {
             user={user}
             questions={questions}
             fetchQuestions={fetchQuestions}
+            handleCheckboxChange={handleCheckboxChange}
+            setSelectedCategory={setSelectedCategory}
+            selectedCategory={selectedCategory}
           />
         )}
       </GridItem>
