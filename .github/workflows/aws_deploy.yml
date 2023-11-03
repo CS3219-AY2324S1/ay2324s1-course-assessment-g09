@@ -21,6 +21,8 @@ jobs:
           { Name: question-service, Path: './backend/question_service' }, 
           { Name: frontend, Path: './frontend' }  
         ]
+      fail-fast: true
+      max-parallel: 1 # NO parallelism for now
     steps:
       # AWS Authentication
       - name: Configure AWS credentials
