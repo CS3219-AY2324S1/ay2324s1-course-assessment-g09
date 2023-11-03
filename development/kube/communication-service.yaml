@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: communication-deployment
+  labels:
+    app: communication
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: communication
+  template:
+    metadata:
+      labels:
+        app: communication
+    spec:
+      containers:
+        - name: communication-container
+          image: communication-service-img
+          ports:
+            - containerPort: 8002
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: communication-PORT
+            - name: ORIGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: ORIGIN
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: communication-service
+spec:
+  selector:
+    app: communication
+  ports:
+    - port: 8002
+      targetPort: 8002

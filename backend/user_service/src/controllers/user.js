@@ -60,6 +60,11 @@ userRouter.get('/getUser', async (request, response) => {
         const allUsers = results.rows;
         const numUsers = allUsers.length;
 
+        allUsers.forEach((user) => {
+            delete user.password; // Remove password 
+            return user;
+        })
+
         const msg = { 'users': allUsers };
         return response.status(200).json(msg);
     })

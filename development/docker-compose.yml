@@ -10,8 +10,7 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - postgres-db:/var/lib/postgresql/data
-    # ports:
-    #   - '5432:5432'
+
     restart: always
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
@@ -21,7 +20,7 @@ services:
 
   user-service:
     container_name: user-service_auth_dev
-    image: wkdouze/user-service-img
+    image: user-service-img
     environment:
       # To hide
       RESTAPI_PORT: 3002
@@ -34,8 +33,7 @@ services:
     build:
       context: ../backend/user_service/
       dockerfile: Dockerfile
-    # ports:
-    #   - "3002:3002"
+
     depends_on:
       postgres:
         condition: service_healthy
@@ -47,7 +45,7 @@ services:
       timeout: 40s
   gateway:
     container_name: apigateway_auth_dev
-    image: wkdouze/apigateway-img
+    image: apigateway-img
     restart: always
     build:
       context: ../gateway/
@@ -61,7 +59,7 @@ services:
         condition: service_started
   auth-service:
     container_name: auth_service_auth_dev
-    image: wkdouze/auth-service-img
+    image: auth-service-img
     restart: always
     build:
       context: ../backend/authentication_service/
@@ -70,17 +68,17 @@ services:
       # To hide
       RESTAPI_PORT: 3004
       USER_SERVICE: user-service:3002
-      SECRET_KEY: J7kPq2xRtVzLwY9fX6eG1sA4iB3oDmC8nU5hW0lZ
-    # ports:
-    #   - "3004:3004"
+      SECRET_KEY: /run/secrets/secret_key
+    secrets:
+      - secret_key
+
   mongo:
     container_name: mongo
     image: mongo:latest
     restart: always
     volumes:
       - mongo-db:/data/db
-    # ports:
-    #   - 27017:27017
+
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh mongo:27017/test --quiet
       interval: 10s
@@ -90,7 +88,7 @@ services:
 
   question-service:
     container_name: question-service
-    image: wkdouze/question-service-img
+    image: question-service-img
     environment:
       RESTAPI_PORT: 3001
       DB_SERVER: mongodb://mongo:27017
@@ -111,34 +109,33 @@ services:
       start_period: 40s
   frontend:
     container_name: frontend
-    image: wkdouze/frontend-img
+    image: frontend-img
     restart: always
     environment:
       NEXT_PUBLIC_IP_ADDRESS: http://localhost
     build:
       context: ../frontend
       dockerfile: Dockerfile
-  # ports:
-  #   - "3005:3005"
   collaboration-service:
     container_name: collaboration-service
-    image: wkdouze/collaboration-service-img
+    image: collaboration-service-img
     restart: always
     environment:
       PORT: 8001
-    # ports:
-    #   - "8001:8001"
+      ORIGIN: 'http://gateway:3000'
+
     build:
       context: ../backend/collaboration_service
       dockerfile: Dockerfile
   matching-service:
     container_name: matching-service
-    image: wkdouze/matching-service-img
+    image: matching-service-img
     restart: always
     environment:
       PORT: 8004
-    # ports:
-    #   - "8004:8004"
+      RABBITMQ: "amqp://rabbitmq"
+      ORIGIN: "http://gateway:3000"
+
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -148,9 +145,6 @@ services:
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.12.6-management
-    # ports:
-    #   - "5672:5672"
-    #   - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -161,18 +155,18 @@ services:
       retries: 3
   communication-service:
     container_name: communication-service
-    image: wkdouze/communication-service-img
+    image: communication-service-img
     restart: always
     build:
       context: ../backend/communication_service
       dockerfile: Dockerfile
-    # ports:
-    #   - "8002:8002"
+
     environment:
       PORT: 8002
+      ORIGIN: 'http://gateway:3000'
   history-service:
     container_name: history-service
-    image: wkdouze/history-service-img
+    image: history-service-img
     environment:
       RESTAPI_PORT: 8003
       DB_SERVER: mongodb://mongo-history:27018
@@ -181,8 +175,6 @@ services:
     build:
       context: ../backend/history_service
       dockerfile: Dockerfile
-    # ports:
-    #   - "8003:8003"
     depends_on:
       - mongo-history
     healthcheck:
@@ -198,8 +190,7 @@ services:
     command: mongod --port 27018
     volumes:
       - mongo-history-db:/data/db
-    # ports:
-    #   - "27018:27018"
+
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo-historysh mongo-history:27018/test --quiet
       interval: 10s
@@ -211,3 +202,7 @@ volumes:
   postgres-db:
   mongo-db:
   mongo-history-db:
+
+secrets:
+  secret_key:
+    file: secret.txt
