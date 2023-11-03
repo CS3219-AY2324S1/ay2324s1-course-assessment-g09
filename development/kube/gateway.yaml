@@ -19,7 +19,13 @@ spec:
           image: apigateway-img
           ports:
             - containerPort: 3000
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "200m"
+            requests:
+              cpu: "100m"
+
 ---
 apiVersion: v1
 kind: Service
