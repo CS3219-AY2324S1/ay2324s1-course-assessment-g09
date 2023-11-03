@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: user-container
-          image: wkdouze/user-service-img
+          image: user-service-img
           ports:
             - containerPort: 3002
           env:
@@ -50,6 +50,7 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: user-RESTAPI_PORT
+          imagePullPolicy: Never
 ---
 apiVersion: v1
 kind: Service

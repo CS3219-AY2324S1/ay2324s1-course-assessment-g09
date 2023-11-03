@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: communication-container
-          image: wkdouze/communication-service-img
+          image: communication-service-img
           ports:
             - containerPort: 8002
           env:
@@ -30,6 +30,7 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: ORIGIN
+          imagePullPolicy: Never
 ---
 apiVersion: v1
 kind: Service

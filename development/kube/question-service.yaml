@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: question-container
-          image: wkdouze/question-service-img
+          image: question-service-img
           ports:
             - containerPort: 3001
           env:
@@ -35,6 +35,7 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: question-RESTAPI_PORT
+          imagePullPolicy: Never
 ---
 apiVersion: v1
 kind: Service

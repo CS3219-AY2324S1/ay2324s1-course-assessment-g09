@@ -20,7 +20,7 @@ services:
 
   user-service:
     container_name: user-service_auth_dev
-    image: wkdouze/user-service-img
+    image: user-service-img
     environment:
       # To hide
       RESTAPI_PORT: 3002
@@ -45,7 +45,7 @@ services:
       timeout: 40s
   gateway:
     container_name: apigateway_auth_dev
-    image: wkdouze/apigateway-img
+    image: apigateway-img
     restart: always
     build:
       context: ../gateway/
@@ -59,7 +59,7 @@ services:
         condition: service_started
   auth-service:
     container_name: auth_service_auth_dev
-    image: wkdouze/auth-service-img
+    image: auth-service-img
     restart: always
     build:
       context: ../backend/authentication_service/
@@ -88,7 +88,7 @@ services:
 
   question-service:
     container_name: question-service
-    image: wkdouze/question-service-img
+    image: question-service-img
     environment:
       RESTAPI_PORT: 3001
       DB_SERVER: mongodb://mongo:27017
@@ -109,7 +109,7 @@ services:
       start_period: 40s
   frontend:
     container_name: frontend
-    image: wkdouze/frontend-img
+    image: frontend-img
     restart: always
     environment:
       NEXT_PUBLIC_IP_ADDRESS: http://localhost
@@ -118,7 +118,7 @@ services:
       dockerfile: Dockerfile
   collaboration-service:
     container_name: collaboration-service
-    image: wkdouze/collaboration-service-img
+    image: collaboration-service-img
     restart: always
     environment:
       PORT: 8001
@@ -129,7 +129,7 @@ services:
       dockerfile: Dockerfile
   matching-service:
     container_name: matching-service
-    image: wkdouze/matching-service-img
+    image: matching-service-img
     restart: always
     environment:
       PORT: 8004
@@ -155,7 +155,7 @@ services:
       retries: 3
   communication-service:
     container_name: communication-service
-    image: wkdouze/communication-service-img
+    image: communication-service-img
     restart: always
     build:
       context: ../backend/communication_service
@@ -166,7 +166,7 @@ services:
       ORIGIN: 'http://gateway:3000'
   history-service:
     container_name: history-service
-    image: wkdouze/history-service-img
+    image: history-service-img
     environment:
       RESTAPI_PORT: 8003
       DB_SERVER: mongodb://mongo-history:27018

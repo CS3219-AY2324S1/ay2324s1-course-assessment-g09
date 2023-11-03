@@ -16,9 +16,10 @@ spec:
     spec:
       containers:
         - name: gateway-deployment
-          image: wkdouze/apigateway-img
+          image: apigateway-img
           ports:
             - containerPort: 3000
+          imagePullPolicy: Never
 ---
 apiVersion: v1
 kind: Service
