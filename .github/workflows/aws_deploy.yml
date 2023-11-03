@@ -18,6 +18,10 @@ jobs:
           { Name: question-service, Path: './backend/question_service' }, 
           { Name: frontend, Path: './frontend' }  
         ]
+
+    permissions: # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+      id-token: write
+      contents: read
     
     steps:
     # Initialisation
