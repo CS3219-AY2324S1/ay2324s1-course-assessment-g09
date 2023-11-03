@@ -9,20 +9,27 @@ env:
   ROLE_TO_ASSUME: arn:aws:iam::920185736846:role/GitHubAction-AssumeRoleWithAction # Get from Choon Yong
 
 jobs: 
-  deploy:
+  build:
     runs-on: ubuntu-latest
     permissions: # These permissions are needed to interact with GitHub's OIDC Token endpoint.
       id-token: write
-      contents: read  
+      contents: read
+    outputs:
+      AWS_SESSION_TOKEN : ${{ steps.creds.outputs.aws_session_token }}  
     strategy: # Define image parameters for a For Loop
       matrix:
         image_parameters: [ # Add new deployment stuff here.
+          { Name: authentication-service, Path: './backend/authentication_service'},
+          { Name: collaboration-service, Path: './backend/collaboration_service'},
+          { Name: communication-service, Path: './backend/communication_service'},
+          { Name: history-service, Path:  './backend/history_service'},
+          { Name: matching-service, Path: './backend/matching_service'},
+          { Name: matching-service-rabbitmq, Path: './backend/matching_service_rabbitmq'},
           { Name: user-service, Path: './backend/user_service' }, 
           { Name: question-service, Path: './backend/question_service' }, 
           { Name: frontend, Path: './frontend' }  
         ]
       fail-fast: true
-      max-parallel: 1 # NO parallelism for now
     steps:
       # AWS Authentication
       - name: Configure AWS credentials
@@ -53,16 +60,24 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ${{ matrix.image_parameters.Path }}
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions: # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+      id-token: write
+      contents: read
+    steps:
       # Deployment
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws_session_token: ${{ steps.creds.outputs.aws_session_token }}
+          aws_session_token: ${{ job.build.outputs.AWS_SESSION_TOKEN }}
           application_name: PeerPrep
           environment_name: PeerPrep-env
           version_label: 15-1 #To manually iterate
           region: ap-southeast-1
           #deployment_package: ./aws_deploy/docker-compose.yml # No change to yaml file for now
-          wait_for_deployment: false  # Set to false to save Github Actions free hours
+          wait_for_deployment: true  # Set to true to save Github Actions free hours
