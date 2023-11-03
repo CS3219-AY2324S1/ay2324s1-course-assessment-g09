@@ -41,10 +41,17 @@ const QuestionInputField = ({
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post(
-        `question_service/admin/questions`,
-        inputValues
-      );
+      console.log({
+        ...inputValues,
+        category: inputValues.category.split(","),
+      });
+      const res = await axios.post(`question_service/admin/questions`, {
+        qn_num: Number(inputValues.qn_num),
+        title: inputValues.title,
+        description: inputValues.description,
+        category: inputValues.category.split(","),
+        complexity: inputValues.complexity,
+      });
 
       console.log(res);
       setInputValues({
