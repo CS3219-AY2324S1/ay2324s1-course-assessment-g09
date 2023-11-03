@@ -2,7 +2,7 @@ name: Push Images to ECR and Deploy to EB.
 on: 
   push:
     branches:
-      - main
+      - master
 env:
   AWS_REGION : ap-southeast-1
   ROLE_TO_ASSUME: arn:aws:iam::920185736846:role/GitHubAction-AssumeRoleWithAction # Get from Choon Yong  
