@@ -116,7 +116,6 @@ services:
     build:
       context: ../frontend
       dockerfile: Dockerfile
-
   collaboration-service:
     container_name: collaboration-service
     image: wkdouze/collaboration-service-img
