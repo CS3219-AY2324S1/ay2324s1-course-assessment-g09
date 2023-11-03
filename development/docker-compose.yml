@@ -81,6 +81,8 @@ services:
     restart: always
     environment:
       PORT: ${MATCH_PORT}
+      RABBITMQ: "amqp://rabbitmq"
+      ORIGIN: "http://gateway:3000"
     build:
       context: ../backend/matching_service
       dockerfile: Dockerfile
@@ -96,7 +98,7 @@ services:
     volumes:
       - mongo-question-db:/data/db
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh mongo-question:27017/test --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh mongo-question:${QN_DB_PORT}/test --quiet
   question-service:
     container_name: question-service
     image: ${ECR}/question-service:latest
@@ -158,13 +160,20 @@ services:
       context: ../frontend
       dockerfile: Dockerfile
     depends_on:
-      - auth-service
-      - collaboration-service
-      - communication-service
-      - history-service 
-      - matching-service
-      - question-service
-      - user-service
+      auth-service:
+        condition: service_started
+      collaboration-service:
+        condition: service_started
+      communication-service:
+        condition: service_started
+      history-service:
+        condition: service_started
+      matching-service:
+        condition: service_started
+      question-service:
+        condition: service_started
+      user-service:
+        condition: service_started
 
   # API-GATEWAY
   gateway:
@@ -177,8 +186,8 @@ services:
     ports: # EXPOSE PORT 3000 to public
       - "3000:3000"
     depends_on:
-      - frontend
-
+      frontend:
+        condition: service_started
 
 volumes:
   # Persistent data
