@@ -24,9 +24,10 @@ jobs:
           { Name: communication-service, Path: './backend/communication_service'},
           { Name: history-service, Path:  './backend/history_service'},
           { Name: matching-service, Path: './backend/matching_service'},
-          { Name: matching-service-rabbitmq, Path: './backend/matching_service_rabbitmq'},
+          #{ Name: matching-service-rabbitmq, Path: './backend/matching_service_rabbitmq'},
           { Name: user-service, Path: './backend/user_service' }, 
           { Name: question-service, Path: './backend/question_service' }, 
+          { Name: gateway, Path: './backend/gateway'},
           { Name: frontend, Path: './frontend' }  
         ]
     steps:
