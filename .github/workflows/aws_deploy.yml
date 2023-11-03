@@ -32,6 +32,9 @@ jobs:
   build:
     needs: login
     runs-on: ubuntu-latest
+    permissions: # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+      id-token: write
+      contents: read  
     strategy: # Define image parameters for a For Loop
       matrix:
         image_parameters: [ 
