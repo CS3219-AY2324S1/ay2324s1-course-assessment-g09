@@ -30,7 +30,7 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: ORIGIN
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
