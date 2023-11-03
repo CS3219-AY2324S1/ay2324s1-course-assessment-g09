@@ -61,7 +61,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy:  
-    needs: login
+    needs: build
     runs-on: ubuntu-latest
     steps:
     # Deployment
