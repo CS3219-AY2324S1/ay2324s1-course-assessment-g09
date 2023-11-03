@@ -29,7 +29,6 @@ jobs:
           { Name: question-service, Path: './backend/question_service' }, 
           { Name: frontend, Path: './frontend' }  
         ]
-      fail-fast: true
     steps:
       # AWS Authentication
       - name: Configure AWS credentials
