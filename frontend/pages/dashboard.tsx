@@ -157,14 +157,18 @@ const dashboard = () => {
         width="100%"
         height="100%"
       >
-        <Flex
+        
+          {user=="user" ? (
+            <History />
+          ):(
+            <Flex
           marginTop={5}
           alignItems="center"
           justifyContent="flex-start"
           flexDirection="column"
           width="90%"
         >
-          <UserInputField
+            <UserInputField
             userInputValues={userInputValues}
             setUserInputValues={setUserInputValues}
             colorMode={colorMode}
@@ -178,8 +182,9 @@ const dashboard = () => {
             setIsCreate={setIsCreateUser}
             colorMode={colorMode}
           />
-          <History />
-        </Flex>
+          </Flex>
+          )}
+        
       </GridItem>
     </Grid>
   );

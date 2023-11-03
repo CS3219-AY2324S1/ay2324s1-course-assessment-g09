@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
 import { editor } from "monaco-editor";
+import { set } from "zod";
 
 type history = {
 	_id: string;
@@ -31,7 +32,7 @@ type history = {
 	user2: string;
 };
 export default function History() {
-	const [user, setUser] = useState("Dennis");
+	const [user, setUser] = useState("");
 	const [history, setHistory] = useState(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [selectedItem, setSelectedItem] = useState(null);
@@ -39,10 +40,13 @@ export default function History() {
 	useEffect(() => {
 		const fetchHistory = async () => {
 			try {
+				const authUser = JSON.parse(sessionStorage.getItem("login")).email;
+				setUser(authUser);
+				console.log(`/history_service/get/${authUser}`)
 				const res = await axios.get(
-					`/history_service/history/get/${user}`
+					`/history_service/get/${authUser}`
 				);
-
+				console.log(res.data);
 				setHistory(
 					res.data
 						.slice()

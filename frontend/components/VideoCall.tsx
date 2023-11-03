@@ -24,6 +24,12 @@ export default function VideoCall({ videoOn, setVideoOn }) {
       setCaller(data.from);
       setCallerSignal(data.signal);
     });
+    socketManager.subscribeToEvent("callEnded", () => {
+      setCallEnded(true);
+      connectionRef.current.destroy();
+      callerStream.getTracks().forEach((track) => track.stop());
+      receiverStream.getTracks().forEach((track) => track.stop());
+    });
   }, []);
 
   const getVideo = async () => {

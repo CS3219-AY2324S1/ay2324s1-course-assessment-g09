@@ -2,8 +2,9 @@ import { Button } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import matchSocketManager from "./Sockets/MatchSocketManager";
+import socketManager from "./Sockets/CommunicationSocketManager";
 
-export default function SaveHistoryButton({
+export default function EndMatchButton({
 	code,
 	language,
 	difficulty,
@@ -25,8 +26,9 @@ export default function SaveHistoryButton({
 			theme,
 			code,
 		};
+		
 		const res = await axios
-			.post("/history_service/history/create", data)
+			.post("/history_service/create", data)
 			.then((res) => console.log(res.data))
 			.then(() => router.push("/"))
 			.catch((err) => console.log(err));
