@@ -16,7 +16,7 @@ jobs:
       contents: read  
     strategy: # Define image parameters for a For Loop
       matrix:
-        image_parameters: [ 
+        image_parameters: [ # Add new deployment stuff here.
           { Name: user-service, Path: './backend/user_service' }, 
           { Name: question-service, Path: './backend/question_service' }, 
           { Name: frontend, Path: './frontend' }  
