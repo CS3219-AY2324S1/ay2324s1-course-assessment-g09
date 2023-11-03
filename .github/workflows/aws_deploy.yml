@@ -15,11 +15,9 @@ jobs:
       id-token: write
       contents: read  
     outputs:
-      registry: ${{ steps.login-ecr.outputs.registry }}
       aws-session-token: ${{ steps.creds.outputs.aws-session-token }}
     steps:
-      # AWS Authentication
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials # AWS Authentication
         id: creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -27,14 +25,9 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           output-credentials: true
-        # Sanity Check
-      - name: Sts GetCallerIdentity (Sanity Check)
+      - name: Sts GetCallerIdentity (Sanity Check) # Sanity Check
         run: |
           aws sts get-caller-identity
-      # Login to ECR
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
   
   build:
     needs: login
@@ -47,13 +40,14 @@ jobs:
           { Name: frontend, Path: './frontend' }  
         ]
     steps:
-      # Initialisation
-      - name: Check out code
+      - name: Login to Amazon ECR # Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Check out code # Initialisation
         uses: actions/checkout@v4
-      # Building images
-      - name : Build, tag, and push image to Amazon ECR ( ${{ matrix.image_parameters.Name }} )
+      - name : Build, tag, and push image to Amazon ECR ( ${{ matrix.image_parameters.Name }} ) # Building images
         env:
-          ECR_REGISTRY: ${{ needs.login.outputs.registry }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ matrix.image_parameters.Name }}
           IMAGE_TAG: latest
         run: |
@@ -64,8 +58,7 @@ jobs:
     needs: [login, build]
     runs-on: ubuntu-latest
     steps:
-    # Deployment
-    - name: Deploy to EB
+    - name: Deploy to EB # Deployment
       uses: einaregilsson/beanstalk-deploy@v21
       with:
         aws_access_key: ${{ env.AWS_ACCESS_KEY_ID }}
