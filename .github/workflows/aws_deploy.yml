@@ -15,9 +15,11 @@ jobs:
       id-token: write
       contents: read  
     outputs:
+      registry: ${{ steps.login-ecr.outputs.registry }}
       aws-session-token: ${{ steps.creds.outputs.aws-session-token }}
     steps:
-      - name: Configure AWS credentials # AWS Authentication
+      # AWS Authentication
+      - name: Configure AWS credentials
         id: creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -25,16 +27,21 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           output-credentials: true
-      - name: Sts GetCallerIdentity (Sanity Check) # Sanity Check
+        # Sanity Check
+      - name: Sts GetCallerIdentity (Sanity Check)
         run: |
           aws sts get-caller-identity
+      # Login to ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
   
   build:
     needs: login
     runs-on: ubuntu-latest
     permissions: # These permissions are needed to interact with GitHub's OIDC Token endpoint.
       id-token: write
-      contents: read  
+      contents: read 
     strategy: # Define image parameters for a For Loop
       matrix:
         image_parameters: [ 
@@ -43,14 +50,13 @@ jobs:
           { Name: frontend, Path: './frontend' }  
         ]
     steps:
-      - name: Login to Amazon ECR # Login to ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-      - name: Check out code # Initialisation
+      # Initialisation
+      - name: Check out code
         uses: actions/checkout@v4
-      - name : Build, tag, and push image to Amazon ECR ( ${{ matrix.image_parameters.Name }} ) # Building images
+      # Building images
+      - name : Build, tag, and push image to Amazon ECR ( ${{ matrix.image_parameters.Name }} )
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REGISTRY: ${{ needs.login.outputs.registry }}
           ECR_REPOSITORY: ${{ matrix.image_parameters.Name }}
           IMAGE_TAG: latest
         run: |
@@ -61,7 +67,8 @@ jobs:
     needs: [login, build]
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy to EB # Deployment
+    # Deployment
+    - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v21
       with:
         aws_access_key: ${{ env.AWS_ACCESS_KEY_ID }}
