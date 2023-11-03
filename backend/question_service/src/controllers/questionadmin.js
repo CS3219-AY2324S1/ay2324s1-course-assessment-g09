@@ -1,20 +1,20 @@
 const express = require('express');
-const questionmanager = require('../questionmanager');
-
-
+const questionmanager = require('../utility/questionmanager');
 const adminQuestionRouter = express.Router();
 
-// PATH: /admin/questions/getall
+// PATH: GET /admin/questions
 adminQuestionRouter.get('/', questionmanager.getQuestions);
 
-// PATH: /admin/questions/create
+// PATH: GET /admin/questions/:num_qn
+adminQuestionRouter.get('/:qn_num', questionmanager.getQuestions);
+
+// PATH: POST /admin/questions
 adminQuestionRouter.post('/', questionmanager.createQuestion);
 
-// PATH: /admin/questions/update/:qn_num
+// PATH: PUT /admin/questions/:qn_num
 adminQuestionRouter.put('/:qn_num', questionmanager.updateQuestion);
 
-// PATH: /admin/questions/delete/:qn_num
+// PATH: DELETE /admin/questions/:qn_num
 adminQuestionRouter.delete('/:qn_num', questionmanager.deleteQuestion);
-
 
 module.exports = adminQuestionRouter;
