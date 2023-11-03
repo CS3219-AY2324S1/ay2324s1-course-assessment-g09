@@ -6,6 +6,9 @@ import {
   GridItem,
   HStack,
   Heading,
+  Icon,
+  IconButton,
+  Text,
   useColorMode,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -15,8 +18,16 @@ import CodeEditor from "../components/CodeEditor";
 import MatchsocketManager from "../components/Sockets/MatchSocketManager";
 import ToggleMode from "../components/ToggleMode";
 import VideoCall from "../components/VideoCall";
+import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
 
 export default function Collaboration() {
+  interface Question {
+    category: string;
+    complexity: string;
+    description: string;
+    qn_num: number;
+    title: string;
+  }
   const router = useRouter();
 
   const { colorMode, toggleColorMode } = useColorMode();
@@ -28,24 +39,86 @@ export default function Collaboration() {
   const matchedUser = MatchsocketManager.getMatchedUser();
 
   const [videoOn, setVideoOn] = useState(false);
+
+  const [qnsNum, setQnsNum] = useState(0);
+
+  const [seconds, setSeconds] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+
+  const [qns, setQns] = useState<Question[]>([
+    { category: "", description: "", qn_num: 0, title: "", complexity: "" },
+    { category: "", description: "", qn_num: 0, title: "", complexity: "" },
+    { category: "", description: "", qn_num: 0, title: "", complexity: "" },
+    { category: "", description: "", qn_num: 0, title: "", complexity: "" },
+  ]);
+
+  useEffect(() => {
+    console.log(qns[qnsNum]);
+    setTitle(qns[qnsNum].title);
+    setComplexity(qns[qnsNum].complexity);
+
+    let desc = qns[qnsNum].description;
+    desc = desc.replace(/<code>/g, "");
+    desc = desc.replace(/<\/code>/g, "");
+
+    setContent(desc);
+  }, [qnsNum]);
   const fetchRandomQuestions = async () => {
     try {
-      const res = await axios.get(`question_service/questions/random`);
+      const res = await axios.get(`question_service/questions/4`);
+      setQns(res.data.qns);
+
+      // console.log(res.data.qns[0]);
+
       // console.log(res.data);
-      let desc = res.data.qn.description;
-      setTitle(res.data.qn.title);
-      setComplexity(res.data.qn.complexity);
+      let desc = res.data.qns[qnsNum].description;
+      setTitle(res.data.qns[qnsNum].title);
+      setComplexity(res.data.qns[qnsNum].complexity);
 
       desc = desc.replace(/<code>/g, "");
       desc = desc.replace(/<\/code>/g, "");
 
       setContent(desc);
-      setTitle(res.data.qns[6].title);
-      setComplexity(res.data.qns[6].complexity);
+      setTitle(res.data.qns[qnsNum].title);
+      setComplexity(res.data.qns[qnsNum].complexity);
     } catch (error) {
       console.log("ERROR: ", error);
     }
   };
+
+  const handleNextQns = () => {
+    if (qnsNum != 3) {
+      setQnsNum(qnsNum + 1);
+    }
+  };
+
+  const handlePrevQns = () => {
+    if (qnsNum != 0) {
+      setQnsNum(qnsNum - 1);
+    }
+  };
+
+  // Stopwatch when in queue
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    // Ran once every second
+    interval = setInterval(() => {
+      // if the previous second is 59, set to 0, else add 1
+      setSeconds((prevSeconds) => {
+        if (prevSeconds === 59) {
+          setMinutes((prevMinutes) => prevMinutes + 1);
+          return 0;
+        } else {
+          return prevSeconds + 1;
+        }
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  });
 
   useEffect(() => {
     fetchRandomQuestions();
@@ -54,6 +127,13 @@ export default function Collaboration() {
   return (
     <Box height="100vh" display="flex" flexDirection="column" mx={4}>
       <HStack justifyContent="center" width="100%" height="5%">
+        <Text
+          fontSize={{ lg: "lg", xl: "xl", "2xl": "2xl" }}
+          fontWeight="bold"
+          ml={5}
+        >
+          {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+        </Text>
         <ToggleMode colorMode={colorMode} toggleColorMode={toggleColorMode} />
       </HStack>
 
@@ -82,26 +162,51 @@ export default function Collaboration() {
                   : "RGBA(255, 255, 255, 0.48)",
             },
           }}
+          mt={2}
         >
           <Box flexDirection="column">
             {content && (
               <Box flex={1} alignSelf="top">
-                <Heading as="h5">
-                  {title}{" "}
-                  <Badge
-                    fontSize="lg"
-                    colorScheme={
-                      complexity == "Easy"
-                        ? "green"
-                        : complexity == "Medium"
-                        ? "orange"
-                        : "red"
-                    }
-                  >
-                    {complexity}
-                  </Badge>
-                </Heading>
+                <HStack width="full" justify="space-between">
+                  <>
+                    <Text fontSize="2xl">
+                      {title}{" "}
+                      <Badge
+                        fontSize="lg"
+                        colorScheme={
+                          complexity == "Easy"
+                            ? "green"
+                            : complexity == "Medium"
+                            ? "orange"
+                            : "red"
+                        }
+                      >
+                        {complexity}
+                      </Badge>
+                    </Text>
+                  </>
+                  <HStack mr={2}>
+                    <IconButton
+                      icon={<AiFillCaretLeft />}
+                      colorScheme="teal"
+                      size="sm"
+                      isDisabled={qnsNum === 0}
+                      onClick={handlePrevQns}
+                      aria-label="Previous"
+                    />
+                    <Text>{qnsNum + 1}</Text>
+                    <IconButton
+                      icon={<AiFillCaretRight />}
+                      colorScheme="teal"
+                      size="sm"
+                      aria-label="Next"
+                      isDisabled={qnsNum === 3}
+                      onClick={handleNextQns}
+                    />
+                  </HStack>
+                </HStack>
                 <Box>
+                  {/* <Icon as={GrPrevious} /> */}
                   <div
                     style={{
                       overflowWrap: "break-word",
