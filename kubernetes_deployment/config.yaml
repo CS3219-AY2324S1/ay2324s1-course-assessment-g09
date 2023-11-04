@@ -2,6 +2,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config
+  namespace: eks-peerprep
+  labels:
+    app: config
 data:
   frontend-NEXT_PUBLIC_IP_ADDRESS: http://localhost
   auth-RESTAPI_PORT: "3004"

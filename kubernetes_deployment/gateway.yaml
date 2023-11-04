@@ -2,24 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gateway-deployment
+  namespace: eks-peerprep
   labels:
-    app: gateway
+    app: gateway-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: gateway
+      app: gateway-service
   template:
     metadata:
       labels:
-        app: gateway
+        app: gateway-service
     spec:
       containers:
         - name: gateway-deployment
-          image: apigateway-img
+          image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/gateway:latest
           ports:
             - containerPort: 3000
-          imagePullPolicy: IfNotPresent
           resources:
             limits:
               cpu: "200m"
@@ -30,12 +30,16 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: gateway
+  name: gateway-service
+  namespace: eks-peerprep
+  labels:
+    app: gateway-service
 spec:
   type: NodePort
   selector:
-    app: gateway
+    app: gateway-service
   ports:
-    - port: 3000
+    - protocol: TCP
+      port: 3000
       targetPort: 3000
       nodePort: 30500
