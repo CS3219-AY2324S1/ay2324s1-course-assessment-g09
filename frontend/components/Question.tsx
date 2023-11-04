@@ -30,11 +30,13 @@ const Question = ({
   questions,
   fetchQuestions,
   selectedComplexity,
+  setSelectedCategory,
+  selectedCategory,
 }) => {
   // const [questions, setQuestions] = useState(null);
   const [description, setDescription] = useState(null);
   const [difficulty, setDifficulty] = useState(null);
-  const [category, setCategory] = useState(null);
+  const [modalCategory, setModalCategory] = useState([]);
 
   const [title, setTitle] = useState(null);
   const [openQuestion, setOpenQuestion] = useState(null);
@@ -51,9 +53,9 @@ const Question = ({
       qn_num,
       title,
       description,
-      category,
       complexity,
     });
+    setSelectedCategory(category);
     setIsCreate(false);
   };
 
@@ -84,7 +86,10 @@ const Question = ({
     console.log(desc);
     setTitle(question.title);
     setDifficulty(question.complexity);
-    setCategory(question.category[0]);
+    setModalCategory(question.category);
+    // setCategory(question.category);
+
+    console.log(question.category);
 
     console.log(openQuestion);
     if (openQuestion === question) {
@@ -175,19 +180,16 @@ const Question = ({
                 </Text>
               </Flex>
             </GridItem>
-            <GridItem
-              key={`grid_item_category_${question.category}`}
-              colSpan={4}
-            >
+            <GridItem key={`grid_item_category_${question.qn_num}`} colSpan={4}>
               <Flex
                 justifyContent="flex-start"
                 pl={2}
                 alignItems="center"
                 height="100%"
-                key={`flex_category_${question.category}`}
+                key={`flex_category_${question.qn_num}`}
                 fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
               >
-                {question.category}
+                {question.category.toString()}
               </Flex>
             </GridItem>
             <GridItem
@@ -307,7 +309,7 @@ const Question = ({
                 </Flex>
               </GridItem>
               <GridItem
-                key={`grid_item_category_${question.category}`}
+                key={`grid_item_category_${question.qn_num}`}
                 colSpan={4}
               >
                 <Flex
@@ -315,10 +317,10 @@ const Question = ({
                   pl={2}
                   alignItems="center"
                   height="100%"
-                  key={`flex_category_${question.category}`}
+                  key={`flex_category_${question.qn_num}`}
                   fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
                 >
-                  {question.category}
+                  {question.category.toString}
                 </Flex>
               </GridItem>
               <GridItem
@@ -405,7 +407,7 @@ const Question = ({
             >
               {difficulty}
             </Badge>
-            <CategoryTag categoryTag={category} />
+            <CategoryTag categoryTag={modalCategory} />
           </ModalHeader>
 
           <ModalBody

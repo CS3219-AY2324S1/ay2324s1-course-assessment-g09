@@ -52,6 +52,7 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: user-RESTAPI_PORT
+          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service

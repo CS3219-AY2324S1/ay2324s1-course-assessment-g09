@@ -244,13 +244,6 @@ export default function Collaboration() {
           <VideoCall videoOn={videoOn} setVideoOn={setVideoOn} />
         </GridItem>
       </Grid>
-
-      {/* <Box>
-        <Grid templateColumns="repeat(2, 1fr)" gap={5} h="80vh">
-          <GridItem display="flex" flex="1"></GridItem>
-          <GridItem display="flex" flex="1"></GridItem>
-        </Grid>
-      </Box> */}
     </Box>
   );
 }

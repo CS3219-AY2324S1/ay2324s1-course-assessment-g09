@@ -20,6 +20,13 @@ spec:
           image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/gateway:latest
           ports:
             - containerPort: 3000
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "200m"
+            requests:
+              cpu: "100m"
+
 ---
 apiVersion: v1
 kind: Service
