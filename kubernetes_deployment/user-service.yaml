@@ -2,23 +2,25 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: user-deployment
+  namespace: eks-peerprep
   labels:
-    app: user
+    app: user-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user
+      app: user-service
   template:
     metadata:
       labels:
-        app: user
+        app: user-service
     spec:
       containers:
         - name: user-container
-          image: wkdouze/user-service-img
+          image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/user-service:latest
           ports:
-            - containerPort: 3002
+            - name: restapi
+              containerPort: 3002
           env:
             - name: DB_DATABASE
               valueFrom:
@@ -50,14 +52,19 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: user-RESTAPI_PORT
+          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: user-service
+  namespace: eks-peerprep
+  labels:
+    app: user-service
 spec:
   selector:
-    app: user
+    app: user-service
   ports:
-    - port: 3002
+    - protocol: TCP
+      port: 3002
       targetPort: 3002

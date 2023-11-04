@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: communication-deployment
+  namespace: eks-peerprep
+  labels:
+    app: communication-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: communication-service
+  template:
+    metadata:
+      labels:
+        app: communication-service
+    spec:
+      containers:
+        - name: communication-container
+          image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/communication-service:latest
+          ports:
+            - containerPort: 8002
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: communication-PORT
+            - name: ORIGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: ORIGIN
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: communication-service
+  namespace: eks-peerprep
+  labels:
+    app: communication-service
+spec:
+  selector:
+    app: communication
+  ports:
+    - protocol: TCP
+      port: 8002
+      targetPort: 8002

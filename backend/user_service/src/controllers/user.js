@@ -60,6 +60,11 @@ userRouter.get('/getUser', async (request, response) => {
         const allUsers = results.rows;
         const numUsers = allUsers.length;
 
+        allUsers.forEach((user) => {
+            delete user.password; // Remove password 
+            return user;
+        })
+
         const msg = { 'users': allUsers };
         return response.status(200).json(msg);
     })
@@ -123,16 +128,19 @@ userRouter.get('/getUserById', async (request, response) => {
 userRouter.put('/updateUser', async (request, response) => {
     try {
         const body = request.body;
-        const { id, email, name, username, password, role } = userSchema.parse(body);
-
-        const pwHash = await bcrypt.hash(password, 17);
-
+        const { email, name, username, password, role } = userSchema.parse(body);
+        const { id } = body;
+        console.log("Incoming ID", id);
+        console.log("ALL", [email, name, username, role, password, id]);
         const updateQuery = `UPDATE ${userAccountTable} SET email=$1, name=$2, username=$3, role=$4, password=$5 WHERE id=$6`;
-        const queryResult = await db.query(updateQuery, [email, name, username, role, pwHash, id]);
-        if (queryResult.rows.length != 1) {
+        const queryResult = await db.query(updateQuery, [email, name, username, role, password, id]);
+        console.log("result", queryResult);
+        if (queryResult.rowCount != 1) {
             throw new Error('Unsuccessful update into database');
         }
+        return response.status(200).json({ "msg": "user updated" });
     } catch (error) {
+        console.log("update err", error);
         return response.status(500).json({ message: ["something went wrong..."] });
     }
 });

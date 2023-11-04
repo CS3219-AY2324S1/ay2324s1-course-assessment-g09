@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matching-deployment
+  namespace: eks-peerprep
+  labels:
+    app: matching-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matching-service
+  template:
+    metadata:
+      labels:
+        app: matching-service
+    spec:
+      containers:
+        - name: matching-container
+          image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/matching-service:latest
+          ports:
+            - containerPort: 8004
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: matching-PORT
+            - name: RABBITMQ
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: matching-RABBITMQ
+            - name: ORIGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: ORIGIN
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matching-service
+  namespace: eks-peerprep
+  labels:
+    app: matching-service
+spec:
+  selector:
+    app: matching-service
+  ports:
+    - protocol: TCP
+      port: 8004
+      targetPort: 8004

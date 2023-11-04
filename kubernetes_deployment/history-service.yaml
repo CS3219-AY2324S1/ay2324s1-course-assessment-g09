@@ -1,48 +1,53 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: question-deployment
+  name: history-deployment
+  namespace: eks-peerprep
   labels:
-    app: question
+    app: history-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: question
+      app: history-service
   template:
     metadata:
       labels:
-        app: question
+        app: history-service
     spec:
       containers:
-        - name: question-container
-          image: wkdouze/question-service-img
+        - name: history-container
+          image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/history-service:latest
           ports:
-            - containerPort: 3001
+            - containerPort: 8003
           env:
             - name: DB_PORT
               valueFrom:
                 configMapKeyRef:
                   name: config
-                  key: question-DB_PORT
+                  key: history-DB_PORT
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:
                   name: config
-                  key: question-DB_SERVER
+                  key: history-DB_SERVER
             - name: RESTAPI_PORT
               valueFrom:
                 configMapKeyRef:
                   name: config
-                  key: question-RESTAPI_PORT
+                  key: history-RESTAPI_PORT
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: question-service
+  name: history-service
+  namespace: eks-peerprep
+  labels:
+    app: history-service
 spec:
   selector:
-    app: question
+    app: history-service
   ports:
-    - port: 3001
-      targetPort: 3001
+    - protocol: TCP
+      port: 8003
+      targetPort: 8003
