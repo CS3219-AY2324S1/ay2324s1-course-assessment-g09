@@ -43,6 +43,8 @@ kind: Service
 metadata:
   name: postgres-service
   namespace: eks-peerprep
+  labels:
+    app: postgres-service
 spec:
   selector:
     app: postgres-service

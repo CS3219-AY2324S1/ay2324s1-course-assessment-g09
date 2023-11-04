@@ -2,21 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: history-deployment
+  namespace: eks-peerprep
   labels:
-    app: history
+    app: history-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: history
+      app: history-service
   template:
     metadata:
       labels:
-        app: history
+        app: history-service
     spec:
       containers:
         - name: history-container
-          image: history-service-img
+          image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/history-service:latest
           ports:
             - containerPort: 8003
           env:
@@ -35,15 +36,18 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: history-RESTAPI_PORT
-          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: history-service
+  namespace: eks-peerprep
+  labels:
+    app: history-service
 spec:
   selector:
-    app: history
+    app: history-service
   ports:
-    - port: 8003
+    - protocol: TCP
+      port: 8003
       targetPort: 8003

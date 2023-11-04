@@ -26,13 +26,14 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: frontend-NEXT_PUBLIC_IP_ADDRESS
-          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend-service
   namespace: eks-peerprep
+  labels:
+    app: frontend-service
 spec:
   selector:
     app: frontend-service

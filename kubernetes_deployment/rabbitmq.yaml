@@ -2,17 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rabbitmq-deployment
+  namespace: eks-peerprep
   labels:
-    app: rabbitmq
+    app: rabbitmq-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: rabbitmq
+      app: rabbitmq-service
   template:
     metadata:
       labels:
-        app: rabbitmq
+        app: rabbitmq-service
     spec:
       containers:
         - name: rabbitmq
@@ -34,10 +35,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq
+  name: rabbitmq-service
+  namespace: eks-peerprep
 spec:
   selector:
-    app: rabbitmq
+    app: rabbitmq-service
   ports:
     - protocol: TCP
       port: 5672

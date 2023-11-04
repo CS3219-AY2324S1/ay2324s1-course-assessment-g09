@@ -36,7 +36,6 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: auth-USER_SERVICE
-          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service

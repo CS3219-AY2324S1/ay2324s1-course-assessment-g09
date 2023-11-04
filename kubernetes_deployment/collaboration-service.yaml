@@ -2,21 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: collaboration-deployment
+  namespace: eks-peerprep
   labels:
-    app: collaboration
+    app: collaboration-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: collaboration
+      app: collaboration-service
   template:
     metadata:
       labels:
-        app: collaboration
+        app: collaboration-service
     spec:
       containers:
         - name: collaboration-container
-          image: collaboration-service-img
+          image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/collaboration-service:latest
           ports:
             - containerPort: 8001
           env:
@@ -30,15 +31,18 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: ORIGIN
-          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: collaboration-service
+  namespace: eks-peerprep
+  labels:
+    app: collaboration-service
 spec:
   selector:
-    app: collaboration
+    app: collaboration-service
   ports:
-    - port: 8001
+    - protocol: TCP
+      port: 8001
       targetPort: 8001

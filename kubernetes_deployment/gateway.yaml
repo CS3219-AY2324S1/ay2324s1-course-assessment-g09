@@ -20,7 +20,6 @@ spec:
           image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/gateway:latest
           ports:
             - containerPort: 3000
-          imagePullPolicy: IfNotPresent
           resources:
             limits:
               cpu: "200m"
@@ -33,6 +32,8 @@ kind: Service
 metadata:
   name: gateway-service
   namespace: eks-peerprep
+  labels:
+    app: gateway-service
 spec:
   type: NodePort
   selector:
@@ -41,4 +42,4 @@ spec:
     - protocol: TCP
       port: 3000
       targetPort: 3000
-      nodePort: 30500
+      nodePort: 3000
