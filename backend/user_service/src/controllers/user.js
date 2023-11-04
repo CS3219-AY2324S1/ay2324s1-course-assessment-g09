@@ -137,7 +137,8 @@ userRouter.put('/updateUser', async (request, response) => {
     }
 });
 
-userRouter.delete('/deleteUser', (request, response) => {
+userRouter.delete('/deleteUser/:id', (request, response) => {
+    console.log(request);
     const userId = parseInt(request.params.id);
     const query = `DELETE FROM ${userAccountTable} WHERE id = $1 RETURNING id`;
 

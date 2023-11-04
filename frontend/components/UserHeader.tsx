@@ -16,7 +16,7 @@ const UserHeader = () => {
       </GridItem>
       <GridItem borderBottom="1px solid" pl={2}>
         <Flex justifyContent="flex-start">
-          <Text fontWeight="bold">Action</Text>
+          <Text fontWeight="bold">Role</Text>
         </Flex>
       </GridItem>
     </Grid>

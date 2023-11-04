@@ -120,6 +120,7 @@ const CategoryCheckbox = ({ handleCheckboxChange, selectedCategory }) => {
             size="sm"
             onChange={handleSearchQueryChange}
             width="70%"
+            placeholder="Search Query"
           />
         </PopoverHeader>
         <PopoverBody height="250px" width="275px" overflowY="auto">
