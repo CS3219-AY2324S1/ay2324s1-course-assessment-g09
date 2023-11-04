@@ -64,7 +64,7 @@ authRouter.post('/signin', async (request, response) => {
 	if (request.cookies && Object.getPrototypeOf(request.cookies) !== null) {
 		try {
 			const decoded = await jwt.verify(request.cookies.token, process.env.SECRET_KEY);
-			return response.status(200).send({ message: "lohin success" });
+			return response.status(200).send({ message: "login success" });
 		} catch (error) {
 			console.log("verify", error.message);
 		}
@@ -88,7 +88,7 @@ authRouter.post('/signin', async (request, response) => {
 			return response.status(400).json({ message: "incorrect email or password" });
 		}
 
-		const token = jwt.sign({ email: myUser.email, role: myUser.role }, tokenDetails.secret, { expiresIn: tokenDetails.duration });
+		const token = jwt.sign({ email: myUser.email, role: myUser.role, id: myUser.id }, tokenDetails.secret, { expiresIn: tokenDetails.duration });
 
 		// response.setHeader('Set-Cookie', [`accessToken=${token}; HttpOnly; Max-Age=34560000`]);
 		response.cookie('token', token, {
@@ -119,6 +119,67 @@ authRouter.post("/signout", async (request, response) => {
 		httpOnly: true,
 	});
 	return response.status(200).send(); //.json({ token: token, role: myUser.role });
+});
+
+authRouter.put("/updateUser", async (request, response) => {
+
+	try {
+		const { email, name, username, password, role } = userSchema.parse(request.body);
+		const { id } = request.body;
+		console.log("ID IS", id);
+		if (request.cookies && Object.getPrototypeOf(request.cookies) !== null) {
+
+			const decoded = await jwt.verify(request.cookies.token, process.env.SECRET_KEY);
+			console.log("decoded", decoded);
+			if (decoded.id != id) {
+				return response.status(401).send();
+			}
+			const pwHash = await bcrypt.hash(password, 6);
+
+			const result = await axios.put(
+				`http://${user_service}/users/updateUser`,
+				{
+					id: id,
+					email: email,
+					name: name,
+					username: username,
+					password: pwHash,
+					role: role,
+				}
+			);
+			response.cookie("token", "", {
+				secure: false,
+				httpOnly: true,
+			});
+			return response.json({
+				message: [`User:${username} has been updated`],
+			}).send();
+		} else {
+			return response.status(401).send();
+		}
+	} catch (error) {
+		if (error instanceof ZodError) {
+			const allMsg = error.issues.map((issue) => issue.message);
+			return response.status(400).json({ message: allMsg });
+		} else if (error instanceof jwt.JsonWebTokenError) {
+			return response.status(401).send();
+		}
+		if (error.response) {
+			console.log(error.response.data);
+			console.log(error.response.status);
+			console.log(error.response.header);
+			return response
+				.status(error.response.status)
+				.json({ message: error.response.data.message });
+		} else {
+
+			console.log("Err:", error);
+		}
+		return response
+			.status(500)
+			.json({ message: ["something went wrong..."] });
+	}
+
 });
 
 module.exports = authRouter;
