@@ -12,6 +12,9 @@ const QuestionsComponent = ({
   user,
   questions,
   fetchQuestions,
+  handleCheckboxChange,
+  setSelectedCategory,
+  selectedCategory,
 }) => {
   const { colorMode } = useColorMode();
 
@@ -25,6 +28,9 @@ const QuestionsComponent = ({
           setIsCreate={setIsCreateQuestion}
           colorMode={colorMode}
           setQuestions={setQuestions}
+          handleCheckboxChange={handleCheckboxChange}
+          setSelectedCategory={setSelectedCategory}
+          selectedCategory={selectedCategory}
         />
       </Box>
 
@@ -38,6 +44,7 @@ const QuestionsComponent = ({
           userMode={user}
           questions={questions}
           fetchQuestions={fetchQuestions}
+          setSelectedCategory={setSelectedCategory}
         />
       </Box>
     </Flex>
