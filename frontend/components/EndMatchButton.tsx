@@ -26,11 +26,11 @@ export default function EndMatchButton({
 			theme,
 			code,
 		};
-		
+		console.log(socketManager.getSocketId(), socketManager.getMatchedSocketId());
+		socketManager.emitEvent("endMatch", socketManager.getSocketId());
 		const res = await axios
 			.post("/history_service/create", data)
 			.then((res) => console.log(res.data))
-			.then(() => router.push("/"))
 			.catch((err) => console.log(err));
 	};
 	return (
