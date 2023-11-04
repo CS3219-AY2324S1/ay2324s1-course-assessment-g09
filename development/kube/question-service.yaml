@@ -2,23 +2,25 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: question-deployment
+  name: ekr-peerprep
   labels:
-    app: question
+    app: question-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: question
+      app: question-service
   template:
     metadata:
       labels:
-        app: question
+        app: question-service
     spec:
       containers:
         - name: question-container
-          image: wkdouze/question-service-img
+          image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/question-service:latest
           ports:
-            - containerPort: 3001
+            - name: restapi
+              containerPort: 3001
           env:
             - name: DB_PORT
               valueFrom:
@@ -40,9 +42,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: question-service
+  namespace: eks-peerprep
+  labels:
+    app: question-service
 spec:
   selector:
-    app: question
+    app: question-service
   ports:
-    - port: 3001
+    - protocol: TCP
+      port: 3001
       targetPort: 3001

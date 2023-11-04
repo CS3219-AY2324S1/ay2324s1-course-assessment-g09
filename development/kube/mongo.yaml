@@ -2,10 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongo-deployment
+  namespace: eks-peerprep
   labels:
     app: mongo-service
 spec:
-  replicas: 1
+  replicas: 1  # Avoid replicated database
   selector:
     matchLabels:
       app: mongo-service
@@ -16,14 +17,18 @@ spec:
     spec:
       containers:
         - name: mongodb
-          image: mongo:5.0
+          image: mongo:latest
           ports:
-            - containerPort: 27017
+            - name: restapi
+              containerPort: 27017
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: mongo-service
+  namespace: eks-peerprep
+  labels:
+    app: mongo-service
 spec:
   selector:
     app: mongo-service
