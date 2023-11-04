@@ -12,7 +12,8 @@ import {
   ModalOverlay,
   useDisclosure,
   Text,
-  Highlight,
+  Input,
+  HStack,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { title } from "process";
@@ -39,14 +40,20 @@ const User = ({
   const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
 
-  // const handleEdit = async ({ _id, id, name }) => {
-  //   setUserInputValues({
-  //     _id,
-  //     user_id: id,
-  //     name,
-  //   });
-  //   setIsCreate(false);
-  // };
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleEdit = async () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = async () => {
+    setIsEditing(false);
+  };
+
+  const handleSubmitEdit = async () => {
+    console.log("Submitted");
+    setIsEditing(false);
+  };
 
   const handleDelete = async ({ id }) => {
     try {
@@ -58,6 +65,7 @@ const User = ({
       // }
       onClose();
       setOpenUser(null);
+      setIsEditing(false);
       // console.log("LENGTH", users.LENGTH);
     } catch (error) {
       console.log("Error", error);
@@ -67,6 +75,7 @@ const User = ({
   const handleClose = () => {
     onClose();
     setOpenUser(null);
+    setIsEditing(false);
   };
 
   const handleModal = (user) => {
@@ -189,38 +198,82 @@ const User = ({
           <ModalHeader>User Page</ModalHeader>
 
           <ModalBody maxHeight="60vh" overflowY="auto" mx={5}>
-            <Text my={3}>
+            {/* Email */}
+            <HStack my={3}>
               <Text fontWeight="bold">Email: </Text>
-              {email}
-            </Text>
-            <Text my={3}>
-              <Text fontWeight="bold">Username: </Text> {username}
-            </Text>
-            <Text my={3}>
+
+              {isEditing ? (
+                <Input variant="flushed" size="sm" value={email} />
+              ) : (
+                <Text>{email}</Text>
+              )}
+            </HStack>
+
+            {/* Username */}
+            <HStack my={3}>
+              <Text fontWeight="bold">Username: </Text>
+
+              {isEditing ? (
+                <Input variant="flushed" size="sm" value={username} />
+              ) : (
+                <Text>{username}</Text>
+              )}
+            </HStack>
+
+            {/* Role */}
+            <HStack my={3}>
               <Text fontWeight="bold">Role: </Text>{" "}
-              <Badge colorScheme={role == "admin" ? "red" : "green"}>
-                {role}
-              </Badge>
-            </Text>
+              {isEditing ? (
+                <Input variant="flushed" size="sm" value={role} />
+              ) : (
+                <Badge colorScheme={role == "admin" ? "red" : "green"}>
+                  {role}
+                </Badge>
+              )}
+            </HStack>
           </ModalBody>
 
           <ModalFooter>
-            <Button
-              bgColor={colorMode === "light" ? "yellow.400" : "yellow.300"}
-              color="black"
-              mx={1}
-              // onClick={() => handleEdit(user)}
-            >
-              Edit
-            </Button>
-            <Button
-              bgColor={colorMode === "light" ? "orange.400" : "orange.300"}
-              color="black"
-              mx={1}
-              onClick={() => handleDelete(openUser)}
-            >
-              Delete
-            </Button>
+            {isEditing ? (
+              <Button
+                bgColor={colorMode === "light" ? "orange.400" : "orange.300"}
+                color="black"
+                mx={1}
+                onClick={() => handleCancelEdit()}
+              >
+                Cancel
+              </Button>
+            ) : (
+              <Button
+                bgColor={colorMode === "light" ? "yellow.400" : "yellow.300"}
+                color="black"
+                mx={1}
+                onClick={() => handleEdit()}
+              >
+                Edit
+              </Button>
+            )}
+
+            {isEditing ? (
+              <Button
+                bgColor={colorMode === "light" ? "green.400" : "green.300"}
+                color="black"
+                mx={1}
+                onClick={() => handleSubmitEdit()}
+              >
+                Submit
+              </Button>
+            ) : (
+              <Button
+                bgColor={colorMode === "light" ? "orange.400" : "orange.300"}
+                color="black"
+                mx={1}
+                onClick={() => handleDelete(openUser)}
+              >
+                Delete
+              </Button>
+            )}
+
             <Button colorScheme="blue" mr={3} onClick={handleClose}>
               Close
             </Button>
