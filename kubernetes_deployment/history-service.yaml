@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: history-deployment
+  labels:
+    app: history
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: history
+  template:
+    metadata:
+      labels:
+        app: history
+    spec:
+      containers:
+        - name: history-container
+          image: history-service-img
+          ports:
+            - containerPort: 8003
+          env:
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: history-DB_PORT
+            - name: DB_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: history-DB_SERVER
+            - name: RESTAPI_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: history-RESTAPI_PORT
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: history-service
+spec:
+  selector:
+    app: history
+  ports:
+    - port: 8003
+      targetPort: 8003

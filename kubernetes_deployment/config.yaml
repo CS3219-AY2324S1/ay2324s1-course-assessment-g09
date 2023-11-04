@@ -22,3 +22,6 @@ data:
   ORIGIN: gateway:3000
   collaboration-PORT: "8001"
   communication-PORT: "8002"
+  history-RESTAPI_PORT: "8003"
+  history-DB_SERVER: mongodb://mongo-history:27017
+  history-DB_PORT: "27017"
