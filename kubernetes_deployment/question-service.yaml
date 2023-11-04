@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: question-deployment
-  namespace: ekr-peerprep
+  namespace: eks-peerprep
   labels:
     app: question-service
 spec:
