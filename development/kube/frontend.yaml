@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: frontend-container
-          image: wkdouze/frontend-img
+          image: frontend-img
           ports:
             - containerPort: 3005
           env:
@@ -25,6 +25,7 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: frontend-NEXT_PUBLIC_IP_ADDRESS
+          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service

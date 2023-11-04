@@ -4,7 +4,7 @@ FROM node:latest
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-COPY .env .env
+# COPY .env .env
 
 
 # Install dependencies

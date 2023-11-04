@@ -45,6 +45,7 @@ const dashboard = () => {
     complexity: "",
   });
 
+  const [userEmail, setUserEmail] = useState("");
   // useState for Creating Question (Whether it's Create/Update question)
   const [isCreateQuestion, setIsCreateQuestion] = useState(true);
 
@@ -68,8 +69,24 @@ const dashboard = () => {
     if (login && login.isLoggedIn) {
       console.log(login);
       setUserRole(login.role);
+      setUserEmail(login.email);
+      console.log("EMAIL SET");
     }
   }, []);
+
+  const [selectedCategory, setSelectedCategory] = useState([]);
+
+  useEffect(() => {
+    console.log(selectedCategory);
+  }, [selectedCategory]);
+
+  const handleCheckboxChange = (changedCategory: any) => {
+    setSelectedCategory((previouslySelectedCategory) =>
+      previouslySelectedCategory.includes(changedCategory)
+        ? previouslySelectedCategory.filter((item) => item !== changedCategory)
+        : [...previouslySelectedCategory, changedCategory]
+    );
+  };
 
   return (
     <Grid
@@ -90,7 +107,7 @@ const dashboard = () => {
         height="100%"
         rowSpan={1}
       >
-        <Profile colorMode={colorMode} userMode={user} />
+        <Profile colorMode={colorMode} userMode={user} userEmail={userEmail} />
       </GridItem>
 
       {/* Question Storage Entry */}
@@ -114,6 +131,8 @@ const dashboard = () => {
               userMode={user}
               questions={questions}
               fetchQuestions={fetchQuestions}
+              setSelectedCategory={setSelectedCategory}
+              selectedCategory={selectedCategory}
             />
           </Box>
         ) : (
@@ -126,6 +145,9 @@ const dashboard = () => {
             user={user}
             questions={questions}
             fetchQuestions={fetchQuestions}
+            handleCheckboxChange={handleCheckboxChange}
+            setSelectedCategory={setSelectedCategory}
+            selectedCategory={selectedCategory}
           />
         )}
       </GridItem>

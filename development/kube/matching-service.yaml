@@ -1,49 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: question-deployment
+  name: matching-deployment
   labels:
-    app: question
+    app: matching
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: question
+      app: matching
   template:
     metadata:
       labels:
-        app: question
+        app: matching
     spec:
       containers:
-        - name: question-container
-          image: question-service-img
+        - name: matching-container
+          image: matching-service-img
           ports:
-            - containerPort: 3001
+            - containerPort: 8004
           env:
-            - name: DB_PORT
+            - name: PORT
               valueFrom:
                 configMapKeyRef:
                   name: config
-                  key: question-DB_PORT
-            - name: DB_SERVER
+                  key: matching-PORT
+            - name: RABBITMQ
               valueFrom:
                 configMapKeyRef:
                   name: config
-                  key: question-DB_SERVER
-            - name: RESTAPI_PORT
+                  key: matching-RABBITMQ
+            - name: ORIGIN
               valueFrom:
                 configMapKeyRef:
                   name: config
-                  key: question-RESTAPI_PORT
+                  key: ORIGIN
           imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: question-service
+  name: matching-service
 spec:
   selector:
-    app: question
+    app: matching
   ports:
-    - port: 3001
-      targetPort: 3001
+    - port: 8004
+      targetPort: 8004
