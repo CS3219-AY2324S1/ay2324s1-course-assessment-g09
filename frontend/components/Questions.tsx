@@ -13,6 +13,8 @@ const Questions = ({
   userMode,
   questions,
   fetchQuestions,
+  setSelectedCategory,
+  selectedCategory,
 }) => {
   const [complexity, setComplexity] = useState("");
 
@@ -37,6 +39,8 @@ const Questions = ({
           questions={questions}
           fetchQuestions={fetchQuestions}
           selectedComplexity={complexity}
+          setSelectedCategory={setSelectedCategory}
+          selectedCategory={selectedCategory}
         />
       </Box>
 

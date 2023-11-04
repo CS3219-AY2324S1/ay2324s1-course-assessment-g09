@@ -21,13 +21,12 @@ import {
   InputRightElement,
   IconButton,
   Icon,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import ToggleMode from "../components/ToggleMode";
 import { AiFillEye, AiFillEyeInvisible, AiOutlineMail } from "react-icons/ai";
 import { MdPassword } from "react-icons/md";
-
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
@@ -76,16 +75,19 @@ const SignUp = () => {
           password: formData.get("password"),
         }),
         mode: "cors",
-        credentials: "include"
+        credentials: "include",
       });
       const result = await response.json();
       // console.log("result", result);
       if (response.ok) {
-        sessionStorage.setItem("login", JSON.stringify({
-          isLoggedIn: true,
-          email: result.email,
-          role: result.role
-        }))
+        sessionStorage.setItem(
+          "login",
+          JSON.stringify({
+            isLoggedIn: true,
+            email: result.email,
+            role: result.role,
+          })
+        );
 
         toast({
           position: "bottom-left",
@@ -119,19 +121,24 @@ const SignUp = () => {
           ),
         });
       }
-
     } catch (error) {
       console.log("err", error);
       toast({
-        position: 'bottom-left', render: () => (
-          <Box color='white' bg='red.300' textAlign="center" padding="10px" rounded="md">
+        position: "bottom-left",
+        render: () => (
+          <Box
+            color="white"
+            bg="red.300"
+            textAlign="center"
+            padding="10px"
+            rounded="md"
+          >
             {"Something went wrong..."}
           </Box>
-        )
-      })
+        ),
+      });
     }
     setSubmitStatus(false);
-
   };
 
   const toggleView = () => {
@@ -219,18 +226,17 @@ const SignUp = () => {
               </InputGroup> */}
 
               <HStack>
-
                 <Link href="/signup" width="7vw">
                   <Button colorScheme="green">Create account</Button>
                 </Link>
                 <div>
-                  {
-                    !submitStatus
-                      ? (<Button type="submit" marginLeft="13vw" colorScheme="blue">
-                        Login
-                      </Button>)
-                      : (<Spinner marginLeft="16vw" />)
-                  }
+                  {!submitStatus ? (
+                    <Button type="submit" marginLeft="13vw" colorScheme="blue">
+                      Login
+                    </Button>
+                  ) : (
+                    <Spinner marginLeft="16vw" />
+                  )}
                 </div>
 
                 {/* <Button type="submit" marginLeft="13vw" colorScheme="blue">
