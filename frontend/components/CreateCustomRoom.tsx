@@ -14,7 +14,6 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import matchSocketManager from "./Sockets/MatchSocketManager";
 import socketManager from "./Sockets/CommunicationSocketManager";
-import { set } from "zod";
 
 export default function CreateCustomRoom() {
   const complexityColor = {
@@ -29,8 +28,10 @@ export default function CreateCustomRoom() {
   const [roomName, setRoomName] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
   const [roomExists, setRoomExists] = useState(false);
+  const [matching, setMatching] = useState(false);
   const handleCreateCustom = () => {
     setRoomExists(false);
+    setMatching(true);
     matchSocketManager.emitEvent("match", {
       condition: roomName,
       difficulty: difficulty,
@@ -67,6 +68,15 @@ export default function CreateCustomRoom() {
     Hard: { light: "red.500", dark: "red.300" },
   };
 
+  function handleLeaveCustom() {
+    setMatching(false);
+    matchSocketManager.emitEvent("leaveQueue", {
+      condition: roomName,
+      socket: matchSocketManager.getSocketId(),
+    });
+    console.log("leaving custom")
+  }
+
   return (
     <Box>
       <Menu>
@@ -79,10 +89,10 @@ export default function CreateCustomRoom() {
           {difficulty == "Easy"
             ? "Easy"
             : difficulty == "Medium"
-            ? "Medium"
-            : difficulty == "Hard"
-            ? "Hard"
-            : "Difficulty"}
+              ? "Medium"
+              : difficulty == "Hard"
+                ? "Hard"
+                : "Difficulty"}
         </MenuButton>
         <MenuList>
           <MenuItem
@@ -112,9 +122,9 @@ export default function CreateCustomRoom() {
         </MenuList>
       </Menu>
       <Input onChange={(e) => setRoomName(e.target.value)} />
-      {/* (roomExists &&
-			<Text>Please choose another name, the room already exist</Text>) */}
-      <Button onClick={handleCreateCustom}>Create and join room</Button>
+      {roomExists &&
+        <Text>Please choose another name, the room already exist</Text>}
+      {!matching ? <Button onClick={handleCreateCustom}>Create and join room</Button> : <Button onClick={handleLeaveCustom}>Leave Queue</Button>}
     </Box>
   );
 }
