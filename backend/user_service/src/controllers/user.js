@@ -1,6 +1,6 @@
 const express = require('express');
 const userSchema = require('../utility/ZSchema').userSchema;
-const bcrypt = require('bcrypt');
+const userNoPasswordSchema = require('../utility/ZSchema').userNoPasswordSchema;
 const { ZodError } = require('zod');
 
 const userRouter = express.Router();
@@ -128,7 +128,7 @@ userRouter.get('/getUserById', async (request, response) => {
 userRouter.put('/updateUser', async (request, response) => {
     try {
         const body = request.body;
-        const { email, name, username, role } = userSchema.parse(body);
+        const { email, name, username, role } = userNoPasswordSchema.parse(body);
         const { id } = body;
         console.log("Incoming ID", id);
         console.log("ALL", [email, name, username, role, id]);

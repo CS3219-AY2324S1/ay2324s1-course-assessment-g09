@@ -10,6 +10,7 @@ const bodyparser = require("body-parser"); // Middleware
 const cors = require("cors") // Middleware
 const userRouter = require('./controllers/user');
 const userAuthRouter = require('./controllers/auth');
+const userAdminRouter = require('./controllers/admin');
 const initialiseDB = require("./utility/db").initialiseDB;
 const logger = require("./middleware/logger");
 
@@ -28,6 +29,7 @@ app.use(logger);
 //Setup Routing
 app.use('/users', userRouter);
 app.use('/auth', userAuthRouter);
+app.use('/admin/users', userAdminRouter);
 
 
 // Start Express App
