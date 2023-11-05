@@ -194,23 +194,15 @@ const dashboard = () => {
         width="100%"
         height="100%"
       >
-        <Flex
-          marginTop={5}
-          alignItems="center"
-          justifyContent="flex-start"
-          flexDirection="column"
-          width="90%"
-        >
-          <UserComponent
-            userInputValues={userInputValues}
-            setUserInputValues={setUserInputValues}
-            isCreateUser={isCreateUser}
-            setIsCreateUser={setIsCreateUser}
-            fetchUsers={fetchUsers}
-            users={users}
-          />
-          <History />
-        </Flex>
+        <UserComponent
+          userInputValues={userInputValues}
+          setUserInputValues={setUserInputValues}
+          isCreateUser={isCreateUser}
+          setIsCreateUser={setIsCreateUser}
+          fetchUsers={fetchUsers}
+          users={users}
+        />
+        <History />
       </GridItem>
     </Grid>
   );

@@ -14,11 +14,24 @@ import {
   Text,
   Input,
   HStack,
+  Box,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuIcon,
+  MenuItem,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { title } from "process";
 import React, { useEffect, useState } from "react";
 import CategoryTag from "./CategoryTag";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const User = ({
   userInputValues,
@@ -31,7 +44,13 @@ const User = ({
   users,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isDialogOpen,
+    onOpen: openDialog,
+    onClose: closeDialog,
+  } = useDisclosure();
   const [openUser, setOpenUser] = useState(null);
+  const cancelRef = React.useRef();
 
   const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
@@ -42,7 +61,31 @@ const User = ({
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleEdit = async () => {
+  const [editUserInputValues, setEditUserInputValues] = useState({
+    email: "",
+    user: "",
+    username: "",
+    role: "",
+  });
+
+  const handleEditInputChange = (event) => {
+    console.log(event);
+    const { name, value } = event.target;
+    console.log(name, value);
+    setEditUserInputValues({
+      ...editUserInputValues,
+      [name]: value,
+    });
+  };
+
+  const handleRoleClick = (role) => {
+    setEditUserInputValues({
+      ...editUserInputValues,
+      role,
+    });
+  };
+
+  const handleEdit = async ({ email, username, role, name }) => {
     setIsEditing(true);
   };
 
@@ -61,15 +104,17 @@ const User = ({
     console.log("Submitted");
     console.log(id, email, name, username, role);
     try {
-      await axios.put(`auth_service/userauth/updateUser`, {
+      await axios.put(`user_service/users/updateUser`, {
         id,
-        email: "abc" + email,
-        name,
-        username,
+        email: editUserInputValues.email,
+        name: editUserInputValues.user,
+        username: editUserInputValues.username,
         // password:
         //   "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS",
-        role,
+        role: editUserInputValues.role,
       });
+      fetchUsers();
+      handleClose();
     } catch (error) {
       if (error.response) {
         console.log(error.response.data); // This is the main part you are interested in
@@ -97,6 +142,7 @@ const User = ({
       onClose();
       setOpenUser(null);
       setIsEditing(false);
+      closeDialog();
       // console.log("LENGTH", users.LENGTH);
     } catch (error) {
       console.log("Error", error);
@@ -109,12 +155,23 @@ const User = ({
     setIsEditing(false);
   };
 
-  const handleModal = (user) => {
-    console.log(user);
-    setUser(user.name);
-    setUsername(user.username);
-    setRole(user.role);
-    setEmail(user.email);
+  useEffect(() => {
+    console.log(editUserInputValues);
+  }, [editUserInputValues]);
+
+  const handleModal = (selectedUser) => {
+    console.log(selectedUser);
+    setUser(selectedUser.name);
+    setUsername(selectedUser.username);
+    setRole(selectedUser.role);
+    setEmail(selectedUser.email);
+    setEditUserInputValues({
+      email: selectedUser.email,
+      user: selectedUser.name,
+      username: selectedUser.username,
+      role: "",
+    });
+    console.log(email, user, username, role);
 
     if (openUser === user) {
       if (isOpen) {
@@ -122,13 +179,25 @@ const User = ({
       }
     } else {
       console.log();
-      setOpenUser(user);
+      setOpenUser(selectedUser);
       onOpen(); // Open the modal if it's closed
     }
   };
 
   return (
-    <>
+    <Box
+      height="85%"
+      overflowY="auto"
+      css={{
+        "&::-webkit-scrollbar": {
+          width: "0.2rem",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor:
+            colorMode == "light" ? "rgba(0,0,0,0.5)" : "RGBA(20, 20, 20, 0.76)",
+        },
+      }}
+    >
       {users &&
         users
           .filter(
@@ -157,7 +226,16 @@ const User = ({
                   height="100%"
                   key={`flex_id_${user.username}`}
                 >
-                  <Text>{user.username}</Text>
+                  <Text
+                    _hover={{
+                      color: colorMode == "light" ? "teal.500" : "teal.300",
+                      fontWeight: "extrabold",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleModal(user)}
+                  >
+                    {user.username}
+                  </Text>
                 </Flex>
               </GridItem>
               <GridItem key={`grid_item_title${user.name}`} pl={2}>
@@ -190,31 +268,6 @@ const User = ({
                   <Badge colorScheme={user.role == "admin" ? "red" : "green"}>
                     {user.role}
                   </Badge>
-
-                  {/* <Button
-                    size="sm"
-                    my={1}
-                    bgColor={
-                      colorMode === "light" ? "yellow.400" : "yellow.300"
-                    }
-                    color="black"
-                    mx={1}
-                    onClick={() => handleEdit(user)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    my={1}
-                    bgColor={
-                      colorMode === "light" ? "orange.400" : "orange.300"
-                    }
-                    color="black"
-                    mx={1}
-                    onClick={() => handleDelete(user)}
-                  >
-                    Delete
-                  </Button> */}
                 </Flex>
               </GridItem>
             </Grid>
@@ -235,9 +288,32 @@ const User = ({
               <Text fontWeight="bold">Email: </Text>
 
               {isEditing ? (
-                <Input variant="flushed" size="sm" value={email} />
+                <Input
+                  variant="flushed"
+                  size="sm"
+                  name="email"
+                  value={editUserInputValues.email}
+                  onChange={handleEditInputChange}
+                />
               ) : (
                 <Text>{email}</Text>
+              )}
+            </HStack>
+
+            {/* Name */}
+            <HStack my={3}>
+              <Text fontWeight="bold">Name: </Text>
+
+              {isEditing ? (
+                <Input
+                  variant="flushed"
+                  size="sm"
+                  name="user"
+                  value={editUserInputValues.user}
+                  onChange={handleEditInputChange}
+                />
+              ) : (
+                <Text>{user}</Text>
               )}
             </HStack>
 
@@ -246,7 +322,13 @@ const User = ({
               <Text fontWeight="bold">Username: </Text>
 
               {isEditing ? (
-                <Input variant="flushed" size="sm" value={username} />
+                <Input
+                  variant="flushed"
+                  size="sm"
+                  value={editUserInputValues.username}
+                  name="username"
+                  onChange={handleEditInputChange}
+                />
               ) : (
                 <Text>{username}</Text>
               )}
@@ -256,7 +338,46 @@ const User = ({
             <HStack my={3}>
               <Text fontWeight="bold">Role: </Text>{" "}
               {isEditing ? (
-                <Input variant="flushed" size="sm" value={role} />
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    rightIcon={<ChevronDownIcon />}
+                    colorScheme={
+                      editUserInputValues.role == ""
+                        ? openUser.role == "user"
+                          ? "green"
+                          : "red"
+                        : editUserInputValues.role == "user"
+                        ? "green"
+                        : "red"
+                    }
+                    fontWeight="bold"
+                  >
+                    {editUserInputValues.role == ""
+                      ? openUser.role == "user"
+                        ? "User"
+                        : "Admin"
+                      : editUserInputValues.role == "user"
+                      ? "User"
+                      : "Admin"}
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem
+                      onClick={() => handleRoleClick("user")}
+                      color={colorMode == "light" ? "green.500" : "green.300"}
+                      fontWeight="bold"
+                    >
+                      User
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => handleRoleClick("admin")}
+                      color={colorMode == "light" ? "red.500" : "red.300"}
+                      fontWeight="bold"
+                    >
+                      Admin
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
               ) : (
                 <Badge colorScheme={role == "admin" ? "red" : "green"}>
                   {role}
@@ -280,7 +401,7 @@ const User = ({
                 bgColor={colorMode === "light" ? "yellow.400" : "yellow.300"}
                 color="black"
                 mx={1}
-                onClick={() => handleEdit()}
+                onClick={() => handleEdit(openUser)}
               >
                 Edit
               </Button>
@@ -300,7 +421,8 @@ const User = ({
                 bgColor={colorMode === "light" ? "orange.400" : "orange.300"}
                 color="black"
                 mx={1}
-                onClick={() => handleDelete(openUser)}
+                onClick={openDialog}
+                // onClick={() => handleDelete(openUser)}
               >
                 Delete
               </Button>
@@ -312,7 +434,39 @@ const User = ({
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+
+      <AlertDialog
+        isOpen={isDialogOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={closeDialog}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete User
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to delete this user? This action can't be
+              reversed.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={closeDialog}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                ml={3}
+                onClick={() => handleDelete(openUser)}
+              >
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </Box>
   );
 };
 
