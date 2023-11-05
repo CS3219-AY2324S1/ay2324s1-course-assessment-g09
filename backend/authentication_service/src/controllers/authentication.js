@@ -7,6 +7,7 @@ const authRouter = express.Router();
 const axios = require("axios");
 const { ZodError } = require("zod");
 const userSchema = require("../utility/ZSchema").userSchema;
+const passwordSchema = require("../utility/ZSchema").passwordSchema;
 
 const tokenDetails = {
 	secret: process.env.SECRET_KEY,
@@ -121,11 +122,11 @@ authRouter.post("/signout", async (request, response) => {
 	return response.status(200).send(); //.json({ token: token, role: myUser.role });
 });
 
-authRouter.put("/updateUser/", async (request, response) => {
+authRouter.put("/updatePassword/", async (request, response) => {
 
 	try {
 		console.log("ENTER AUTH ROUTER")
-		const { email, name, username, password, role } = userSchema.parse(request.body);
+		const { password } = passwordSchema.parse(request.body);
 		const { id } = request.body;
 		console.log("ID IS", id);
 		if (request.cookies && Object.getPrototypeOf(request.cookies) !== null) {
@@ -135,17 +136,13 @@ authRouter.put("/updateUser/", async (request, response) => {
 			if (decoded.id != id) {
 				return response.status(401).send();
 			}
-			// const pwHash = await bcrypt.hash(password, 6);
+			const pwHash = await bcrypt.hash(password, 6);
 			console.log("Right before user_service")
 			const result = await axios.put(
-				`http://${user_service}/users/updateUser`,
+				`http://${user_service}/auth/updatePassword`,
 				{
 					id: id,
-					email: email,
-					name: name,
-					username: username,
-					// password: pwHash,
-					role: role,
+					password: pwHash,
 				}
 			);
 			response.cookie("token", "", {
@@ -153,7 +150,7 @@ authRouter.put("/updateUser/", async (request, response) => {
 				httpOnly: true,
 			});
 			return response.json({
-				message: [`User:${username} has been updated`],
+				message: [`Password has been updated`],
 			}).send();
 		} else {
 			return response.status(401).send();
