@@ -61,7 +61,7 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 	};
 
 	useEffect(() => {
-		const socket = io({path: "/collaboration_service/socket.io/"});
+		const socket = io({ path: "/collaboration_service/socket.io/" });
 		setSocket(socket);
 
 		socket?.emit("joinRoom", socketRoom);
@@ -113,10 +113,10 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 						{language == "javascript"
 							? "Javascript"
 							: language == "python"
-							? "Python"
-							: language == "C++"
-							? "C++"
-							: "Java"}
+								? "Python"
+								: language == "C++"
+									? "C++"
+									: "Java"}
 					</MenuButton>
 					<MenuList>
 						<MenuItem onClick={handleLanguageChange} value="javascript">
