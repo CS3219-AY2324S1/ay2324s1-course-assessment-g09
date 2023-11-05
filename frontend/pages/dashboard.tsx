@@ -15,11 +15,14 @@ import UserInputField from "../components/UserInputField";
 import Users from "../components/Users";
 import Profile from "./profile";
 import QuestionProgress from "./questionProgress";
+import UserComponent from "../components/UserComponent";
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
 const dashboard = () => {
   const [questions, setQuestions] = useState(null);
+  const [users, setUsers] = useState(null);
+
   const fetchQuestions = async () => {
     try {
       const res = await axios.get(`question_service/questions`);
@@ -31,8 +34,20 @@ const dashboard = () => {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      // const res = await axios.get(`${IP_ADDRESS}:3002/users/getall`);
+      const res = await axios.get(`user_service/users/getUser`);
+      console.log(res);
+      setUsers(res.data.users);
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
+  };
+
   useEffect(() => {
     fetchQuestions();
+    fetchUsers();
   }, []);
 
   // Questions input field
@@ -186,19 +201,13 @@ const dashboard = () => {
           flexDirection="column"
           width="90%"
         >
-          <UserInputField
+          <UserComponent
             userInputValues={userInputValues}
             setUserInputValues={setUserInputValues}
-            colorMode={colorMode}
-            isCreate={isCreateUser}
-            setIsCreate={setIsCreateUser}
-          />
-          <Users
-            userInputValues={userInputValues}
-            setUserInputValues={setUserInputValues}
-            isCreate={isCreateUser}
-            setIsCreate={setIsCreateUser}
-            colorMode={colorMode}
+            isCreateUser={isCreateUser}
+            setIsCreateUser={setIsCreateUser}
+            fetchUsers={fetchUsers}
+            users={users}
           />
           <History />
         </Flex>

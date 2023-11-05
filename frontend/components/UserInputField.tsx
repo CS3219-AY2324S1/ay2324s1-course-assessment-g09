@@ -1,4 +1,13 @@
-import { Grid, Input, Button, Flex, Icon, Text } from "@chakra-ui/react";
+import {
+  Grid,
+  Input,
+  Button,
+  Flex,
+  Icon,
+  Text,
+  HStack,
+  GridItem,
+} from "@chakra-ui/react";
 import axios from "axios";
 import React, { useState } from "react";
 import { AiTwotoneEdit } from "react-icons/ai";
@@ -10,6 +19,8 @@ const UserInputField = ({
   colorMode,
   isCreate,
   setIsCreate,
+  userSearchQuery,
+  setUserSearchQuery,
 }) => {
   const [users, setUsers] = useState(null);
 
@@ -66,48 +77,61 @@ const UserInputField = ({
     fetchUsers();
   };
 
+  const handleSearchQueryChange = (event) => {
+    const { value } = event.target;
+    setUserSearchQuery(value);
+  };
+
   return (
-    <Grid templateColumns="repeat(3, 1fr)" gap={2}>
-      <Input
-        placeholder="ID"
-        variant="filled"
-        name="user_id"
-        value={userInputValues.user_id}
-        onChange={handleInputChange}
-      />
-      <Input
-        placeholder="Title"
-        variant="filled"
-        name="name"
-        value={userInputValues.name}
-        onChange={handleInputChange}
-      />
-      {isCreate ? (
-        <Button
-          mb={3}
-          colorScheme={colorMode === "light" ? "green" : "teal"}
-          isDisabled={!isButtonValid()}
-          type="submit"
-          onClick={handleSubmit}
-        >
-          <Flex align="center">
-            <Icon as={IoMdAdd} mr={1} />
-            <Text>Create</Text>
-          </Flex>
-        </Button>
-      ) : (
-        <Button
-          mb={3}
-          colorScheme={colorMode === "light" ? "pink" : "purple"}
-          onClick={handleUpdate}
-        >
-          <Flex align="center">
-            <Icon as={AiTwotoneEdit} mr={1} />
-            <Text>Update</Text>
-          </Flex>
-        </Button>
-      )}
-    </Grid>
+    <Input
+      variant="flushed"
+      size="sm"
+      width="100%"
+      placeholder="Search Query"
+      onChange={handleSearchQueryChange}
+    />
+
+    // <Grid templateColumns="repeat(3, 1fr)" gap={2}>
+    //   <Input
+    //     placeholder="ID"
+    //     variant="filled"
+    //     name="user_id"
+    //     value={userInputValues.user_id}
+    //     onChange={handleInputChange}
+    //   />
+    //   <Input
+    //     placeholder="Title"
+    //     variant="filled"
+    //     name="name"
+    //     value={userInputValues.name}
+    //     onChange={handleInputChange}
+    //   />
+    //   {isCreate ? (
+    //     <Button
+    //       mb={3}
+    //       colorScheme={colorMode === "light" ? "green" : "teal"}
+    //       isDisabled={!isButtonValid()}
+    //       type="submit"
+    //       onClick={handleSubmit}
+    //     >
+    //       <Flex align="center">
+    //         <Icon as={IoMdAdd} mr={1} />
+    //         <Text>Create</Text>
+    //       </Flex>
+    //     </Button>
+    //   ) : (
+    //     <Button
+    //       mb={3}
+    //       colorScheme={colorMode === "light" ? "pink" : "purple"}
+    //       onClick={handleUpdate}
+    //     >
+    //       <Flex align="center">
+    //         <Icon as={AiTwotoneEdit} mr={1} />
+    //         <Text>Update</Text>
+    //       </Flex>
+    //     </Button>
+    //   )}
+    // </Grid>
   );
 };
 
