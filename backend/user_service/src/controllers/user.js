@@ -128,12 +128,12 @@ userRouter.get('/getUserById', async (request, response) => {
 userRouter.put('/updateUser', async (request, response) => {
     try {
         const body = request.body;
-        const { email, name, username, password, role } = userSchema.parse(body);
+        const { email, name, username, role } = userSchema.parse(body);
         const { id } = body;
         console.log("Incoming ID", id);
-        console.log("ALL", [email, name, username, role, password, id]);
-        const updateQuery = `UPDATE ${userAccountTable} SET email=$1, name=$2, username=$3, role=$4, password=$5 WHERE id=$6`;
-        const queryResult = await db.query(updateQuery, [email, name, username, role, password, id]);
+        console.log("ALL", [email, name, username, role, id]);
+        const updateQuery = `UPDATE ${userAccountTable} SET email=$1, name=$2, username=$3, role=$4, WHERE id=$6`;
+        const queryResult = await db.query(updateQuery, [email, name, username, role, id]);
         console.log("result", queryResult);
         if (queryResult.rowCount != 1) {
             throw new Error('Unsuccessful update into database');

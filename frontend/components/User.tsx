@@ -50,8 +50,39 @@ const User = ({
     setIsEditing(false);
   };
 
-  const handleSubmitEdit = async () => {
+  const handleSubmitEdit = async ({
+    id,
+    email,
+    name,
+    username,
+    // password,
+    role,
+  }) => {
     console.log("Submitted");
+    console.log(id, email, name, username, role);
+    try {
+      await axios.put(`auth_service/userauth/updateUser`, {
+        id,
+        email: "abc" + email,
+        name,
+        username,
+        // password:
+        //   "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS",
+        role,
+      });
+    } catch (error) {
+      if (error.response) {
+        console.log(error.response.data); // This is the main part you are interested in
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log("Error", error.message);
+      }
+      console.log(error.config);
+    }
+
     setIsEditing(false);
   };
 
@@ -79,6 +110,7 @@ const User = ({
   };
 
   const handleModal = (user) => {
+    console.log(user);
     setUser(user.name);
     setUsername(user.username);
     setRole(user.role);
@@ -259,7 +291,7 @@ const User = ({
                 bgColor={colorMode === "light" ? "green.400" : "green.300"}
                 color="black"
                 mx={1}
-                onClick={() => handleSubmitEdit()}
+                onClick={() => handleSubmitEdit(openUser)}
               >
                 Submit
               </Button>

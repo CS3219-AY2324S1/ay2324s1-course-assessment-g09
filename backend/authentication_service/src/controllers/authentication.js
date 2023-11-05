@@ -121,9 +121,10 @@ authRouter.post("/signout", async (request, response) => {
 	return response.status(200).send(); //.json({ token: token, role: myUser.role });
 });
 
-authRouter.put("/updateUser", async (request, response) => {
+authRouter.put("/updateUser/", async (request, response) => {
 
 	try {
+		console.log("ENTER AUTH ROUTER")
 		const { email, name, username, password, role } = userSchema.parse(request.body);
 		const { id } = request.body;
 		console.log("ID IS", id);
@@ -134,8 +135,8 @@ authRouter.put("/updateUser", async (request, response) => {
 			if (decoded.id != id) {
 				return response.status(401).send();
 			}
-			const pwHash = await bcrypt.hash(password, 6);
-
+			// const pwHash = await bcrypt.hash(password, 6);
+			console.log("Right before user_service")
 			const result = await axios.put(
 				`http://${user_service}/users/updateUser`,
 				{
@@ -143,7 +144,7 @@ authRouter.put("/updateUser", async (request, response) => {
 					email: email,
 					name: name,
 					username: username,
-					password: pwHash,
+					// password: pwHash,
 					role: role,
 				}
 			);
