@@ -7,6 +7,7 @@ import {
   Text,
   HStack,
   GridItem,
+  Box,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useState } from "react";
@@ -83,14 +84,16 @@ const UserInputField = ({
   };
 
   return (
-    <Input
-      variant="flushed"
-      size="sm"
-      width="100%"
-      placeholder="Search Query"
-      onChange={handleSearchQueryChange}
-    />
-
+    <Box height="10%" width="100%">
+      <Input
+        variant="flushed"
+        size="sm"
+        width="100%"
+        placeholder="Search Query"
+        onChange={handleSearchQueryChange}
+        height="100%"
+      />
+    </Box>
     // <Grid templateColumns="repeat(3, 1fr)" gap={2}>
     //   <Input
     //     placeholder="ID"

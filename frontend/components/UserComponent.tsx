@@ -1,4 +1,4 @@
-import { useColorMode } from "@chakra-ui/react";
+import { Box, Flex, useColorMode } from "@chakra-ui/react";
 import React, { useState } from "react";
 import UserInputField from "./UserInputField";
 import Users from "./Users";
@@ -15,7 +15,14 @@ const UserComponent = ({
   const [userSearchQuery, setUserSearchQuery] = useState("");
 
   return (
-    <>
+    <Flex
+      marginTop={5}
+      alignItems="center"
+      justifyContent="flex-start"
+      flexDirection="column"
+      width="90%"
+      height="100%"
+    >
       <UserInputField
         userInputValues={userInputValues}
         setUserInputValues={setUserInputValues}
@@ -25,6 +32,7 @@ const UserComponent = ({
         userSearchQuery={userSearchQuery}
         setUserSearchQuery={setUserSearchQuery}
       />
+
       <Users
         userInputValues={userInputValues}
         setUserInputValues={setUserInputValues}
@@ -35,7 +43,7 @@ const UserComponent = ({
         fetchUsers={fetchUsers}
         users={users}
       />
-    </>
+    </Flex>
   );
 };
 
