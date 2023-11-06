@@ -2,6 +2,7 @@
 import {
   Badge,
   Box,
+  Button,
   Grid,
   GridItem,
   HStack,
@@ -19,6 +20,7 @@ import MatchsocketManager from "../components/Sockets/MatchSocketManager";
 import ToggleMode from "../components/ToggleMode";
 import VideoCall from "../components/VideoCall";
 import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
+import collabSocketManager from "../components/Sockets/CollabSocketManager";
 
 export default function Collaboration() {
   interface Question {
@@ -44,7 +46,8 @@ export default function Collaboration() {
 
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
-
+  const [started, setStarted] = useState(false);
+  const [paused, setPaused] = useState(false);
   const [qns, setQns] = useState<Question[]>([
     { category: "", description: "", qn_num: 0, title: "", complexity: "" },
     { category: "", description: "", qn_num: 0, title: "", complexity: "" },
@@ -63,6 +66,7 @@ export default function Collaboration() {
 
     setContent(desc);
   }, [qnsNum]);
+
   const fetchRandomQuestions = async () => {
     try {
       const res = await axios.get(`question_service/questions/4`);
@@ -98,30 +102,34 @@ export default function Collaboration() {
     }
   };
 
-  // Stopwatch when in queue
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
+  // // Stopwatch when in queue
+  // useEffect(() => {
+  //   let interval: NodeJS.Timeout;
 
-    // Ran once every second
-    interval = setInterval(() => {
-      // if the previous second is 59, set to 0, else add 1
-      setSeconds((prevSeconds) => {
-        if (prevSeconds === 59) {
-          setMinutes((prevMinutes) => prevMinutes + 1);
-          return 0;
-        } else {
-          return prevSeconds + 1;
-        }
-      });
-    }, 1000);
+  //   // Ran once every second
+  //   interval = setInterval(() => {
+  //     // if the previous second is 59, set to 0, else add 1
+  //     setSeconds((prevSeconds) => {
+  //       if (prevSeconds === 59) {
+  //         setMinutes((prevMinutes) => prevMinutes + 1);
+  //         return 0;
+  //       } else {
+  //         return prevSeconds + 1;
+  //       }
+  //     });
+  //   }, 1000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  });
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // });
 
   useEffect(() => {
     fetchRandomQuestions();
+    collabSocketManager.subscribeToEvent("setTimer", (data) => {
+      setMinutes(data.minutes);
+      setSeconds(data.seconds);
+    })
   }, []);
 
   return (
@@ -134,6 +142,14 @@ export default function Collaboration() {
         >
           {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
         </Text>
+        <Button onClick={() => {
+          collabSocketManager.emitEvent("startTimer", "");
+          setStarted(true);
+        }}>Start</Button>
+        <Button onClick={() => collabSocketManager.emitEvent("stopTimer", "")}>Pause</Button>
+        <Button onClick={() => {
+          collabSocketManager.emitEvent("resetTimer", "");
+        }}>Reset</Button>
         <ToggleMode colorMode={colorMode} toggleColorMode={toggleColorMode} />
       </HStack>
 
@@ -177,8 +193,8 @@ export default function Collaboration() {
                           complexity == "Easy"
                             ? "green"
                             : complexity == "Medium"
-                            ? "orange"
-                            : "red"
+                              ? "orange"
+                              : "red"
                         }
                       >
                         {complexity}

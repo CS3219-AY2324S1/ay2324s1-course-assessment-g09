@@ -11,9 +11,7 @@ async function connectToDB() {
 		useUnifiedTopology: true,
 	})
 		.then(() =>
-			console.log(
-				`MongoDB for history running on port ${process.env.DB_PORT}.`
-			)
+			console.log(`MongoDB for history running on port ${process.env.DB_PORT}.`)
 		)
 		.catch((err) => {
 			console.log("Error connecting to DB. Exiting.");
@@ -61,6 +59,7 @@ async function getAllHistory(req, res) {
 
 async function getHistoryByUser(req, res) {
 	const user = req.params.user;
+	console.log(user);
 	try {
 		const history = await History.find({ user1: user });
 		res.status(200).json(history);

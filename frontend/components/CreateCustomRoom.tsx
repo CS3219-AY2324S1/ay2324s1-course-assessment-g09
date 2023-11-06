@@ -19,7 +19,6 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import matchSocketManager from "./Sockets/MatchSocketManager";
 import socketManager from "./Sockets/CommunicationSocketManager";
-import { set } from "zod";
 
 export default function CreateCustomRoom() {
   const complexityColor = {
@@ -34,8 +33,10 @@ export default function CreateCustomRoom() {
   const [roomName, setRoomName] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
   const [roomExists, setRoomExists] = useState(false);
+  const [matching, setMatching] = useState(false);
   const handleCreateCustom = () => {
     setRoomExists(false);
+    setMatching(true);
     matchSocketManager.emitEvent("match", {
       condition: roomName,
       difficulty: difficulty,
@@ -72,7 +73,16 @@ export default function CreateCustomRoom() {
     Hard: { light: "red.500", dark: "red.300" },
   };
 
-  return (
+  function handleLeaveCustom() {
+    setMatching(false);
+    matchSocketManager.emitEvent("leaveQueue", {
+      condition: roomName,
+      socket: matchSocketManager.getSocketId(),
+    });
+    console.log("leaving custom")
+  }
+
+return (
     <Box>
       <Heading
         as="h5"
