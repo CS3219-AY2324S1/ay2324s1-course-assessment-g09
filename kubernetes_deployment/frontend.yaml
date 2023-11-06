@@ -2,21 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-deployment
+  namespace: eks-peerprep
   labels:
-    app: frontend
+    app: frontend-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: frontend-service
   template:
     metadata:
       labels:
-        app: frontend
+        app: frontend-service
     spec:
       containers:
         - name: frontend-container
-          image: frontend-img
+          image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/frontend:latest
           ports:
             - containerPort: 3005
           env:
@@ -25,15 +26,17 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: frontend-NEXT_PUBLIC_IP_ADDRESS
-          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: frontend-service
+  namespace: eks-peerprep
+  labels:
+    app: frontend-service
 spec:
   selector:
-    app: frontend
+    app: frontend-service
   ports:
     - protocol: TCP
       port: 3005
