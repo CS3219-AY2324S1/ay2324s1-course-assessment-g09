@@ -132,7 +132,7 @@ userRouter.put('/updateUser', async (request, response) => {
         const { id } = body;
         console.log("Incoming ID", id);
         console.log("ALL", [email, name, username, role, id]);
-        const updateQuery = `UPDATE ${userAccountTable} SET email=$1, name=$2, username=$3, role=$4, WHERE id=$6`;
+        const updateQuery = `UPDATE ${userAccountTable} SET email=$1, name=$2, username=$3, role=$4 WHERE id=$5`;
         const queryResult = await db.query(updateQuery, [email, name, username, role, id]);
         console.log("result", queryResult);
         if (queryResult.rowCount != 1) {

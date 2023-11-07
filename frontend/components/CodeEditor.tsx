@@ -14,7 +14,7 @@ import Editor from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import SaveHistoryButton from "./SaveHistoryButton";
+import EndMatchButton from "./EndMatchButton";
 
 export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 	const editorRef = useRef(null);
@@ -39,7 +39,6 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 			isIncomingCode.current = false;
 			return;
 		}
-		console.log("sent");
 		setCode(editorRef.current.getModel().getValue());
 		socket?.emit("codeChange", event);
 	};
@@ -62,15 +61,15 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 	};
 
 	useEffect(() => {
-		const socket = io({path: "/collaboration_service/socket.io/"});
+		const socket = io({ path: "/collaboration_service/socket.io/" });
 		setSocket(socket);
 
 		socket?.emit("joinRoom", socketRoom);
 
 		socket.on("codeChange", (event) => {
 			isIncomingCode.current = true;
-			console.log("received", event);
 			editorRef.current.getModel()?.applyEdits(event.changes);
+			setCode(editorRef.current.getModel().getValue());
 		});
 
 		socket.on("languageChange", (event) => {
@@ -114,10 +113,10 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 						{language == "javascript"
 							? "Javascript"
 							: language == "python"
-							? "Python"
-							: language == "C++"
-							? "C++"
-							: "Java"}
+								? "Python"
+								: language == "C++"
+									? "C++"
+									: "Java"}
 					</MenuButton>
 					<MenuList>
 						<MenuItem onClick={handleLanguageChange} value="javascript">
@@ -137,22 +136,12 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 			</GridItem>
 
 			<GridItem>
-				<SaveHistoryButton
+				<EndMatchButton
 					code={code}
 					theme={theme}
 					language={language}
 					difficulty={"Easy"}
 				/>
-				{/* <Button
-
-						onClick={() =>
-							alert(editorRef.current.getModel().getValue())
-						}
-						width="100%"
-						colorScheme="green"
-					>
-						Save History
-					</Button> */}
 			</GridItem>
 			<GridItem>
 				<Button onClick={handleFormat} width="100%" colorScheme="blue">

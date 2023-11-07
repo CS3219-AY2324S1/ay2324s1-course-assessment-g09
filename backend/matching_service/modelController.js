@@ -98,6 +98,7 @@ async function removeFromUser(socketId) {
 async function removeFromCustom(condition) {
 	await customModel.destroy({ where: { condition: condition } });
 }
+
 exports.pairUserByDifficulty = pairUserByDifficulty;
 exports.customPair = customPair;
 exports.removeFromUser = removeFromUser;

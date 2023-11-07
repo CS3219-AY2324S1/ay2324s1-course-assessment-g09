@@ -14,6 +14,7 @@ import axios from "axios";
 import socketManager from "./Sockets/CommunicationSocketManager";
 import MatchsocketManager from "./Sockets/MatchSocketManager";
 import { useRouter } from "next/router";
+import collabSocketManager from "./Sockets/CollabSocketManager";
 
 export default function MatchButton({ handleQuickStart }) {
   const { colorMode } = useColorMode();
@@ -57,6 +58,7 @@ export default function MatchButton({ handleQuickStart }) {
       const matchedVideoSocket = data.videoSocket;
       const room = data.room;
       console.log("matched", matchedUser, matchedVideoSocket, room);
+      collabSocketManager.setRoom(room);
       socketManager.setMatchedSocketId(matchedVideoSocket);
       MatchsocketManager.setMatchedUser(matchedUser);
       MatchsocketManager.setMatchedRoom(room);
@@ -76,10 +78,10 @@ export default function MatchButton({ handleQuickStart }) {
             {difficulty == "Easy"
               ? "Easy"
               : difficulty == "Medium"
-              ? "Medium"
-              : difficulty == "Hard"
-              ? "Hard"
-              : "Difficulty"}
+                ? "Medium"
+                : difficulty == "Hard"
+                  ? "Hard"
+                  : "Difficulty"}
           </MenuButton>
           <MenuList>
             <MenuItem

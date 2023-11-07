@@ -17,9 +17,9 @@ io.on("connection", (socket) => {
 	// console.log(socket.id);
 	socket.emit("getSelfId", socket.id);
 	console.log("socket id: ", socket.id);
-	socket.on("disconnect", () => {
-		socket.broadcast.emit("callEnded");
-	});
+	// socket.on("disconnect", () => {
+	// 	socket.broadcast.emit("callEnded");
+	// });
 
 	socket.on("callUser", (data) => {
 		console.log("call user ", "from: ", data.from, "to: ", data.userToCall);
@@ -35,10 +35,16 @@ io.on("connection", (socket) => {
 			io.to(data.to).emit("signal", data.signal);
 		});
 	});
+
 	socket.on("test", (data) => {
 		// console.log(data);
 		console.log("target socket: ", data.to);
 		io.to(data.to).emit("signal", data.signal);
+	});
+
+	socket.on("endMatch", (data) => {
+		console.log("end match", data);
+		io.to(data).emit("callEnded");
 	});
 
 	socket.on("answerCall", (data) => {
