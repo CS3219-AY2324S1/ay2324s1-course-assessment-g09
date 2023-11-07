@@ -33,10 +33,11 @@ io.on("connection", (socket) => {
 				socketId: socket.id,
 			})
 		);
+
 		socket.on("leaveQueue", (data) => {
-			console.log("leaveQueue", data);
-			const { condition, socket } = data;
-			sendToQueue("leave_queue", JSON.stringify({ condition, socket }));
+			const { condition, socketId } = data;
+			console.log(socket.id);
+			sendToQueue("leave_queue", JSON.stringify({ condition, socketId }));
 		});
 	});
 });

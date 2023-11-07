@@ -69,22 +69,27 @@ export default function Collaboration() {
 
   const fetchRandomQuestions = async () => {
     try {
-      const res = await axios.get(`question_service/questions/4`);
-      setQns(res.data.qns);
+      // const res = await axios.get(`question_service/questions/4`);
+      // setQns(qns);
+      collabSocketManager.emitEvent("getQns", "");
+      collabSocketManager.subscribeToEvent("qnsRes", (qns) => {
+        setQns(qns);
+        let desc = qns[qnsNum].description;
+        setTitle(qns[qnsNum].title);
+        setComplexity(qns[qnsNum].complexity);
 
-      // console.log(res.data.qns[0]);
+        desc = desc.replace(/<code>/g, "");
+        desc = desc.replace(/<\/code>/g, "");
+
+        setContent(desc);
+        setTitle(qns[qnsNum].title);
+        setComplexity(qns[qnsNum].complexity);
+      });
+
+      // console.log(qns[0]);
 
       // console.log(res.data);
-      let desc = res.data.qns[qnsNum].description;
-      setTitle(res.data.qns[qnsNum].title);
-      setComplexity(res.data.qns[qnsNum].complexity);
 
-      desc = desc.replace(/<code>/g, "");
-      desc = desc.replace(/<\/code>/g, "");
-
-      setContent(desc);
-      setTitle(res.data.qns[qnsNum].title);
-      setComplexity(res.data.qns[qnsNum].complexity);
     } catch (error) {
       console.log("ERROR: ", error);
     }

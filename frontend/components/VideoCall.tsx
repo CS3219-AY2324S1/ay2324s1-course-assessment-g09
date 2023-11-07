@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
-import { Box, Text, Button, Input } from "@chakra-ui/react";
+import { Box, Text, Button, Input, HStack } from "@chakra-ui/react";
 import socketManager from "./Sockets/CommunicationSocketManager";
 import VideoComponent from "./VideoComponent";
 import { set } from "zod";
@@ -139,10 +139,10 @@ export default function VideoCall({ videoOn, setVideoOn }) {
         Get Video
       </Button>
       {!callerStream ? null : (
-        <Box>
+        <HStack>
           <VideoComponent stream={callerStream} isLocal={true} />
           <VideoComponent stream={receiverStream} isLocal={false} />
-        </Box>
+        </HStack>
       )}
 
       {!callAccepted && <Button onClick={callUser} colorScheme="purple" mr={2}>

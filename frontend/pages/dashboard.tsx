@@ -194,18 +194,18 @@ const dashboard = () => {
         width="100%"
         height="100%"
       >
-        {user=="user" ? (
-            <History />
-          ):(
-        <UserComponent
-          userInputValues={userInputValues}
-          setUserInputValues={setUserInputValues}
-          isCreateUser={isCreateUser}
-          setIsCreateUser={setIsCreateUser}
-          fetchUsers={fetchUsers}
-          users={users}
-        />
-        )
+        {user == "user" ? (
+          <History />
+        ) : (
+          <UserComponent
+            userInputValues={userInputValues}
+            setUserInputValues={setUserInputValues}
+            isCreateUser={isCreateUser}
+            setIsCreateUser={setIsCreateUser}
+            fetchUsers={fetchUsers}
+            users={users}
+          />
+        )}
       </GridItem>
     </Grid>
   );
