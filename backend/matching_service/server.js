@@ -72,10 +72,10 @@ amqp.connect(process.env.RABBITMQ, (err, conn) => {
 			ch.consume(
 				queueName,
 				(msg) => {
-					const { condition, socket } = JSON.parse(msg.content.toString());
-					console.log(condition, socket);
+					const { condition, socketId } = JSON.parse(msg.content.toString());
+					console.log(condition, socketId);
 					if (condition == "") {
-						removeFromUser(socket);
+						removeFromUser(socketId);
 					} else {
 						removeFromCustom(condition);
 					}

@@ -79,7 +79,7 @@ const profile = ({ colorMode, userMode, userEmail }) => {
     setInQueue(false);
     setMinutes(0);
     setSeconds(0);
-    matchSocketManager.emitEvent("leaveQueue", { condition: "", socket: matchSocketManager.getSocketId() });
+    matchSocketManager.emitEvent("leaveQueue", { condition: "", socketId: matchSocketManager.getSocketId() });
     console.log("leaving queue")
   };
 
@@ -132,6 +132,10 @@ const profile = ({ colorMode, userMode, userEmail }) => {
       clearInterval(interval);
       setInQueue(true);
       setTimerValue(100);
+    }
+
+    if (seconds >= 30) {
+      handleLeaveQueue();
     }
 
     return () => {

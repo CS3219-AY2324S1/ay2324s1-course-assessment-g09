@@ -28,6 +28,7 @@ export default function EndMatchButton({
 		};
 		console.log(socketManager.getSocketId(), socketManager.getMatchedSocketId());
 		socketManager.emitEvent("endMatch", socketManager.getSocketId());
+		matchSocketManager.emitEvent("endMatch", socketManager.getMatchedSocketId());
 		const res = await axios
 			.post("/history_service/create", data)
 			.then((res) => console.log(res.data))
