@@ -11,7 +11,7 @@ const passwordSchema = require("../utility/ZSchema").passwordSchema;
 
 const tokenDetails = {
 	secret: process.env.SECRET_KEY,
-	duration: "3600s",
+	duration: "2 days",
 };
 
 const user_service = process.env.USER_SERVICE;
