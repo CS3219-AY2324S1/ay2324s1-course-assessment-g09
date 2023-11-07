@@ -36,6 +36,11 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: history-RESTAPI_PORT
+          resources:
+            limits:
+              cpu: "200m"
+            requests:
+              cpu: "100m"
 ---
 apiVersion: v1
 kind: Service
