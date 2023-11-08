@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
 		socket.join(room);
 		console.log(room);
 		const res = await axios
-			.get(`http://question-service:3001/questions/4`)
+			.get(`http://question-service:3001/questions/1`)
 			.catch((err) => {
 				console.log(err);
 			});

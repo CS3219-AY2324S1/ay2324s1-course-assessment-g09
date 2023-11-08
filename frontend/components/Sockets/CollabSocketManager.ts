@@ -4,6 +4,9 @@ class SocketManager {
 	private socket: Socket | null = null;
 	private socketId: string | null = null;
 	private room: string | null = null;
+	private qnsName: string | null = null;
+	private qnsDesc: string | null = null;
+	private difficulty: string | null = null;
 
 	constructor() {
 		this.initialize();
@@ -38,6 +41,30 @@ class SocketManager {
 
 	public getRoom(): string | null {
 		return this.room;
+	}
+
+	public getQnsName(): string | null {
+		return this.qnsName;
+	}
+
+	public getQnsDesc(): string | null {
+		return this.qnsDesc;
+	}
+
+	public getDifficulty(): string | null {
+		return this.difficulty;
+	}
+
+	public setQnsName(qnsName: string | null) {
+		this.qnsName = qnsName;
+	}
+
+	public setQnsDesc(qnsDesc: string | null) {
+		this.qnsDesc = qnsDesc;
+	}
+
+	public setDifficulty(difficulty: string | null) {
+		this.difficulty = difficulty;
 	}
 
 	public setRoom(r: string | null) {

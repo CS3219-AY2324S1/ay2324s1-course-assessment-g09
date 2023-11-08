@@ -84,25 +84,7 @@ export default function VideoCall({ videoOn, setVideoOn }) {
     callerStream.getVideoTracks()[0].enabled =
       !callerStream.getVideoTracks()[0].enabled;
   };
-  const answer = async () => {
-    try {
-      const callerStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-      setcallerStream(callerStream);
-      socketManager.subscribeToEvent("callEnded", () => {
-        console.log("caller ended call");
-        if (callerStream.getTracks()) {
-          callerStream.getTracks().forEach((track) => track.stop());
-        }
-      });
-      answerCall();
-      setVideoOn(!videoOn);
-    } catch (err) {
-      console.log(err);
-    }
-  }
+
   const answerCall = async () => {
     const peer = new Peer({
       initiator: false,
@@ -132,38 +114,35 @@ export default function VideoCall({ videoOn, setVideoOn }) {
 
   return (
     <Box>
-      <Button onClick={toggleCamera} colorScheme="blue">
-        Toggle Camera
-      </Button>
-      <Button onClick={getVideo} colorScheme="blue">
+      {!callerStream && <Button onClick={getVideo} colorScheme="blue">
         Get Video
-      </Button>
+      </Button>}
+
+      {!callAccepted && <Button onClick={callUser} colorScheme="purple" mr={2}>
+        Call
+      </Button>}
+
       {!callerStream ? null : (
         <HStack>
           <VideoComponent stream={callerStream} isLocal={true} />
           <VideoComponent stream={receiverStream} isLocal={false} />
         </HStack>
       )}
-
-      {!callAccepted && <Button onClick={callUser} colorScheme="purple" mr={2}>
-        Call
+      {callerStream && <Button onClick={toggleCamera} colorScheme="blue">
+        Toggle Camera
       </Button>}
+
 
       {receivingCall ? (
         <Button onClick={answerCall} colorScheme="green">
           Answer
         </Button>
       ) : null}
-      {receivingCall ? (
-        <Button onClick={answer} colorScheme="green">
-          Answer2
-        </Button>
-      ) : null}
-      {callAccepted && !callEnded ? (
+      {/* {callAccepted && !callEnded ? (
         <Button onClick={leaveCall} colorScheme="red">
           End Call
         </Button>
-      ) : null}
+      ) : null} */}
     </Box>
   );
 }

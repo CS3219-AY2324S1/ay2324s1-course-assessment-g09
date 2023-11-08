@@ -32,6 +32,7 @@ import { io } from "socket.io-client";
 import EndMatchButton from "./EndMatchButton";
 import { on } from "events";
 import matchSocketManager from "./Sockets/MatchSocketManager";
+import socketManager from "./Sockets/CommunicationSocketManager";
 
 export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 	const editorRef = useRef(null);
@@ -92,7 +93,7 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 			setCode(editorRef.current.getModel().getValue());
 		});
 
-		matchSocketManager.subscribeToEvent("matchEnded", () => {
+		socketManager.subscribeToEvent("matchEnded", () => {
 			console.log("match ended");
 			onOpen();
 		})
@@ -180,7 +181,6 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 									code={code}
 									theme={theme}
 									language={language}
-									difficulty={"Easy"}
 								/>
 							</ModalFooter>
 						</ModalContent>
@@ -219,7 +219,6 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 							code={code}
 							theme={theme}
 							language={language}
-							difficulty={"Easy"}
 						/>
 					</AlertDialogFooter>
 				</AlertDialogContent>

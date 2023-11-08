@@ -75,8 +75,11 @@ export default function Collaboration() {
       collabSocketManager.subscribeToEvent("qnsRes", (qns) => {
         setQns(qns);
         let desc = qns[qnsNum].description;
+        collabSocketManager.setQnsDesc(desc);
         setTitle(qns[qnsNum].title);
+        collabSocketManager.setQnsName(qns[qnsNum].title);
         setComplexity(qns[qnsNum].complexity);
+        collabSocketManager.setDifficulty(qns[qnsNum].complexity);
 
         desc = desc.replace(/<code>/g, "");
         desc = desc.replace(/<\/code>/g, "");
@@ -95,17 +98,17 @@ export default function Collaboration() {
     }
   };
 
-  const handleNextQns = () => {
-    if (qnsNum != 3) {
-      setQnsNum(qnsNum + 1);
-    }
-  };
+  // const handleNextQns = () => {
+  //   if (qnsNum != 3) {
+  //     setQnsNum(qnsNum + 1);
+  //   }
+  // };
 
-  const handlePrevQns = () => {
-    if (qnsNum != 0) {
-      setQnsNum(qnsNum - 1);
-    }
-  };
+  // const handlePrevQns = () => {
+  //   if (qnsNum != 0) {
+  //     setQnsNum(qnsNum - 1);
+  //   }
+  // };
 
   // // Stopwatch when in queue
   // useEffect(() => {
@@ -206,7 +209,7 @@ export default function Collaboration() {
                       </Badge>
                     </Text>
                   </>
-                  <HStack mr={2}>
+                  {/* <HStack mr={2}>
                     <IconButton
                       icon={<AiFillCaretLeft />}
                       colorScheme="teal"
@@ -224,7 +227,7 @@ export default function Collaboration() {
                       isDisabled={qnsNum === 3}
                       onClick={handleNextQns}
                     />
-                  </HStack>
+                  </HStack> */}
                 </HStack>
                 <Box>
                   {/* <Icon as={GrPrevious} /> */}
