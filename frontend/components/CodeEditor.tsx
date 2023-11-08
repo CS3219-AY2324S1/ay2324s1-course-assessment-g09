@@ -180,7 +180,6 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 									code={code}
 									theme={theme}
 									language={language}
-									difficulty={"Easy"}
 								/>
 							</ModalFooter>
 						</ModalContent>
@@ -219,7 +218,6 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 							code={code}
 							theme={theme}
 							language={language}
-							difficulty={"Easy"}
 						/>
 					</AlertDialogFooter>
 				</AlertDialogContent>

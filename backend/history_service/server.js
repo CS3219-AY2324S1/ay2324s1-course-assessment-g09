@@ -4,6 +4,7 @@ const {
 	createHistory,
 	getAllHistory,
 	getHistoryByUser,
+	getDistinctByUser,
 } = require("./historyController");
 const bodyparser = require("body-parser"); // Middleware
 const cors = require("cors"); // Middleware
@@ -24,6 +25,7 @@ app.use(
 app.post("/create", createHistory); //CREATE
 app.get("/getall", getAllHistory); // READ
 app.get("/get/:user", getHistoryByUser); // READ
+app.get("/getProgress/:user", getDistinctByUser);
 
 // Connect to MongoDB
 connectToDB();

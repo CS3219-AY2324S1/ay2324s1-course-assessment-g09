@@ -67,9 +67,39 @@ async function getHistoryByUser(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+
+async function getDistinctByUser(req, res) {
+	const user = req.params.user;
+	console.log(user);
+	try {
+		const history = await History.aggregate([
+			{
+				$match: {
+					user1: user,
+				},
+			},
+			{
+				$group: {
+					_id: "$Difficulty",
+					entries: { $addToSet: "$questionName" },
+				},
+			},
+			{
+				$project: {
+					_id: 1,
+					distinctCount: { $size: "$entries" }, // Count the number of distinct values
+				},
+			},
+		]);
+		res.status(200).json(history);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+}
 module.exports = {
 	connectToDB,
 	createHistory,
 	getAllHistory,
 	getHistoryByUser,
+	getDistinctByUser,
 };
