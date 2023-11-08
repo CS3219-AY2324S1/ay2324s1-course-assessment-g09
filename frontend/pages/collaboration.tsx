@@ -98,17 +98,17 @@ export default function Collaboration() {
     }
   };
 
-  const handleNextQns = () => {
-    if (qnsNum != 3) {
-      setQnsNum(qnsNum + 1);
-    }
-  };
+  // const handleNextQns = () => {
+  //   if (qnsNum != 3) {
+  //     setQnsNum(qnsNum + 1);
+  //   }
+  // };
 
-  const handlePrevQns = () => {
-    if (qnsNum != 0) {
-      setQnsNum(qnsNum - 1);
-    }
-  };
+  // const handlePrevQns = () => {
+  //   if (qnsNum != 0) {
+  //     setQnsNum(qnsNum - 1);
+  //   }
+  // };
 
   // // Stopwatch when in queue
   // useEffect(() => {
@@ -209,7 +209,7 @@ export default function Collaboration() {
                       </Badge>
                     </Text>
                   </>
-                  <HStack mr={2}>
+                  {/* <HStack mr={2}>
                     <IconButton
                       icon={<AiFillCaretLeft />}
                       colorScheme="teal"
@@ -227,7 +227,7 @@ export default function Collaboration() {
                       isDisabled={qnsNum === 3}
                       onClick={handleNextQns}
                     />
-                  </HStack>
+                  </HStack> */}
                 </HStack>
                 <Box>
                   {/* <Icon as={GrPrevious} /> */}

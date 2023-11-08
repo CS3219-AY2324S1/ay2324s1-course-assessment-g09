@@ -36,15 +36,10 @@ io.on("connection", (socket) => {
 		});
 	});
 
-	socket.on("test", (data) => {
-		// console.log(data);
-		console.log("target socket: ", data.to);
-		io.to(data.to).emit("signal", data.signal);
-	});
-
-	socket.on("endMatch", (data) => {
-		console.log("end match", data);
-		io.to(data).emit("callEnded");
+	socket.on("endMatch", (matchedSocket) => {
+		console.log("endMatch", matchedSocket, socket.id);
+		io.to(matchedSocket).emit("matchEnded");
+		io.to(socket.id).emit("callEnded");
 	});
 
 	socket.on("answerCall", (data) => {
