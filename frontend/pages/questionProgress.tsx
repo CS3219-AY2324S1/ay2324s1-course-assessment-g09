@@ -3,9 +3,25 @@ import {
   CircularProgress,
   CircularProgressLabel,
 } from "@chakra-ui/react";
-import React from "react";
+import axios from "axios";
+import React, { useEffect } from "react";
 
 const questionProgress = ({ colorMode }) => {
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const authUser = JSON.parse(sessionStorage.getItem("login")).email;
+        const res = await axios.get(
+          `/history_service/getProgress/${authUser}`
+        );
+        console.log(res.data);
+      } catch (error) {
+        console.log("ERROR: ", error);
+      }
+    }
+    fetchProgress();
+  })
+
   return (
     <HStack>
       <CircularProgress

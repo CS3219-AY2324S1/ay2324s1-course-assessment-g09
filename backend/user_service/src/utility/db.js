@@ -61,15 +61,35 @@ const initialiseDB = () => {
         }
         console.log(`Initialisation: Initialised Users table.`);
         if (process.env.NODE_ENV != "production") {
-            const values = ["admin@peerprep.com", "admin", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"];
-            const adminQuery = `INSERT INTO ${userAccountTable} (email, username, name, role, password) VALUES ($1, $2, $3, $4, $5);`;
-            db.query(adminQuery, values, (error, results) => {
-                if (error) {
-                    console.log('Initialisation: Error initialising Admin account.');
-                    return process.exit(1);
-                }
-                console.log(`Initialisation: Initialised Admin account.`);
-            });
+
+            const values = [["admin@peerprep.com", "admin", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin1@peerprep.com", "admin1", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin2@peerprep.com", "admin2", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin3@peerprep.com", "admin3", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin4@peerprep.com", "admin4", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin5@peerprep.com", "admin5", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin6@peerprep.com", "admin6", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin7@peerprep.com", "admin7", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin8@peerprep.com", "admin8", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin9@peerprep.com", "admin9", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin10@peerprep.com", "admin10", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin11@peerprep.com", "admin11", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin12@peerprep.com", "admin12", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin13@peerprep.com", "admin13", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin14@peerprep.com", "admin14", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"],
+            ["admin15@peerprep.com", "admin15", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"]];
+
+            for (let i = 0; i < 15; i += 1) {
+                const adminQuery = `INSERT INTO ${userAccountTable} (email, username, name, role, password) VALUES ($1, $2, $3, $4, $5);`;
+                db.query(adminQuery, values[i], (error, results) => {
+                    if (error) {
+                        console.log('Initialisation: Error initialising Admin account.');
+                        return process.exit(1);
+                    }
+                    console.log(`Initialisation: Initialised Admin account.`);
+                });
+            }
+            
         }
 
     });

@@ -6,7 +6,7 @@ metadata:
   labels:
     app: mongo-service
 spec:
-  replicas: 1  # Avoid replicated database
+  replicas: 1 # Avoid replicated database
   selector:
     matchLabels:
       app: mongo-service
@@ -21,6 +21,13 @@ spec:
           ports:
             - name: restapi
               containerPort: 27017
+      volumeMounts:
+        - mountPath: /data/db
+          name: mongodb
+    volumeMounts:
+      - name: mongodb
+        PersistentVolumeClaim:
+          claimName: mongo-pvc
 ---
 apiVersion: v1
 kind: Service

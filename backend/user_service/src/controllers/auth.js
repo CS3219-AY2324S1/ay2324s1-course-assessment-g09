@@ -31,6 +31,24 @@ userAuthRouter.get('/getUserByEmail', (request, response) => {
     })
 });
 
+userAuthRouter.put("/updatePassword", async (request, response) => {
+    try {
+        const body = request.body;
+        const { password, id } = body;
+        console.log("Incoming ID", id);
+        console.log("ALL", [email, name, username, role, id]);
+        const updateQuery = `UPDATE ${userAccountTable} SET password=$1, WHERE id=$2`;
+        const queryResult = await db.query(updateQuery, [password, id]);
+        console.log("result", queryResult);
+        if (queryResult.rowCount != 1) {
+            throw new Error('Unsuccessful update into database');
+        }
+        return response.status(200).json({ "msg": "user updated" });
+    } catch (error) {
+        console.log("update err", error);
+        return response.status(500).json({ message: ["something went wrong..."] });
+    }
+});
 
 module.exports = userAuthRouter;
 

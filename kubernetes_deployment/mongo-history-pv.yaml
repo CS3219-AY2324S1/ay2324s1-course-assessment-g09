@@ -1,0 +1,29 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: mongo-history-pv
+  labels:
+    type: local
+    app: mongo-history-service
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data/mongohistory"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mongo-history-pvc
+  labels:
+    app: mongo-history-service
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

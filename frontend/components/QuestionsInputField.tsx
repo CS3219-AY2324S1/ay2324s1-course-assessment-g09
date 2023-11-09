@@ -117,7 +117,9 @@ const QuestionInputField = ({
   };
 
   const handleInputChange = (event) => {
+    console.log(event);
     const { name, value } = event.target;
+    console.log(name, value);
     setInputValues({
       ...inputValues,
       [name]: value,

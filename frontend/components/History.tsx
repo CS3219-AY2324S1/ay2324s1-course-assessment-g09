@@ -14,9 +14,11 @@ import {
 	Text,
 	Grid,
 	GridItem,
+	Badge,
 } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
 import { editor } from "monaco-editor";
+import { set } from "zod";
 
 type history = {
 	_id: string;
@@ -31,7 +33,7 @@ type history = {
 	user2: string;
 };
 export default function History() {
-	const [user, setUser] = useState("Dennis");
+	const [user, setUser] = useState("");
 	const [history, setHistory] = useState(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [selectedItem, setSelectedItem] = useState(null);
@@ -39,10 +41,13 @@ export default function History() {
 	useEffect(() => {
 		const fetchHistory = async () => {
 			try {
+				const authUser = JSON.parse(sessionStorage.getItem("login")).email;
+				setUser(authUser);
+				console.log(`/history_service/get/${authUser}`)
 				const res = await axios.get(
-					`/history_service/history/get/${user}`
+					`/history_service/get/${authUser}`
 				);
-
+				console.log(res.data);
 				setHistory(
 					res.data
 						.slice()
@@ -72,7 +77,7 @@ export default function History() {
 							<Text>{index}</Text>
 							<Text>{record.questionName}</Text>
 							<Text>
-								Date:{" "}
+								Date:
 								{new Date(
 									record.createdAt
 								).toLocaleDateString()}
@@ -91,6 +96,18 @@ export default function History() {
 						<Box>
 							<ModalHeader>
 								{selectedItem.questionName}
+								<Badge
+									ml={3}
+									colorScheme={
+										String(selectedItem.difficulty).toLowerCase() == "easy"
+											? "green"
+											: String(selectedItem.difficulty).toLowerCase() == "medium"
+												? "orange"
+												: "red"
+									}
+								>
+									{selectedItem.difficulty}
+								</Badge>
 							</ModalHeader>
 							<ModalCloseButton />
 							<ModalBody>

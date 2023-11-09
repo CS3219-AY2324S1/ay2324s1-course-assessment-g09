@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
-import { Box, Text, Button, Input } from "@chakra-ui/react";
+import { Box, Text, Button, Input, HStack } from "@chakra-ui/react";
 import socketManager from "./Sockets/CommunicationSocketManager";
 import VideoComponent from "./VideoComponent";
 import { set } from "zod";
+import { useRouter } from "next/router";
+import { get } from "http";
 
 export default function VideoCall({ videoOn, setVideoOn }) {
   const self = socketManager.getSocketId();
@@ -17,12 +19,19 @@ export default function VideoCall({ videoOn, setVideoOn }) {
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const connectionRef = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     socketManager.subscribeToEvent("callUser", (data) => {
       setReceivingCall(true);
       setCaller(data.from);
       setCallerSignal(data.signal);
+    });
+    socketManager.subscribeToEvent("callEnded", () => {
+      if (connectionRef.current) {
+        connectionRef.current.destroy();
+      }
+      router.push("/");
     });
   }, []);
 
@@ -33,6 +42,12 @@ export default function VideoCall({ videoOn, setVideoOn }) {
         audio: true,
       });
       setcallerStream(callerStream);
+      socketManager.subscribeToEvent("callEnded", () => {
+        console.log("caller ended call");
+        if (callerStream.getTracks()) {
+          callerStream.getTracks().forEach((track) => track.stop());
+        }
+      });
       setVideoOn(!videoOn);
     } catch (err) {
       console.log(err);
@@ -65,28 +80,30 @@ export default function VideoCall({ videoOn, setVideoOn }) {
   };
 
 
-	const toggleCamera = () => {
-		callerStream.getVideoTracks()[0].enabled =
-			!callerStream.getVideoTracks()[0].enabled;
-	};
+  const toggleCamera = () => {
+    callerStream.getVideoTracks()[0].enabled =
+      !callerStream.getVideoTracks()[0].enabled;
+  };
 
-	const answerCall = async () => {
-		setCallAccepted(true);
-		const peer = new Peer({
-			initiator: false,
-			trickle: false,
-			stream: callerStream,
-		});
-		peer.on("signal", (data) => {
-			console.log(data);
-			socketManager.emitEvent("answerCall", { signal: data, to: caller });
-		});
-		peer.on("stream", (stream) => {
-			setReceiverStream(stream);
-		});
-		peer.signal(callerSignal);
-		connectionRef.current = peer;
-	};
+  const answerCall = async () => {
+    const peer = new Peer({
+      initiator: false,
+      trickle: false,
+      stream: callerStream,
+    });
+
+    peer.on("signal", (data) => {
+      console.log(data);
+      socketManager.emitEvent("answerCall", { signal: data, to: caller });
+    });
+
+    peer.on("stream", (stream) => {
+      setReceiverStream(stream);
+    });
+
+    peer.signal(callerSignal);
+    connectionRef.current = peer;
+  };
 
 
   const leaveCall = () => {
@@ -95,35 +112,37 @@ export default function VideoCall({ videoOn, setVideoOn }) {
   };
 
 
-	return (
-		<Box>
-			<Button onClick={toggleCamera} colorScheme="blue">
-				Toggle Camera
-			</Button>
-			<Button onClick={getVideo} colorScheme="blue">
-				Get Video
-			</Button>
-			{!callerStream ? null : (
-				<Box>
-					<VideoComponent stream={callerStream} isLocal={true} />
-					<VideoComponent stream={receiverStream} isLocal={false} />
-				</Box>
-			)}
+  return (
+    <Box>
+      {!callerStream && <Button onClick={getVideo} colorScheme="blue">
+        Get Video
+      </Button>}
 
-      <Button onClick={callUser} colorScheme="purple" mr={2}>
+      {!callAccepted && <Button onClick={callUser} colorScheme="purple" mr={2}>
         Call
-      </Button>
+      </Button>}
+
+      {!callerStream ? null : (
+        <HStack>
+          <VideoComponent stream={callerStream} isLocal={true} />
+          <VideoComponent stream={receiverStream} isLocal={false} />
+        </HStack>
+      )}
+      {callerStream && <Button onClick={toggleCamera} colorScheme="blue">
+        Toggle Camera
+      </Button>}
+
 
       {receivingCall ? (
         <Button onClick={answerCall} colorScheme="green">
           Answer
         </Button>
       ) : null}
-      {callAccepted && !callEnded ? (
+      {/* {callAccepted && !callEnded ? (
         <Button onClick={leaveCall} colorScheme="red">
           End Call
         </Button>
-      ) : null}
+      ) : null} */}
     </Box>
   );
 }

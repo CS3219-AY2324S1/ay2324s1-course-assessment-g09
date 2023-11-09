@@ -20,6 +20,7 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
 	console.log("a user connected:", socket.id);
+
 	socket.on("match", (data) => {
 		const { condition, difficulty, user, videoSocket } = data;
 		console.log("match", data);
@@ -33,6 +34,11 @@ io.on("connection", (socket) => {
 				socketId: socket.id,
 			})
 		);
+	});
+	socket.on("leaveQueue", (data) => {
+		const { condition, socketId } = data;
+		console.log(socket.id);
+		sendToQueue("leave_queue", JSON.stringify({ condition, socketId }));
 	});
 });
 

@@ -9,9 +9,12 @@ const Users = ({
   isCreate,
   setIsCreate,
   colorMode,
+  userSearchQuery,
+  fetchUsers,
+  users,
 }) => {
   return (
-    <Box width="100%" marginX={12}>
+    <Box width="100%" height="80%">
       <UserHeader />
       <User
         userInputValues={userInputValues}
@@ -19,6 +22,9 @@ const Users = ({
         isCreate={isCreate}
         setIsCreate={setIsCreate}
         colorMode={colorMode}
+        userSearchQuery={userSearchQuery}
+        fetchUsers={fetchUsers}
+        users={users}
       />
     </Box>
   );
