@@ -31,11 +31,13 @@ function formatTime(mili) {
 
 io.on("connection", (socket) => {
 	console.log("a user connected:", socket.id);
-	socket.on("joinRoom", async (room) => {
+	socket.on("joinRoom", async (room, difficulty) => {
 		socket.join(room);
 		console.log(room);
 		const res = await axios
-			.get(`http://question-service:3001/questions/1`)
+			.get(`http://question-service:3001/questions/1`, {
+				complexity: difficulty,
+			})
 			.catch((err) => {
 				console.log(err);
 			});
