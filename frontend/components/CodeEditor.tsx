@@ -33,8 +33,9 @@ import EndMatchButton from "./EndMatchButton";
 import { on } from "events";
 import matchSocketManager from "./Sockets/MatchSocketManager";
 import socketManager from "./Sockets/CommunicationSocketManager";
+import collabSocketManager from "./Sockets/CollabSocketManager";
 
-export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
+export default function CodeEditor({ socketRoom, colorMode }) {
 	const editorRef = useRef(null);
 	const [socket, setSocket] = useState(null);
 	const isIncomingCode = useRef(false);
@@ -90,7 +91,7 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 		const socket = io({ path: "/collaboration_service/socket.io/" });
 		setSocket(socket);
 
-		socket?.emit("joinRoom", socketRoom);
+		socket?.emit("joinRoom", { room: socketRoom, difficulty: collabSocketManager.getDifficulty() });
 
 		socket.on("codeChange", (event) => {
 			isIncomingCode.current = true;
