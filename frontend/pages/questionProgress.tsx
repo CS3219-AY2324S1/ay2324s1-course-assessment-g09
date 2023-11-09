@@ -20,7 +20,7 @@ const questionProgress = ({ colorMode, difficultyCount }) => {
         const res = await axios.get(
           `/history_service/getProgress/${authUser}`
         );
-        console.log(res.data);
+        // console.log(res.data);
         setProgress({
           Easy: res.data.Easy * 100 / difficultyCount.Easy,
           Medium: res.data.Medium * 100 / difficultyCount.Medium,
@@ -31,7 +31,7 @@ const questionProgress = ({ colorMode, difficultyCount }) => {
       }
     }
     fetchProgress();
-  })
+  }, [])
 
   return (
     <HStack>
