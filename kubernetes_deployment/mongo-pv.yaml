@@ -2,9 +2,10 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: mongo-pv
+  namespace: eks-peerprep
   labels:
     type: local
-    app: mongo-service
+    app: mongo
 spec:
   storageClassName: manual
   capacity:
@@ -18,8 +19,9 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: mongo-pvc
+  namespace: eks-peerprep
   labels:
-    app: mongo-service
+    app: mongo
 spec:
   storageClassName: manual
   accessModes:
