@@ -14,8 +14,6 @@ export default function EndMatchButton({
 	const handleHistory = async () => {
 		const user1 = JSON.parse(sessionStorage.getItem("login")).email;
 		const user2 = matchSocketManager.getMatchedUser();
-		// const questionName = "Test Question";
-		// const question = "Test Question";
 		const questionName = collabSocketManager.getQnsName();
 		const question = collabSocketManager.getQnsDesc();
 		const difficulty = collabSocketManager.getDifficulty();
@@ -32,6 +30,7 @@ export default function EndMatchButton({
 		};
 		console.log(socketManager.getSocketId(), socketManager.getMatchedSocketId());
 		socketManager.emitEvent("endMatch", socketManager.getMatchedSocketId());
+		collabSocketManager.emitEvent("resetTimer", "");
 		const res = await axios
 			.post("/history_service/create", data)
 			.then((res) => console.log(res.data))
