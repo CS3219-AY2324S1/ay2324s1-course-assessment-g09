@@ -4,9 +4,15 @@ import {
   CircularProgressLabel,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-const questionProgress = ({ colorMode }) => {
+const questionProgress = ({ colorMode, difficultyCount }) => {
+  const [progress, setProgress] = useState({
+    Easy: 0,
+    Medium: 0,
+    Hard: 0,
+  });
+
   useEffect(() => {
     const fetchProgress = async () => {
       try {
@@ -15,6 +21,11 @@ const questionProgress = ({ colorMode }) => {
           `/history_service/getProgress/${authUser}`
         );
         console.log(res.data);
+        setProgress({
+          Easy: res.data.Easy * 100 / difficultyCount.Easy,
+          Medium: res.data.Medium * 100 / difficultyCount.Medium,
+          Hard: res.data.Hard * 100 / difficultyCount.Hard,
+        });
       } catch (error) {
         console.log("ERROR: ", error);
       }
@@ -25,7 +36,7 @@ const questionProgress = ({ colorMode }) => {
   return (
     <HStack>
       <CircularProgress
-        value={65}
+        value={progress.Easy}
         size="85px"
         thickness="10px"
         my={2}
@@ -41,7 +52,7 @@ const questionProgress = ({ colorMode }) => {
         </CircularProgressLabel>
       </CircularProgress>
       <CircularProgress
-        value={35}
+        value={progress.Medium}
         size="85px"
         thickness="10px"
         my={2}
@@ -57,7 +68,7 @@ const questionProgress = ({ colorMode }) => {
         </CircularProgressLabel>
       </CircularProgress>
       <CircularProgress
-        value={20}
+        value={progress.Hard}
         size="85px"
         thickness="10px"
         my={2}
