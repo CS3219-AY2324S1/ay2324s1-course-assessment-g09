@@ -4,16 +4,16 @@ metadata:
   name: mongo-history-deployment
   namespace: eks-peerprep
   labels:
-    app: mongo-history-service
+    app: mongo-history
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongo-history-service
+      app: mongo-history
   template:
     metadata:
       labels:
-        app: mongo-history-service
+        app: mongo-history
     spec:
       containers:
         - name: mongodb
@@ -31,13 +31,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo-history-service
+  name: mongo-history
   namespace: eks-peerprep
   labels:
-    app: mongo-history-service
+    app: mongo-history
 spec:
   selector:
-    app: mongo-history-service
+    app: mongo-history
   ports:
     - protocol: TCP
       port: 27017
