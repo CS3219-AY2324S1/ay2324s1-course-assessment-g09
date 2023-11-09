@@ -4,16 +4,16 @@ metadata:
   name: frontend-deployment
   namespace: eks-peerprep
   labels:
-    app: frontend-service
+    app: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend-service
+      app: frontend
   template:
     metadata:
       labels:
-        app: frontend-service
+        app: frontend
     spec:
       containers:
         - name: frontend-container
@@ -30,13 +30,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-service
+  name: frontend
   namespace: eks-peerprep
   labels:
-    app: frontend-service
+    app: frontend
 spec:
   selector:
-    app: frontend-service
+    app: frontend
   ports:
     - protocol: TCP
       port: 3005
