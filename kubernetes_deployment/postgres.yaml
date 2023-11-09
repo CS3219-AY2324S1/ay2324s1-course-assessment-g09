@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-deployment
+  name: postgres
   namespace: eks-peerprep
   labels:
-    app: postgres-service
+    app: postgres
 spec:
   replicas: 1 # No replicated database
   selector:
     matchLabels:
-      app: postgres-service
+      app: postgres
   template:
     metadata:
       labels:
-        app: postgres-service
+        app: postgres
     spec:
       containers:
         - name: postgres-container
@@ -41,13 +41,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-service
+  name: postgres
   namespace: eks-peerprep
   labels:
-    app: postgres-service
+    app: postgres
 spec:
   selector:
-    app: postgres-service
+    app: postgres
   ports:
     - protocol: TCP
       port: 5432
