@@ -46,7 +46,7 @@ amqp.connect(process.env.RABBITMQ, (err, conn) => {
 					msg.content.toString()
 				);
 				console.log("matched", u1, u2, v1, v2, s1, s2);
-				let roomId = uuidv4();
+				let roomId = uuidv4().toString();
 				if (condition != "") {
 					roomId = condition;
 				}

@@ -118,7 +118,7 @@ export default function VideoCall({ videoOn, setVideoOn }) {
         Get Video
       </Button>}
 
-      {!callAccepted && <Button onClick={callUser} colorScheme="purple" mr={2}>
+      {!callAccepted && callerStream && <Button onClick={callUser} colorScheme="purple" mr={2}>
         Call
       </Button>}
 
