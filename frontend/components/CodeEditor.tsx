@@ -52,16 +52,21 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 	useEffect(() => {
 		handleThemeChange(colorMode);
 	}, [colorMode]);
+
 	const handleCodeChange = (
 		value = "",
 		event: editor.IModelContentChangedEvent
 	) => {
+		console.log(socket);
 		if (isIncomingCode.current) {
 			isIncomingCode.current = false;
-			return;
+			console.log("incoming code");
+		} else {
+			setCode(editorRef.current.getModel().getValue());
+			socket?.emit("codeChange", event);
+			console.log(event)
 		}
-		setCode(editorRef.current.getModel().getValue());
-		socket?.emit("codeChange", event);
+
 	};
 
 	const handleThemeChange = (e: string) => {
@@ -90,6 +95,7 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 		socket.on("codeChange", (event) => {
 			isIncomingCode.current = true;
 			editorRef.current.getModel()?.applyEdits(event.changes);
+			console.log("code change", event.changes);
 			setCode(editorRef.current.getModel().getValue());
 		});
 
