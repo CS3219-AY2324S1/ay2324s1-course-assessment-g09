@@ -50,13 +50,13 @@ io.on("connection", (socket) => {
 		});
 
 		socket.on("codeChange", (data) => {
-			console.log(data);
-			io.to(room).emit("codeChange", data);
+			console.log(socket.id, room);
+			socket.to(room).emit("codeChange", data);
 		});
 
 		socket.on("languageChange", (data) => {
 			// console.log(data);
-			io.to(room).emit("languageChange", data);
+			socket.to(room).emit("languageChange", data);
 		});
 
 		socket.on("startTimer", () => {
@@ -83,11 +83,11 @@ io.on("connection", (socket) => {
 		socket.on("resetTimer", () => {
 			if (timer) {
 				clearInterval(timer);
-				timer = null;
-				elapsedTime = 0;
-				console.log("Timer reset");
-				io.to(room).emit("setTimer", { minutes: 0, seconds: 0 });
 			}
+			timer = null;
+			elapsedTime = 0;
+			console.log("Timer reset");
+			io.to(room).emit("setTimer", { minutes: 0, seconds: 0 });
 		});
 	});
 });
