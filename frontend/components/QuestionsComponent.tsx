@@ -1,4 +1,4 @@
-import { Box, Flex, VStack, useColorMode } from "@chakra-ui/react";
+import { Box, Center, Flex, VStack, useColorMode } from "@chakra-ui/react";
 import React, { useState } from "react";
 import QuestionInputField from "./QuestionsInputField";
 import Questions from "./Questions";
@@ -35,17 +35,26 @@ const QuestionsComponent = ({
       </Box>
 
       <Box width="100%" height="90%" mt={8}>
-        <Questions
-          inputValues={questionInputValues}
-          setInputValues={setQuestionInputValues}
-          isCreate={isCreateQuestion}
-          setIsCreate={setIsCreateQuestion}
-          colorMode={colorMode}
-          userMode={user}
-          questions={questions}
-          fetchQuestions={fetchQuestions}
-          setSelectedCategory={setSelectedCategory}
-        />
+        {questions != null &&
+        Array.isArray(questions) &&
+        questions.length != 0 ? (
+          <Questions
+            inputValues={questionInputValues}
+            setInputValues={setQuestionInputValues}
+            isCreate={isCreateQuestion}
+            setIsCreate={setIsCreateQuestion}
+            colorMode={colorMode}
+            userMode={user}
+            questions={questions}
+            fetchQuestions={fetchQuestions}
+            setSelectedCategory={setSelectedCategory}
+            selectedCategory={selectedCategory}
+          />
+        ) : (
+          <Center height="100%" width="100%">
+            Questions is currently empty...
+          </Center>
+        )}
       </Box>
     </Flex>
   );

@@ -1,41 +1,22 @@
-import {
-  Box,
-  Center,
-  Flex,
-  Grid,
-  GridItem,
-  VStack,
-  useColorMode,
-} from "@chakra-ui/react";
+import { Box, Grid, GridItem, useColorMode } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import History from "../components/History";
 import Questions from "../components/Questions";
 import QuestionsComponent from "../components/QuestionsComponent";
-import UserInputField from "../components/UserInputField";
-import Users from "../components/Users";
 import Profile from "./profile";
 import QuestionProgress from "./questionProgress";
 import UserComponent from "../components/UserComponent";
 
-const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
-
-const dashboard = () => {
+export const dashboard = () => {
   const [questions, setQuestions] = useState(null);
   const [users, setUsers] = useState(null);
-  // const [difficultyCount, setDifficultyCount] = useState({
-  //   Easy: 0,
-  //   Medium: 0,
-  //   Hard: 0,
-  // });
-  const [easyCount, setEasyCount] = useState(0);
-  const [mediumCount, setMediumCount] = useState(0);
-  const [hardCount, setHardCount] = useState(0);
 
   const fetchQuestions = async () => {
     try {
       const res = await axios.get(`question_service/questions`);
       console.log(res);
+
       setQuestions(res.data.qns);
     } catch (error) {
       console.log("ERROR: ", error);
@@ -145,26 +126,18 @@ const dashboard = () => {
       >
         {user == "user" ? (
           <Box height="100%" width="100%" p={2}>
-            {questions != null &&
-            Array.isArray(questions) &&
-            questions.length != 0 ? (
-              <Questions
-                inputValues={questionInputValues}
-                setInputValues={setQuestionInputValues}
-                isCreate={isCreateQuestion}
-                setIsCreate={setIsCreateQuestion}
-                colorMode={colorMode}
-                userMode={user}
-                questions={questions}
-                fetchQuestions={fetchQuestions}
-                setSelectedCategory={setSelectedCategory}
-                selectedCategory={selectedCategory}
-              />
-            ) : (
-              <Center height="100%" width="100%">
-                Questions is currently empty...
-              </Center>
-            )}
+            <Questions
+              inputValues={questionInputValues}
+              setInputValues={setQuestionInputValues}
+              isCreate={isCreateQuestion}
+              setIsCreate={setIsCreateQuestion}
+              colorMode={colorMode}
+              userMode={user}
+              questions={questions}
+              fetchQuestions={fetchQuestions}
+              setSelectedCategory={setSelectedCategory}
+              selectedCategory={selectedCategory}
+            />
           </Box>
         ) : (
           <QuestionsComponent
@@ -195,7 +168,7 @@ const dashboard = () => {
         width="100%"
         rowSpan={1}
       >
-        <QuestionProgress colorMode={colorMode} questions={questions} />
+        <QuestionProgress colorMode={colorMode} />
       </GridItem>
 
       {/* User Portion/ History */}
@@ -226,5 +199,3 @@ const dashboard = () => {
     </Grid>
   );
 };
-
-export default dashboard;
