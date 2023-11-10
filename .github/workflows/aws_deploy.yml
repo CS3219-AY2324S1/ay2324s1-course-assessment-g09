@@ -90,7 +90,7 @@ jobs:
           export ECR_REPOSITORY=${{ job.build.outputs.ECR_REPOSITORY }}/${{ job.build.outputs.ECR_REPOSITORY }}
           export IMAGE_TAG=${{ env.SHORT_SHA }}
           export KUBECONFIG=kubeconfig.yaml
-          envsubst < k8s/kustomization.tmpl.yaml > k8s/kustomization.yaml
+          envsubst < kubernetes_deployment/kustomization.tmpl.yaml > kubernetes_deployment/kustomization.yaml
           kubectl kustomize kubernetes_deployment | kubectl apply -f -
   
   deploy-to-eb:
