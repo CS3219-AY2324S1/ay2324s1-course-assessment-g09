@@ -41,7 +41,7 @@ metadata:
     app: communication-service
 spec:
   selector:
-    app: communication
+    app: communication-service
   ports:
     - protocol: TCP
       port: 8002
