@@ -276,8 +276,6 @@ export default function Collaboration() {
           my="auto"
         >
           <CodeEditor
-            socketRoom={room}
-            matchedUser={matchedUser}
             colorMode={colorMode}
           />
         </GridItem>

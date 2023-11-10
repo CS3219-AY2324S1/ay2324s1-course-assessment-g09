@@ -86,6 +86,7 @@ const SignUp = () => {
             isLoggedIn: true,
             email: result.email,
             role: result.role,
+            id: result.id
           })
         );
 

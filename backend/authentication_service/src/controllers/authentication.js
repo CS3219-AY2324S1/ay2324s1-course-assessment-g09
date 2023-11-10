@@ -96,7 +96,7 @@ authRouter.post('/signin', async (request, response) => {
 			secure: false,
 			httpOnly: true
 		});
-		return response.status(200).send({ message: "login success", email: myUser.email, role: myUser.role });//.json({ token: token, role: myUser.role });
+		return response.status(200).send({ message: "login success", email: myUser.email, role: myUser.role, id: myUser.id });//.json({ token: token, role: myUser.role });
 	} catch (error) {
 		if (error.response) {
 			if (error.response.status === 404) {

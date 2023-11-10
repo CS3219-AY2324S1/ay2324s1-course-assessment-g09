@@ -2,20 +2,22 @@ const { Question } = require('./db');
 
 const random = (arr, n) => {
   var result = new Array(n),
-      len = arr.length,
-      taken = new Array(len);
+    len = arr.length,
+    taken = new Array(len);
   if (n > len)
-      return arr;
+    return arr;
   while (n--) {
-      var x = Math.floor(Math.random() * len);
-      result[n] = arr[x in taken ? taken[x] : x];
-      taken[x] = --len in taken ? taken[len] : len;
+    var x = Math.floor(Math.random() * len);
+    result[n] = arr[x in taken ? taken[x] : x];
+    taken[x] = --len in taken ? taken[len] : len;
   }
-  return result.sort((a,b) => a.qn_num - b.qn_num);
+  return result.sort((a, b) => a.qn_num - b.qn_num);
 }
 
 const getQuestions = async (request, response) => {
   // Get questions. Users could filter by category, complexity, etc.
+  console.log("request", request.query);
+  console.log("HELLOOO", request.query.complexity);
 
   const return_success = result => {
     const numQns = result.length;
@@ -28,10 +30,10 @@ const getQuestions = async (request, response) => {
   };
 
   // 1. Check valid Schema.
-  return Question.find(request.body)
-                  .then(data => request.params.qn_num ? random(data, request.params.qn_num) : data)
-                  .then(return_success)
-                  .catch(handle_error);
+  return Question.find(request.query)
+    .then(data => request.params.qn_num ? random(data, request.params.qn_num) : data)
+    .then(return_success)
+    .catch(handle_error);
 }
 
 const createQuestion = async (request, response) => {
@@ -54,15 +56,15 @@ const createQuestion = async (request, response) => {
     return response.status(400).json(msg);
   }
   return Question.create(request.body)
-                  .then(return_success)
-                  .catch(handle_error);
+    .then(return_success)
+    .catch(handle_error);
 };
 
 const updateQuestion = async (request, response) => {
   // Update questions from given details. Users could update any field(s).
   const return_success = (result) => {
     if (!result) {
-      const msg = { 'msg': `Question ${ request.params.qn_num } does not exist.`, 'qn_num': null };
+      const msg = { 'msg': `Question ${request.params.qn_num} does not exist.`, 'qn_num': null };
       return response.status(404).json(msg);
     } else {
       const msg = { 'msg': 'Question updated.', 'qn_num': request.params.qn_num };
@@ -74,16 +76,16 @@ const updateQuestion = async (request, response) => {
     return response.status(500).json(msg);
   };
 
-  return Question.findOneAndUpdate({'qn_num': request.params.qn_num }, request.body)
-                  .then(return_success)
-                  .catch(handle_error);
+  return Question.findOneAndUpdate({ 'qn_num': request.params.qn_num }, request.body)
+    .then(return_success)
+    .catch(handle_error);
 }
 
 const deleteQuestion = async (request, response) => {
 
   const return_success = (result) => {
     if (!result) {
-      const msg = { 'msg': `Question with qn_num ${ request.params.qn_num } does not exist.`, 'qn_num': null };
+      const msg = { 'msg': `Question with qn_num ${request.params.qn_num} does not exist.`, 'qn_num': null };
       return response.status(404).json(msg);
     } else {
       const msg = { 'msg': 'Question deleted.', 'qn_num': request.params.qn_num };
@@ -98,8 +100,8 @@ const deleteQuestion = async (request, response) => {
   // Delete questions from given question number.
   //1. Delete questions.
   return Question.findOneAndDelete({ 'qn_num': request.params.qn_num })
-                  .then(return_success)
-                  .catch(handle_error);
+    .then(return_success)
+    .catch(handle_error);
 };
 
 module.exports = {

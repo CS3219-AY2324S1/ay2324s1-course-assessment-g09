@@ -1,0 +1,32 @@
+resources:
+- authentication-hpa.yaml
+- authentication-service.yaml
+- collaboration-service.yaml
+- communication-service.yaml
+- config.yaml
+- frontend.yaml
+- gateway-hpa.yaml
+- gateway.yaml
+- history-hpa.yaml
+- history-service.yaml
+- ingress.yaml
+- matching-service.yaml
+- mongo-history-pv.yaml
+- mongo-history.yaml
+- mongo-pv.yaml
+- mongo.yaml
+- namespace.yaml
+- postgres-pv.yaml
+- postgres.yaml
+- question-hpa.yaml
+- question-service.yaml
+- rabbitmq.yaml
+- secret.taml
+- user-hpa.yaml
+- user-service.yaml
+namespace: eks-peerprep
+
+images:
+- name: amazonaws.com/kubernetes-github-actions
+  newName: ${ECR_REPOSITORY}
+  newTag: ${IMAGE_TAG}

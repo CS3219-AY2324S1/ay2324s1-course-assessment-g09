@@ -98,7 +98,7 @@ const SignUp = () => {
                         <Input name="email" type="email" placeholder='john@peerprep.com' />
                     </FormControl>
                     <FormControl>
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel>Display Name</FormLabel>
                         <Input name="name" type="text" placeholder='john tan' />
                     </FormControl>
                     <FormControl>

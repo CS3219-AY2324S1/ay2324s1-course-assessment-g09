@@ -274,4 +274,5 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
       </AlertDialog>
     </>
   );
+
 }
