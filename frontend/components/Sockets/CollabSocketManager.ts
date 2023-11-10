@@ -9,10 +9,22 @@ class SocketManager {
 	private difficulty: string | null = null;
 
 	constructor() {
-		this.initialize();
+		this.socket = null;
 	}
 
-	private initialize() {
+	// private initialize() {
+	// 	this.socket = io({
+	// 		path: "/collaboration_service/socket.io/",
+	// 		autoConnect: false,
+	// 	});
+
+	// 	this.socket.on("connect", () => {
+	// 		this.socketId = this.socket?.id || null;
+	// 		console.log(`Connected with Socket ID: ${this.socketId}`);
+	// 	});
+	// }
+
+	public connect() {
 		this.socket = io({
 			path: "/collaboration_service/socket.io/",
 		});
@@ -21,10 +33,12 @@ class SocketManager {
 			this.socketId = this.socket?.id || null;
 			console.log(`Connected with Socket ID: ${this.socketId}`);
 		});
-	}
-
-	public connect() {
-		this.socket?.connect();
+		console.log(this.room, this.difficulty, this.socket);
+		this.socket.emit("joinRoom", {
+			room: this.room,
+			difficulty: this.difficulty,
+		});
+		return this.socket;
 	}
 
 	public disconnect() {
@@ -68,7 +82,6 @@ class SocketManager {
 	}
 
 	public setRoom(r: string | null) {
-		this.socket.emit("joinRoom", r);
 		this.room = r;
 	}
 
