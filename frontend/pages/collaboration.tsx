@@ -3,6 +3,7 @@ import {
   Badge,
   Box,
   Button,
+  Divider,
   Grid,
   GridItem,
   HStack,
@@ -92,7 +93,6 @@ export default function Collaboration() {
       // console.log(qns[0]);
 
       // console.log(res.data);
-
     } catch (error) {
       console.log("ERROR: ", error);
     }
@@ -137,7 +137,7 @@ export default function Collaboration() {
     collabSocketManager.subscribeToEvent("setTimer", (data) => {
       setMinutes(data.minutes);
       setSeconds(data.seconds);
-    })
+    });
   }, []);
 
   return (
@@ -150,14 +150,24 @@ export default function Collaboration() {
         >
           {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
         </Text>
-        <Button onClick={() => {
-          collabSocketManager.emitEvent("startTimer", "");
-          setStarted(true);
-        }}>Start</Button>
-        <Button onClick={() => collabSocketManager.emitEvent("stopTimer", "")}>Pause</Button>
-        <Button onClick={() => {
-          collabSocketManager.emitEvent("resetTimer", "");
-        }}>Reset</Button>
+        <Button
+          onClick={() => {
+            collabSocketManager.emitEvent("startTimer", "");
+            setStarted(true);
+          }}
+        >
+          Start
+        </Button>
+        <Button onClick={() => collabSocketManager.emitEvent("stopTimer", "")}>
+          Pause
+        </Button>
+        <Button
+          onClick={() => {
+            collabSocketManager.emitEvent("resetTimer", "");
+          }}
+        >
+          Reset
+        </Button>
         <ToggleMode colorMode={colorMode} toggleColorMode={toggleColorMode} />
       </HStack>
 
@@ -173,6 +183,7 @@ export default function Collaboration() {
         {/* Questions */}
         <GridItem
           height="100%"
+          width="100%"
           rowSpan={videoOn ? 5 : 9}
           overflowY="auto"
           css={{
@@ -201,8 +212,8 @@ export default function Collaboration() {
                           complexity == "Easy"
                             ? "green"
                             : complexity == "Medium"
-                              ? "orange"
-                              : "red"
+                            ? "orange"
+                            : "red"
                         }
                       >
                         {complexity}
@@ -253,10 +264,17 @@ export default function Collaboration() {
               </Box>
             )}
           </Box>
+          <Divider orientation="horizontal" width="100%" />
         </GridItem>
 
         {/* Editor */}
-        <GridItem height="90%" overflowY="hidden" rowSpan={10} my="auto">
+        <GridItem
+          height="90%"
+          width="100%"
+          overflowY="hidden"
+          rowSpan={10}
+          my="auto"
+        >
           <CodeEditor
             socketRoom={room}
             matchedUser={matchedUser}
@@ -264,7 +282,7 @@ export default function Collaboration() {
           />
         </GridItem>
 
-        <GridItem rowSpan={videoOn ? 5 : 1}>
+        <GridItem rowSpan={videoOn ? 5 : 1} width="100%">
           <VideoCall videoOn={videoOn} setVideoOn={setVideoOn} />
         </GridItem>
       </Grid>
