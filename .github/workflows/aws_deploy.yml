@@ -91,7 +91,7 @@ jobs:
           export IMAGE_TAG=${{ env.SHORT_SHA }}
           export KUBECONFIG=kubeconfig.yaml
           envsubst < k8s/kustomization.tmpl.yaml > k8s/kustomization.yaml
-          kubectl kustomize k8s | kubectl apply -f -
+          kubectl kustomize kubernetes_deployment | kubectl apply -f -
   
   deploy-to-eb:
     needs: build
