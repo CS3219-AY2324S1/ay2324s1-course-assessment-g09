@@ -21,7 +21,7 @@ resources:
 - question-hpa.yaml
 - question-service.yaml
 - rabbitmq.yaml
-- secret.taml
+- secret.yaml
 - user-hpa.yaml
 - user-service.yaml
 namespace: eks-peerprep
