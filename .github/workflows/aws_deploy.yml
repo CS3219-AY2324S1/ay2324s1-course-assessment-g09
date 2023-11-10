@@ -91,10 +91,10 @@ jobs:
       # Deploy to EKS
       - name: Deploy to EKS
         run: |
-          export ECR_REPOSITORY=${{ job.build.outputs.ECR_REPOSITORY }}/${{ job.build.outputs.ECR_REPOSITORY }}
+          export ECR_REPOSITORY=${{ needs.build.outputs.ECR_REPOSITORY }}/${{ needs.build.outputs.ECR_REPOSITORY }}
           export IMAGE_TAG=${{ env.SHORT_SHA }}
           export KUBECONFIG=kubeconfig.yaml
-          envsubst < kubernetes_deployment/kustomization.tmpl.yaml > kustomization.yaml
+          envsubst < kubernetes_deployment/kustomization.tmpl.yaml > kubernetes_deployment/kustomization.yaml
           kubectl kustomize kubernetes_deployment | kubectl apply -f -
   
   deploy-to-eb:
@@ -110,7 +110,7 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_session_token: ${{ job.build.outputs.AWS_SESSION_TOKEN }}
+          aws_session_token: ${{ needs.build.outputs.AWS_SESSION_TOKEN }}
           application_name: PeerPrep
           environment_name: PeerPrep-env
           version_label: 16 #To manually iterate
