@@ -19,7 +19,7 @@ data:
   user-RESTAPI_PORT: "3002"
   matching-PORT: "8004"
   matching-RABBITMQ: amqp://rabbitmq
-  ORIGIN: gateway:3000
+  ORIGIN: gateway-service:3000
   collaboration-PORT: "8001"
   communication-PORT: "8002"
   history-RESTAPI_PORT: "8003"
