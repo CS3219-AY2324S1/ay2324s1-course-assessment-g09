@@ -80,7 +80,7 @@ async function getDistinctByUser(req, res) {
 			},
 			{
 				$group: {
-					_id: "$Difficulty",
+					_id: "$difficulty",
 					entries: { $addToSet: "$questionName" },
 				},
 			},
@@ -91,7 +91,16 @@ async function getDistinctByUser(req, res) {
 				},
 			},
 		]);
-		res.status(200).json(history);
+		const distinctCountMap = {
+			Easy: 0,
+			Medium: 0,
+			Hard: 0,
+		};
+		history.forEach((element) => {
+			distinctCountMap[element._id] = element.distinctCount;
+		});
+		console.log(distinctCountMap);
+		res.status(200).json(distinctCountMap);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}

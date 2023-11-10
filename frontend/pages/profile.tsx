@@ -33,6 +33,7 @@ const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
 const profile = ({ colorMode, userMode, userEmail }) => {
   const cancelRef = React.useRef();
+  const leastDestructiveRef = React.useRef();
 
   const [loggedInName, setLoggedInName] = useState("");
   const [loggedInUserName, setLoggedInUserName] = useState("");
@@ -85,6 +86,8 @@ const profile = ({ colorMode, userMode, userEmail }) => {
 
   // Disclosure for Match Found
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {isOpen: isDialogOpen, onOpen: openDialog, onClose: closeDialog} = useDisclosure();
+  
 
   // Stopwatch when in queue
   useEffect(() => {
@@ -136,6 +139,7 @@ const profile = ({ colorMode, userMode, userEmail }) => {
 
     if (seconds >= 30) {
       handleLeaveQueue();
+      openDialog();
     }
 
     return () => {
@@ -344,8 +348,31 @@ const profile = ({ colorMode, userMode, userEmail }) => {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
+
+
+      {/* <AlertDialog isOpen={isOpen} leastDestructiveRef={leastDestructiveRef} onClose={onClose}> */}
+      <AlertDialog isOpen={isDialogOpen} leastDestructiveRef={leastDestructiveRef}  onClose={closeDialog}>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Matching Failed
+            </AlertDialogHeader>
+  
+            <AlertDialogBody>
+              There is currently no compatible user. Please kindly try again later.
+            </AlertDialogBody>
+  
+            <AlertDialogFooter>
+              <Button colorScheme="orange" onClick={closeDialog}>
+                Close
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Grid>
   );
 };
 
 export default profile;
+

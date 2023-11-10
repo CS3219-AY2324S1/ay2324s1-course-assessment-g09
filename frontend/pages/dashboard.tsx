@@ -23,6 +23,11 @@ const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 const dashboard = () => {
   const [questions, setQuestions] = useState(null);
   const [users, setUsers] = useState(null);
+  const [difficultyCount, setDifficultyCount] = useState({
+    Easy: 0,
+    Medium: 0,
+    Hard: 0,
+  });
 
   const fetchQuestions = async () => {
     try {
@@ -30,6 +35,12 @@ const dashboard = () => {
       console.log(res);
 
       setQuestions(res.data.qns);
+      setDifficultyCount({
+        Easy: res.data.qns.filter((qn) => qn.complexity == "Easy").length,
+        Medium: res.data.qns.filter((qn) => qn.complexity == "Medium").length,
+        Hard: res.data.qns.filter((qn) => qn.complexity == "Hard").length,
+      })
+      console.log(difficultyCount)
     } catch (error) {
       console.log("ERROR: ", error);
     }
@@ -188,7 +199,7 @@ const dashboard = () => {
         width="100%"
         rowSpan={1}
       >
-        <QuestionProgress colorMode={colorMode} />
+        <QuestionProgress colorMode={colorMode} difficultyCount={difficultyCount} />
       </GridItem>
 
       {/* User Portion/ History */}
