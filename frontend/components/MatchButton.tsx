@@ -59,6 +59,7 @@ export default function MatchButton({ handleQuickStart }) {
       const room = data.roomId;
       console.log("matched", matchedUser, matchedVideoSocket, room);
       collabSocketManager.setRoom(room);
+      collabSocketManager.setDifficulty(difficulty);
       socketManager.setMatchedSocketId(matchedVideoSocket);
       MatchsocketManager.setMatchedUser(matchedUser);
       MatchsocketManager.setMatchedRoom(room);

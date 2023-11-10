@@ -6,7 +6,7 @@ import {
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-const questionProgress = ({ colorMode, difficultyCount }) => {
+const questionProgress = ({ colorMode, questions }) => {
   const [progress, setProgress] = useState({
     Easy: 0,
     Medium: 0,
@@ -20,18 +20,24 @@ const questionProgress = ({ colorMode, difficultyCount }) => {
         const res = await axios.get(
           `/history_service/getProgress/${authUser}`
         );
-        // console.log(res.data);
+        const easyCount = questions.filter((q) => q.complexity === "Easy").length;
+        const mediumCount = questions.filter(
+          (q) => q.complexity === "Medium"
+        ).length;
+        const hardCount = questions.filter((q) => q.complexity === "Hard").length;
+        console.log("fetched from history", res.data);
         setProgress({
-          Easy: res.data.Easy * 100 / difficultyCount.Easy,
-          Medium: res.data.Medium * 100 / difficultyCount.Medium,
-          Hard: res.data.Hard * 100 / difficultyCount.Hard,
+          Easy: res.data.Easy * 100 / easyCount,
+          Medium: res.data.Medium * 100 / mediumCount,
+          Hard: res.data.Hard * 100 / hardCount,
         });
+        console.log("fetch from question", easyCount, mediumCount, hardCount, progress.Easy, progress.Medium, progress.Hard)
       } catch (error) {
         console.log("ERROR: ", error);
       }
     }
     fetchProgress();
-  }, [])
+  }, [questions])
 
   return (
     <HStack>

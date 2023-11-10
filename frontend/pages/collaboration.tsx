@@ -258,8 +258,6 @@ export default function Collaboration() {
         {/* Editor */}
         <GridItem height="90%" overflowY="hidden" rowSpan={10} my="auto">
           <CodeEditor
-            socketRoom={room}
-            matchedUser={matchedUser}
             colorMode={colorMode}
           />
         </GridItem>
