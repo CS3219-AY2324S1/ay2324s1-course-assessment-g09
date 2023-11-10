@@ -88,7 +88,10 @@ export default function CodeEditor({ socketRoom, colorMode }) {
 	};
 
 	useEffect(() => {
-		const socket = io({ path: "/collaboration_service/socket.io/" });
+		const socket = io({
+			path: "/collaboration_service/socket.io/",
+		});
+		console.log("socket", socket);
 		setSocket(socket);
 
 		socket?.emit("joinRoom", { room: socketRoom, difficulty: collabSocketManager.getDifficulty() });
