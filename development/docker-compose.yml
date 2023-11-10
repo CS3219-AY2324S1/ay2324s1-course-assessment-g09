@@ -7,7 +7,7 @@ services:
   # AUTHENTICATION SERVICE
   auth-service:
     container_name: auth_service_auth_dev
-    image: ${ECR}/authentication-service:latest
+    image: authentication-service
     environment:
       RESTAPI_PORT: ${AUTH_PORT}
       USER_SERVICE: ${AUTH_USER_SERVICE}
@@ -22,7 +22,7 @@ services:
   # COLLABORATION_SERVICE
   collaboration-service:
     container_name: collaboration-service
-    image: ${ECR}/collaboration-service:latest
+    image: collaboration-service
     environment:
       PORT: ${COLLAB_PORT}
       ORIGIN: "http://gateway:3000"
@@ -34,7 +34,7 @@ services:
   # COMMUNICATION SERVICE
   communication-service:
     container_name: communication-service
-    image: ${ECR}/communication-service:latest
+    image: communication-service
     environment:
       PORT: ${COMM_PORT}
       ORIGIN: "http://gateway:3000"
@@ -55,7 +55,7 @@ services:
       test: echo 'db.runCommand("ping").ok' | mongosh mongo-history:${HIST_DB_PORT}/test --quiet
   history-service:
     container_name: history-service
-    image: ${ECR}/history-service:latest
+    image: history-service
     environment:
       RESTAPI_PORT: ${HIST_PORT}
       DB_SERVER: mongodb://mongo-history:${HIST_DB_PORT} # OR localhost if not possible
@@ -81,7 +81,7 @@ services:
       test: rabbitmq-diagnostics -q ping
   matching-service:
     container_name: matching-service
-    image: ${ECR}/matching-service:latest
+    image: matching-service
     restart: always
     environment:
       PORT: ${MATCH_PORT}
@@ -105,7 +105,7 @@ services:
       test: echo 'db.runCommand("ping").ok' | mongosh mongo-question:${QN_DB_PORT}/test --quiet
   question-service:
     container_name: question-service
-    image: ${ECR}/question-service:latest
+    image: question-service
     environment:
       RESTAPI_PORT: ${QN_PORT}
       DB_SERVER: mongodb://mongo-question:${QN_DB_PORT}
@@ -135,7 +135,7 @@ services:
       test: pg_isready -U postgres
   user-service:
     container_name: user-service_auth_dev
-    image: ${ECR}/user-service:latest
+    image: user-service
     environment:
       RESTAPI_PORT: ${USER_PORT}
       DB_SERVER: postgres
@@ -156,7 +156,7 @@ services:
   # FRONTEND
   frontend:
     container_name: frontend
-    image: ${ECR}/frontend:latest
+    image: frontend
     restart: always
     environment:
       NEXT_PUBLIC_IP_ADDRESS: http://localhost
@@ -182,7 +182,7 @@ services:
   # API-GATEWAY
   gateway:
     container_name: apigateway_auth_dev
-    image: ${ECR}/gateway:latest
+    image: gateway
     restart: always
     build:
       context: ../gateway/
