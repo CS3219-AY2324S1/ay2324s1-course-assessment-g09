@@ -26,7 +26,7 @@ resources:
 - user-service.yaml
 namespace: eks-peerprep
 
-images:
-- name: amazonaws.com/kubernetes-github-actions
-  newName: ${ECR_REPOSITORY}
-  newTag: ${IMAGE_TAG}
+#images:
+#- name: amazonaws.com/kubernetes-github-actions
+#  newName: ${ECR_REPOSITORY}
+#  newTag: ${IMAGE_TAG}
