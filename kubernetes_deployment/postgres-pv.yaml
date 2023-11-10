@@ -2,9 +2,10 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: postgres-pv
+  namespace: eks-peerprep
   labels:
     type: local
-    app: postgres-service
+    app: postgres
 spec:
   storageClassName: manual
   capacity:
@@ -18,8 +19,9 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: postgres-pvc
+  namespace: eks-peerprep
   labels:
-    app: postgres-service
+    app: postgres
 spec:
   storageClassName: manual
   accessModes:

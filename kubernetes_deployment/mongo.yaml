@@ -21,13 +21,13 @@ spec:
           ports:
             - name: restapi
               containerPort: 27017
-      volumeMounts:
-        - mountPath: /data/db
-          name: mongodb
-    volumeMounts:
-      - name: mongodb
-        PersistentVolumeClaim:
-          claimName: mongo-pvc
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongodb
+      volumes:
+        - name: mongodb
+          persistentVolumeClaim:
+            claimName: mongo-pvc
 ---
 apiVersion: v1
 kind: Service
