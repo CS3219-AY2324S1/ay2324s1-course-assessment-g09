@@ -31,7 +31,7 @@ const questionProgress = ({ colorMode, questions }) => {
           Medium: res.data.Medium * 100 / mediumCount,
           Hard: res.data.Hard * 100 / hardCount,
         });
-        console.log("fetch from question", easyCount, mediumCount, hardCount, progress)
+        console.log("fetch from question", easyCount, mediumCount, hardCount, progress.Easy, progress.Medium, progress.Hard)
       } catch (error) {
         console.log("ERROR: ", error);
       }

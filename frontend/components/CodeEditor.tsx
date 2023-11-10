@@ -35,7 +35,7 @@ import matchSocketManager from "./Sockets/MatchSocketManager";
 import socketManager from "./Sockets/CommunicationSocketManager";
 import collabSocketManager from "./Sockets/CollabSocketManager";
 
-export default function CodeEditor({ socketRoom, colorMode }) {
+export default function CodeEditor({ colorMode }) {
 	const editorRef = useRef(null);
 	const [socket, setSocket] = useState(null);
 	const isIncomingCode = useRef(false);
@@ -58,14 +58,12 @@ export default function CodeEditor({ socketRoom, colorMode }) {
 		value = "",
 		event: editor.IModelContentChangedEvent
 	) => {
-		console.log(socket);
 		if (isIncomingCode.current) {
 			isIncomingCode.current = false;
 			console.log("incoming code");
 		} else {
 			setCode(editorRef.current.getModel().getValue());
-			socket?.emit("codeChange", event);
-			console.log(event)
+			collabSocketManager.emitEvent("codeChange", event);
 		}
 
 	};
@@ -84,19 +82,14 @@ export default function CodeEditor({ socketRoom, colorMode }) {
 			e.target.value
 		);
 		setLanguage(e.target.value);
-		socket?.emit("languageChange", e.target.value);
+		collabSocketManager.emitEvent("languageChange", e.target.value);
 	};
 
 	useEffect(() => {
-		const socket = io({
-			path: "/collaboration_service/socket.io/",
-		});
-		console.log("socket", socket);
-		setSocket(socket);
+		// console.log("socket", socket);
+		collabSocketManager.connect();
 
-		socket?.emit("joinRoom", { room: socketRoom, difficulty: collabSocketManager.getDifficulty() });
-
-		socket.on("codeChange", (event) => {
+		collabSocketManager.subscribeToEvent("codeChange", (event) => {
 			isIncomingCode.current = true;
 			editorRef.current.getModel()?.applyEdits(event.changes);
 			console.log("code change", event.changes);
@@ -108,7 +101,7 @@ export default function CodeEditor({ socketRoom, colorMode }) {
 			onOpen();
 		})
 
-		socket.on("languageChange", (event) => {
+		collabSocketManager.subscribeToEvent("languageChange", (event) => {
 			console.log("received", event);
 			(window as any).monaco.editor.setModelLanguage(
 				editorRef.current?.getModel(),
@@ -117,7 +110,7 @@ export default function CodeEditor({ socketRoom, colorMode }) {
 			setLanguage(event);
 		});
 		return () => {
-			socket.disconnect();
+			collabSocketManager.disconnect();
 		};
 	}, []);
 

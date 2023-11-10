@@ -31,9 +31,9 @@ function formatTime(mili) {
 
 io.on("connection", (socket) => {
 	console.log("a user connected:", socket.id);
-	socket.on("joinRoom", async (room, difficulty) => {
+	socket.on("joinRoom", async ({ room, difficulty }) => {
 		socket.join(room);
-		console.log(room);
+		console.log("rooms user is in ", socket.rooms);
 		const res = await axios
 			.get(`http://question-service:3001/questions/1`, {
 				complexity: difficulty,
@@ -42,6 +42,7 @@ io.on("connection", (socket) => {
 				console.log(err);
 			});
 		const qns = res.data.qns;
+		console.log("difficulty", difficulty);
 		console.log(qns);
 		socket.on("getQns", () => {
 			io.to(room).emit("qnsRes", qns);
