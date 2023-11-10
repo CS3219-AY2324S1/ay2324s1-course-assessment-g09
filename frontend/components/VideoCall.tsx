@@ -79,7 +79,6 @@ export default function VideoCall({ videoOn, setVideoOn }) {
     connectionRef.current = peer;
   };
 
-
   const toggleCamera = () => {
     callerStream.getVideoTracks()[0].enabled =
       !callerStream.getVideoTracks()[0].enabled;
@@ -103,41 +102,54 @@ export default function VideoCall({ videoOn, setVideoOn }) {
 
     peer.signal(callerSignal);
     connectionRef.current = peer;
-  };
 
+    setCallAccepted(true);
+  };
 
   const leaveCall = () => {
     setCallEnded(true);
     connectionRef.current.destroy();
   };
 
-
   return (
-    <Box>
-      {!callerStream && <Button onClick={getVideo} colorScheme="blue">
-        Get Video
-      </Button>}
+    <Box width="100%">
+      <HStack width="100%" height="5%" mt={2}>
+        {!callerStream && (
+          <Button onClick={getVideo} colorScheme="blue">
+            Get Video
+          </Button>
+        )}
 
-      {!callAccepted && callerStream && <Button onClick={callUser} colorScheme="purple" mr={2}>
-        Call
-      </Button>}
+        {!callAccepted && callerStream && (
+          <Button onClick={callUser} colorScheme="purple" mr={2}>
+            Call
+          </Button>
+        )}
+
+        {callerStream && (
+          <Button onClick={toggleCamera} colorScheme="blue">
+            Toggle Camera
+          </Button>
+        )}
+
+        {receivingCall && !callAccepted ? (
+          <Button onClick={answerCall} colorScheme="green">
+            Answer
+          </Button>
+        ) : null}
+      </HStack>
 
       {!callerStream ? null : (
-        <HStack>
-          <VideoComponent stream={callerStream} isLocal={true} />
-          <VideoComponent stream={receiverStream} isLocal={false} />
+        <HStack width="100%" height="90%" mt={2}>
+          <Box width="50%" height="100%">
+            <VideoComponent stream={callerStream} isLocal={true} />
+          </Box>
+          <Box width="50%" height="100%">
+            <VideoComponent stream={receiverStream} isLocal={false} />
+          </Box>
         </HStack>
       )}
-      {callerStream && <Button onClick={toggleCamera} colorScheme="blue">
-        Toggle Camera
-      </Button>}
 
-
-      {receivingCall ? (
-        <Button onClick={answerCall} colorScheme="green">
-          Answer
-        </Button>
-      ) : null}
       {/* {callAccepted && !callEnded ? (
         <Button onClick={leaveCall} colorScheme="red">
           End Call
