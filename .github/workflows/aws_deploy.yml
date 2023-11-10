@@ -84,6 +84,12 @@ jobs:
           sudo mv kubectl /usr/local/bin/
           echo ${{ secrets.KUBECONFIG }} | base64 --decode > kubeconfig.yaml
 
+      - name: Preparing Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          sudo cp -i kubeconfig.yaml $HOME/.kube/config
+          sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
       # Initialisation
       - name: Check out code
         uses: actions/checkout@v4
