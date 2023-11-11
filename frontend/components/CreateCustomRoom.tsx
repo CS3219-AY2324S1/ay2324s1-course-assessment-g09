@@ -20,7 +20,7 @@ import { useRouter } from "next/router";
 import matchSocketManager from "./Sockets/MatchSocketManager";
 import socketManager from "./Sockets/CommunicationSocketManager";
 
-export default function CreateCustomRoom() {
+export default function CreateCustomRoom({ setRoomCreated }) {
   const complexityColor = {
     Easy: "green",
     Medium: "orange",
@@ -35,6 +35,7 @@ export default function CreateCustomRoom() {
   const [roomExists, setRoomExists] = useState(false);
   const [matching, setMatching] = useState(false);
   const handleCreateCustom = () => {
+    setRoomCreated(true);
     setRoomExists(false);
     setMatching(true);
     matchSocketManager.emitEvent("match", {
@@ -79,10 +80,10 @@ export default function CreateCustomRoom() {
       condition: roomName,
       socket: matchSocketManager.getSocketId(),
     });
-    console.log("leaving custom")
+    console.log("leaving custom");
   }
 
-return (
+  return (
     <Box>
       <Heading
         as="h5"
@@ -151,6 +152,7 @@ return (
           onClick={handleCreateCustom}
           size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
           colorScheme="green"
+          isDisabled={roomName === ""}
         >
           Create Room
         </Button>
