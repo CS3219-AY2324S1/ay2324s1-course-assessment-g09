@@ -16,7 +16,7 @@ import MatchsocketManager from "./Sockets/MatchSocketManager";
 import { useRouter } from "next/router";
 import collabSocketManager from "./Sockets/CollabSocketManager";
 
-export default function MatchButton({ handleQuickStart }) {
+export default function MatchButton({ handleQuickStart, roomCreated }) {
   const { colorMode } = useColorMode();
 
   const complexityColor = {
@@ -75,14 +75,15 @@ export default function MatchButton({ handleQuickStart }) {
             as={Button}
             rightIcon={<ChevronDownIcon />}
             colorScheme={complexityColor[difficulty]}
+            isDisabled={roomCreated}
           >
             {difficulty == "Easy"
               ? "Easy"
               : difficulty == "Medium"
-                ? "Medium"
-                : difficulty == "Hard"
-                  ? "Hard"
-                  : "Difficulty"}
+              ? "Medium"
+              : difficulty == "Hard"
+              ? "Hard"
+              : "Difficulty"}
           </MenuButton>
           <MenuList>
             <MenuItem
@@ -115,6 +116,7 @@ export default function MatchButton({ handleQuickStart }) {
           colorScheme="purple"
           size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
           onClick={handleMatch}
+          isDisabled={roomCreated}
         >
           Match
         </Button>
