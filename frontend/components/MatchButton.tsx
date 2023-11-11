@@ -44,7 +44,7 @@ export default function MatchButton({ handleQuickStart, roomCreated }) {
       const data = {
         condition: "",
         difficulty: difficulty,
-        user: JSON.parse(sessionStorage.getItem("login")).email,
+        user: JSON.parse(sessionStorage.getItem("login")).id,
         // user: "test",
         videoSocket: socketManager.getSocketId(),
       };
@@ -80,10 +80,10 @@ export default function MatchButton({ handleQuickStart, roomCreated }) {
             {difficulty == "Easy"
               ? "Easy"
               : difficulty == "Medium"
-              ? "Medium"
-              : difficulty == "Hard"
-              ? "Hard"
-              : "Difficulty"}
+                ? "Medium"
+                : difficulty == "Hard"
+                  ? "Hard"
+                  : "Difficulty"}
           </MenuButton>
           <MenuList>
             <MenuItem

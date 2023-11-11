@@ -16,7 +16,7 @@ const questionProgress = ({ colorMode, questions }) => {
   useEffect(() => {
     const fetchProgress = async () => {
       try {
-        const authUser = JSON.parse(sessionStorage.getItem("login")).email;
+        const authUser = JSON.parse(sessionStorage.getItem("login")).id;
         const res = await axios.get(
           `/history_service/getProgress/${authUser}`
         );
