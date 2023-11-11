@@ -17,13 +17,19 @@ import {
 import CreateCustomRoom from "./CreateCustomRoom";
 import JoinCustomRoom from "./JoinCustomRoom";
 import { useState } from "react";
+import matchSocketManager from "./Sockets/MatchSocketManager";
 
 export default function CustomRoomButton({ roomCreated, setRoomCreated }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [customRoom, setCustomRoom] = useState("");
   const handleLeaveRoom = () => {
     onClose();
     setRoomCreated(false);
+    console.log(customRoom);
+    matchSocketManager.emitEvent("leaveQueue", {
+      condition: customRoom,
+      socketId: matchSocketManager.getSocketId(),
+    });
   };
 
   return (
@@ -56,7 +62,7 @@ export default function CustomRoomButton({ roomCreated, setRoomCreated }) {
               </Text>
             ) : (
               <HStack height="90%">
-                <CreateCustomRoom setRoomCreated={setRoomCreated} />
+                <CreateCustomRoom setRoomCreated={setRoomCreated} setCustomRoom={setCustomRoom} />
 
                 <Center height="200px">
                   <Divider orientation="vertical" />

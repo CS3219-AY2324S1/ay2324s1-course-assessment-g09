@@ -12,6 +12,7 @@ import { useState } from "react";
 import socketManager from "./Sockets/CommunicationSocketManager";
 import matchSocketManager from "./Sockets/MatchSocketManager";
 import { useRouter } from "next/router";
+import collabSocketManager from "./Sockets/CollabSocketManager";
 
 export default function JoinCustomRoom() {
   const { colorMode } = useColorMode();
@@ -22,16 +23,18 @@ export default function JoinCustomRoom() {
     matchSocketManager.emitEvent("match", {
       condition: roomName,
       difficulty: "",
-      user: JSON.parse(sessionStorage.getItem("login")).email,
+      user: JSON.parse(sessionStorage.getItem("login")).id,
       videoSocket: socketManager.getSocketId(),
     });
     matchSocketManager.subscribeToEvent("matched", (data) => {
       const matchedUser = data.user;
       const matchedVideoSocket = data.videoSocket;
-      const room = data.room;
+      const room = data.roomId;
       const difficulty = data.difficulty;
-      console.log("matched", matchedUser, matchedVideoSocket, room);
+      console.log("matched", data);
       matchSocketManager.setMatchedDifficulty(difficulty);
+      collabSocketManager.setDifficulty(difficulty);
+      collabSocketManager.setRoom(room);
       socketManager.setMatchedSocketId(matchedVideoSocket);
       matchSocketManager.setMatchedUser(matchedUser);
       matchSocketManager.setMatchedRoom(room);
