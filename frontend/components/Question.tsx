@@ -1,4 +1,10 @@
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Badge,
   Box,
   Button,
@@ -17,6 +23,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import CategoryTag from "./CategoryTag";
+import React from "react";
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
@@ -41,6 +48,12 @@ const Question = ({
   const [title, setTitle] = useState(null);
   const [openQuestion, setOpenQuestion] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isQuestionDialogOpen,
+    onOpen: openQuestionDialog,
+    onClose: closeQuestionDialog,
+  } = useDisclosure();
+  const cancelRef = React.useRef();
 
   const handleEdit = async ({
     qn_num,
@@ -240,11 +253,42 @@ const Question = ({
                     bgColor={colorMode === "light" ? "pink.200" : "pink.300"}
                     color="black"
                     mx={1}
-                    onClick={() => deleteQuestion(question)}
+                    onClick={openQuestionDialog}
                   >
                     Delete
                   </Button>
                 </Flex>
+                <AlertDialog
+                  isOpen={isQuestionDialogOpen}
+                  leastDestructiveRef={cancelRef}
+                  onClose={closeQuestionDialog}
+                >
+                  <AlertDialogOverlay>
+                    <AlertDialogContent>
+                      <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                        Delete Question
+                      </AlertDialogHeader>
+
+                      <AlertDialogBody>
+                        Are you sure you want to delete this question? This
+                        action can't be reversed.
+                      </AlertDialogBody>
+
+                      <AlertDialogFooter>
+                        <Button ref={cancelRef} onClick={closeQuestionDialog}>
+                          Cancel
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          ml={3}
+                          onClick={() => deleteQuestion(question)}
+                        >
+                          Delete
+                        </Button>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialogOverlay>
+                </AlertDialog>
               </GridItem>
             )}
           </Grid>
@@ -375,7 +419,9 @@ const Question = ({
                       bgColor={colorMode === "light" ? "pink.200" : "pink.300"}
                       color="black"
                       mx={1}
-                      onClick={() => deleteQuestion(question)}
+                      onClick={() => {
+                        console.log("HAHA");
+                      }}
                     >
                       Delete
                     </Button>
