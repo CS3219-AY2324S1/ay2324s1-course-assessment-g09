@@ -1,4 +1,10 @@
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Badge,
   Box,
   Button,
@@ -17,6 +23,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import CategoryTag from "./CategoryTag";
+import React from "react";
 
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
@@ -38,9 +45,45 @@ const Question = ({
   const [difficulty, setDifficulty] = useState(null);
   const [modalCategory, setModalCategory] = useState([]);
 
+  const [question, setQuestion] = useState({
+    qn_num: 0,
+    title: "",
+    description: "",
+    category: [],
+    complexity: "",
+  });
+
   const [title, setTitle] = useState(null);
   const [openQuestion, setOpenQuestion] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isQuestionDialogOpen,
+    onOpen: openQuestionDialog,
+    onClose: closeQuestionDialog,
+  } = useDisclosure();
+  const cancelRef = React.useRef();
+
+  const handleCloseQuestionDialog = () => {
+    closeQuestionDialog();
+    setQuestion({
+      qn_num: 0,
+      title: "",
+      description: "",
+      category: [],
+      complexity: "",
+    });
+  };
+
+  const handleOpenQuestionDialog = (deleteQuestion) => {
+    if (question === deleteQuestion) {
+      if (isQuestionDialogOpen) {
+        closeQuestionDialog(); // Close the modal if it's open
+      }
+    } else {
+      setQuestion(deleteQuestion);
+      openQuestionDialog(); // Open the modal if it's closed
+    }
+  };
 
   const handleEdit = async ({
     qn_num,
@@ -67,40 +110,30 @@ const Question = ({
     complexity,
   }) => {
     await axios.delete(`question_service/admin/questions/${qn_num}`);
+    handleCloseQuestionDialog();
     fetchQuestions();
   };
 
-  useEffect(() => {
-    console.log(isOpen);
-  }, [isOpen]);
-
   const handleModal = (question, index) => {
-    console.log(question);
     let desc = question.description;
-    console.log(desc);
+
     desc = desc.replace(/<code>/g, "");
     desc = desc.replace(/<\/code>/g, "");
-    console.log(desc);
 
     setDescription(desc);
-    console.log(desc);
+
     setTitle(question.title);
     setDifficulty(question.complexity);
     setModalCategory(question.category);
     // setCategory(question.category);
 
-    console.log(question.category);
-
-    console.log(openQuestion);
     if (openQuestion === question) {
       if (isOpen) {
         onClose(); // Close the modal if it's open
       }
     } else {
-      console.log();
       setOpenQuestion(question);
       onOpen(); // Open the modal if it's closed
-      // console.log(isOpen);
     }
   };
 
@@ -175,12 +208,17 @@ const Question = ({
                   fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
                   fontWeight="semibold"
                   my={2}
+                  isTruncated
                 >
                   {question.title}
                 </Text>
               </Flex>
             </GridItem>
-            <GridItem key={`grid_item_category_${question.qn_num}`} colSpan={4}>
+            <GridItem
+              key={`grid_item_category_${question.qn_num}`}
+              colSpan={4}
+              width="100%"
+            >
               <Flex
                 justifyContent="flex-start"
                 pl={2}
@@ -188,6 +226,8 @@ const Question = ({
                 height="100%"
                 key={`flex_category_${question.qn_num}`}
                 fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
+                width="100%"
+                isTruncated
               >
                 {question.category.toString()}
               </Flex>
@@ -240,7 +280,7 @@ const Question = ({
                     bgColor={colorMode === "light" ? "pink.200" : "pink.300"}
                     color="black"
                     mx={1}
-                    onClick={() => deleteQuestion(question)}
+                    onClick={() => handleOpenQuestionDialog(question)}
                   >
                     Delete
                   </Button>
@@ -375,7 +415,6 @@ const Question = ({
                       bgColor={colorMode === "light" ? "pink.200" : "pink.300"}
                       color="black"
                       mx={1}
-                      onClick={() => deleteQuestion(question)}
                     >
                       Delete
                     </Button>
@@ -453,6 +492,38 @@ const Question = ({
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <AlertDialog
+        isOpen={isQuestionDialogOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={closeQuestionDialog}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Question
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to delete this question? This action can't
+              be reversed.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={handleCloseQuestionDialog}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                ml={3}
+                onClick={() => deleteQuestion(question)}
+              >
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 };
