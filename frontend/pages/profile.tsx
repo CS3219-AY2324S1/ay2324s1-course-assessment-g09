@@ -214,7 +214,9 @@ const profile = ({ colorMode, userMode, userEmail }) => {
           </Text>
           <Badge
             variant="outline"
-            colorScheme={userMode.toLowerCase() === "user" ? "green" : "red"}
+            colorScheme={
+              userMode && userMode.toLowerCase() === "user" ? "green" : "red"
+            }
             fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
           >
             {userMode}
