@@ -7,6 +7,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 const axios = require("axios");
+const url = require("url");
 
 const app = express();
 app.use(cors());
@@ -31,15 +32,23 @@ function formatTime(mili) {
 
 io.on("connection", (socket) => {
 	console.log("a user connected:", socket.id);
-	socket.on("joinRoom", async (room) => {
+	socket.on("joinRoom", async ({ room, difficulty }) => {
 		socket.join(room);
-		console.log(room);
-		const res = await axios
-			.get(`http://question-service:3001/questions/1`)
-			.catch((err) => {
-				console.log(err);
-			});
+		console.log("rooms user is in ", socket.rooms);
+
+		const params = new url.URLSearchParams({ complexity: difficulty });
+
+		const res = await axios.get(`http://question-service:3001/questions/1?${params}`);
+		// const res = await axios
+		// 	.get(`http://question-service:3001/questions/1`, {
+		// 		complexity: difficulty,
+		// 	})
+		// 	.catch((err) => {
+		// 		console.log(err);
+		// 	});
+
 		const qns = res.data.qns;
+		console.log("difficulty", difficulty);
 		console.log(qns);
 		socket.on("getQns", () => {
 			io.to(room).emit("qnsRes", qns);

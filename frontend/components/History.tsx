@@ -48,7 +48,7 @@ export default function History() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const authUser = JSON.parse(sessionStorage.getItem("login")).email;
+        const authUser = JSON.parse(sessionStorage.getItem("login")).id;
         setUser(authUser);
         console.log(`/history_service/get/${authUser}`);
         const res = await axios.get(`/history_service/get/${authUser}`);
@@ -125,8 +125,8 @@ export default function History() {
                         ? "gray.300"
                         : "gray.700"
                       : colorMode == "light"
-                      ? "gray.400"
-                      : "gray.800"
+                        ? "gray.400"
+                        : "gray.800"
                   }
                 >
                   <HStack
@@ -162,12 +162,12 @@ export default function History() {
                         <Badge
                           colorScheme={
                             String(selectedItem.difficulty).toLowerCase() ==
-                            "easy"
+                              "easy"
                               ? "green"
                               : String(selectedItem.difficulty).toLowerCase() ==
                                 "medium"
-                              ? "orange"
-                              : "red"
+                                ? "orange"
+                                : "red"
                           }
                         >
                           {selectedItem.difficulty}

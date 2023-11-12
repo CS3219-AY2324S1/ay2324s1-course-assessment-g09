@@ -29,10 +29,10 @@ const initialiseDB = () => {
     const query = `
         BEGIN; 
 
-        DROP TABLE IF EXISTS user_account; --Support Data Persistence (for Production)
+        --DROP TABLE IF EXISTS user_account; --Support Data Persistence (for Production)
 
         -- CreateTable
-        CREATE TABLE "${userAccountTable}" (
+        CREATE TABLE IF NOT EXISTS "${userAccountTable}" (
             "id" SERIAL NOT NULL,
             "email" TEXT NOT NULL,
             "username" TEXT,
@@ -45,10 +45,10 @@ const initialiseDB = () => {
         );
         
         -- CreateIndex
-        CREATE UNIQUE INDEX "user_account_email_key" ON "${userAccountTable}"("email");
+        CREATE UNIQUE INDEX IF NOT EXISTS "user_account_email_key" ON "${userAccountTable}"("email");
         
         -- CreateIndex
-        CREATE UNIQUE INDEX "user_account_username_key" ON "${userAccountTable}"("username");
+        CREATE UNIQUE INDEX IF NOT EXISTS "user_account_username_key" ON "${userAccountTable}"("username");
         
         
         COMMIT;
@@ -80,7 +80,8 @@ const initialiseDB = () => {
             ["admin15@peerprep.com", "admin15", "admin tan", "admin", "$2b$06$onVZsDMoFEcm2NfmZIvvWOYDgNezrDeW6AyAHITq0fKVcj8vDacsS"]];
 
             for (let i = 0; i < 15; i += 1) {
-                const adminQuery = `INSERT INTO ${userAccountTable} (email, username, name, role, password) VALUES ($1, $2, $3, $4, $5);`;
+                const adminQuery = `INSERT INTO ${userAccountTable} (email, username, name, role, password) VALUES ($1, $2, $3, $4, $5)
+                ON CONFLICT (email) DO NOTHING;`;
                 db.query(adminQuery, values[i], (error, results) => {
                     if (error) {
                         console.log('Initialisation: Error initialising Admin account.');
@@ -89,7 +90,7 @@ const initialiseDB = () => {
                     console.log(`Initialisation: Initialised Admin account.`);
                 });
             }
-            
+
         }
 
     });

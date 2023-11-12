@@ -19,8 +19,9 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import matchSocketManager from "./Sockets/MatchSocketManager";
 import socketManager from "./Sockets/CommunicationSocketManager";
+import collabSocketManager from "./Sockets/CollabSocketManager";
 
-export default function CreateCustomRoom() {
+export default function CreateCustomRoom({ setRoomCreated, setCustomRoom }) {
   const complexityColor = {
     Easy: "green",
     Medium: "orange",
@@ -35,22 +36,25 @@ export default function CreateCustomRoom() {
   const [roomExists, setRoomExists] = useState(false);
   const [matching, setMatching] = useState(false);
   const handleCreateCustom = () => {
+    setRoomCreated(true);
     setRoomExists(false);
     setMatching(true);
     matchSocketManager.emitEvent("match", {
       condition: roomName,
       difficulty: difficulty,
-      user: JSON.parse(sessionStorage.getItem("login")).email,
+      user: JSON.parse(sessionStorage.getItem("login")).id,
       videoSocket: socketManager.getSocketId(),
     });
 
     matchSocketManager.subscribeToEvent("matched", (data) => {
       const matchedUser = data.user;
       const matchedVideoSocket = data.videoSocket;
-      const room = data.room;
+      const room = data.roomId;
       const difficulty = data.difficulty;
-      console.log("matched", matchedUser, matchedVideoSocket, room);
+      console.log("matched", data);
       matchSocketManager.setMatchedDifficulty(difficulty);
+      collabSocketManager.setDifficulty(difficulty);
+      collabSocketManager.setRoom(room);
       socketManager.setMatchedSocketId(matchedVideoSocket);
       matchSocketManager.setMatchedUser(matchedUser);
       matchSocketManager.setMatchedRoom(room);
@@ -79,10 +83,10 @@ export default function CreateCustomRoom() {
       condition: roomName,
       socket: matchSocketManager.getSocketId(),
     });
-    console.log("leaving custom")
+    console.log("leaving custom");
   }
 
-return (
+  return (
     <Box>
       <Heading
         as="h5"
@@ -105,10 +109,10 @@ return (
               {difficulty == "Easy"
                 ? "Easy"
                 : difficulty == "Medium"
-                ? "Medium"
-                : difficulty == "Hard"
-                ? "Hard"
-                : "Difficulty"}
+                  ? "Medium"
+                  : difficulty == "Hard"
+                    ? "Hard"
+                    : "Difficulty"}
             </MenuButton>
             <MenuList>
               <MenuItem
@@ -140,7 +144,10 @@ return (
         </GridItem>
         <GridItem colSpan={2}>
           <Input
-            onChange={(e) => setRoomName(e.target.value)}
+            onChange={(e) => {
+              setRoomName(e.target.value);
+              setCustomRoom(e.target.value);
+            }}
             size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
             placeholder="Enter Room ID"
           />
@@ -151,6 +158,7 @@ return (
           onClick={handleCreateCustom}
           size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
           colorScheme="green"
+          isDisabled={roomName === ""}
         >
           Create Room
         </Button>

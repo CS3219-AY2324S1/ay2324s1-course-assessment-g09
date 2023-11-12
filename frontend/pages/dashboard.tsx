@@ -23,12 +23,19 @@ const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 const dashboard = () => {
   const [questions, setQuestions] = useState(null);
   const [users, setUsers] = useState(null);
+  // const [difficultyCount, setDifficultyCount] = useState({
+  //   Easy: 0,
+  //   Medium: 0,
+  //   Hard: 0,
+  // });
+  const [easyCount, setEasyCount] = useState(0);
+  const [mediumCount, setMediumCount] = useState(0);
+  const [hardCount, setHardCount] = useState(0);
 
   const fetchQuestions = async () => {
     try {
       const res = await axios.get(`question_service/questions`);
       console.log(res);
-
       setQuestions(res.data.qns);
     } catch (error) {
       console.log("ERROR: ", error);
@@ -188,7 +195,7 @@ const dashboard = () => {
         width="100%"
         rowSpan={1}
       >
-        <QuestionProgress colorMode={colorMode} />
+        <QuestionProgress colorMode={colorMode} questions={questions} />
       </GridItem>
 
       {/* User Portion/ History */}

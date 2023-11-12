@@ -33,6 +33,8 @@ import EndMatchButton from "./EndMatchButton";
 import { on } from "events";
 import matchSocketManager from "./Sockets/MatchSocketManager";
 import socketManager from "./Sockets/CommunicationSocketManager";
+import collabSocketManager from "./Sockets/CollabSocketManager";
+import axios from "axios";
 
 export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 	const editorRef = useRef(null);
@@ -44,10 +46,16 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 	const [theme, setTheme] = useState("light");
 	const cancelRef = useRef();
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { isOpen: modalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
+	const {
+		isOpen: modalOpen,
+		onOpen: onModalOpen,
+		onClose: onModalClose,
+	} = useDisclosure();
 	const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor) => {
 		editorRef.current = editor;
 	};
+
+	const cancelButtonRef = useRef();
 
 	useEffect(() => {
 		handleThemeChange(colorMode);
@@ -63,10 +71,9 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 			console.log("incoming code");
 		} else {
 			setCode(editorRef.current.getModel().getValue());
-			socket?.emit("codeChange", event);
-			console.log(event)
+			collabSocketManager.emitEvent("codeChange", event);
+			console.log(event);
 		}
-
 	};
 
 	const handleThemeChange = (e: string) => {
@@ -83,16 +90,13 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 			e.target.value
 		);
 		setLanguage(e.target.value);
-		socket?.emit("languageChange", e.target.value);
+		collabSocketManager.emitEvent("languageChange", e.target.value);
 	};
 
 	useEffect(() => {
-		const socket = io({ path: "/collaboration_service/socket.io/" });
-		setSocket(socket);
+		collabSocketManager.connect();
 
-		socket?.emit("joinRoom", socketRoom);
-
-		socket.on("codeChange", (event) => {
+		collabSocketManager.subscribeToEvent("codeChange", (event) => {
 			isIncomingCode.current = true;
 			editorRef.current.getModel()?.applyEdits(event.changes);
 			console.log("code change", event.changes);
@@ -102,9 +106,9 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 		socketManager.subscribeToEvent("matchEnded", () => {
 			console.log("match ended");
 			onOpen();
-		})
+		});
 
-		socket.on("languageChange", (event) => {
+		collabSocketManager.subscribeToEvent("languageChange", (event) => {
 			console.log("received", event);
 			(window as any).monaco.editor.setModelLanguage(
 				editorRef.current?.getModel(),
@@ -113,7 +117,7 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 			setLanguage(event);
 		});
 		return () => {
-			socket.disconnect();
+			collabSocketManager.disconnect();
 		};
 	}, []);
 
@@ -135,6 +139,36 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 				formatAction.run();
 			}
 		}
+	};
+
+	const handleHistory = async () => {
+		const user1 = JSON.parse(sessionStorage.getItem("login")).id;
+		const user2 = matchSocketManager.getMatchedUser();
+		// const questionName = "Test Question";
+		// const question = "Test Question";
+		const questionName = collabSocketManager.getQnsName();
+		const question = collabSocketManager.getQnsDesc();
+		const difficulty = collabSocketManager.getDifficulty();
+
+		const data = {
+			user1,
+			user2,
+			difficulty,
+			questionName,
+			question,
+			language,
+			theme,
+			code,
+		};
+		console.log(
+			socketManager.getSocketId(),
+			socketManager.getMatchedSocketId()
+		);
+		socketManager.emitEvent("endMatch", socketManager.getMatchedSocketId());
+		const res = await axios
+			.post("/history_service/create", data)
+			.then((res) => console.log(res.data))
+			.catch((err) => console.log(err));
 	};
 
 	return (
@@ -169,24 +203,25 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 				</GridItem>
 
 				<GridItem>
-					<Button onClick={onModalOpen}>End Match</Button>
+					<Button onClick={onModalOpen} colorScheme="red">
+						End Match
+					</Button>
 					<Modal isOpen={modalOpen} onClose={onModalClose}>
 						<ModalOverlay />
 						<ModalContent>
 							<ModalHeader>Modal Title</ModalHeader>
 							<ModalCloseButton />
-							<ModalBody>
-								Are you sure you want to end the match?
-							</ModalBody>
+							<ModalBody>Are you sure you want to end the match?</ModalBody>
 
 							<ModalFooter>
-								<Button colorScheme='blue' mr={3} onClick={onClose}>
+								<Button colorScheme="blue" mr={3} onClick={onClose}>
 									Close
 								</Button>
 								<EndMatchButton
 									code={code}
 									theme={theme}
 									language={language}
+									handleHistory={handleHistory}
 								/>
 							</ModalFooter>
 						</ModalContent>
@@ -208,11 +243,15 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 				</GridItem>
 			</Grid>
 			<AlertDialog
-				motionPreset='slideInBottom'
+				motionPreset="slideInBottom"
 				leastDestructiveRef={cancelRef}
-				onClose={onClose}
+				onClose={() => {
+					handleHistory;
+					onClose;
+				}}
 				isOpen={isOpen}
 				isCentered
+				blockScrollOnMount={true}
 			>
 				<AlertDialogOverlay />
 				<AlertDialogContent>
@@ -225,10 +264,12 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 							code={code}
 							theme={theme}
 							language={language}
+							handleHistory={handleHistory}
 						/>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
 		</>
 	);
+
 }

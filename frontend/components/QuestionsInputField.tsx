@@ -38,6 +38,10 @@ const QuestionInputField = ({
 
   const [selectedComplexity, setSelectedComplexity] = useState("");
 
+  useEffect(() => {
+    console.log(selectedCategory);
+  }, [selectedCategory]);
+
   const fetchQuestions = async () => {
     const res = await axios.get(`question_service/questions`);
     setQuestions(res.data.qns);
@@ -47,7 +51,7 @@ const QuestionInputField = ({
     try {
       console.log({
         ...inputValues,
-        category: inputValues.category.split(","),
+        category: selectedCategory,
       });
       const res = await axios.post(`question_service/admin/questions`, {
         qn_num: Number(inputValues.qn_num),

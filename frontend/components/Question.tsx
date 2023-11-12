@@ -77,7 +77,7 @@ const Question = ({
   const handleOpenQuestionDialog = (deleteQuestion) => {
     if (question === deleteQuestion) {
       if (isQuestionDialogOpen) {
-        closeQuestionDialog(); // Close the modal if it's open
+        handleCloseQuestionDialog();
       }
     } else {
       setQuestion(deleteQuestion);
@@ -85,6 +85,9 @@ const Question = ({
     }
   };
 
+  useEffect(() => {
+    console.log(question);
+  }, [question]);
   const handleEdit = async ({
     qn_num,
     title,
@@ -285,6 +288,37 @@ const Question = ({
                     Delete
                   </Button>
                 </Flex>
+                <AlertDialog
+                  isOpen={isQuestionDialogOpen}
+                  leastDestructiveRef={cancelRef}
+                  onClose={closeQuestionDialog}
+                >
+                  <AlertDialogOverlay>
+                    <AlertDialogContent>
+                      <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                        Delete Question
+                      </AlertDialogHeader>
+
+                      <AlertDialogBody>
+                        Are you sure you want to delete this question? This
+                        action can't be reversed.
+                      </AlertDialogBody>
+
+                      <AlertDialogFooter>
+                        <Button ref={cancelRef} onClick={closeQuestionDialog}>
+                          Cancel
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          ml={3}
+                          onClick={() => deleteQuestion(question)}
+                        >
+                          Delete
+                        </Button>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialogOverlay>
+                </AlertDialog>
               </GridItem>
             )}
           </Grid>
@@ -497,6 +531,8 @@ const Question = ({
         isOpen={isQuestionDialogOpen}
         leastDestructiveRef={cancelRef}
         onClose={closeQuestionDialog}
+        closeOnOverlayClick={false}
+        closeOnEsc={false}
       >
         <AlertDialogOverlay>
           <AlertDialogContent>

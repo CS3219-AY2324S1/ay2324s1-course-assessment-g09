@@ -32,7 +32,9 @@ import matchSocketManager from "../components/Sockets/MatchSocketManager";
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
 const profile = ({ colorMode, userMode, userEmail }) => {
+  const [roomCreated, setRoomCreated] = useState(false);
   const cancelRef = React.useRef();
+  const leastDestructiveRef = React.useRef();
 
   const [loggedInName, setLoggedInName] = useState("");
   const [loggedInUserName, setLoggedInUserName] = useState("");
@@ -79,12 +81,17 @@ const profile = ({ colorMode, userMode, userEmail }) => {
     setInQueue(false);
     setMinutes(0);
     setSeconds(0);
-    matchSocketManager.emitEvent("leaveQueue", { condition: "", socketId: matchSocketManager.getSocketId() });
-    console.log("leaving queue")
+    matchSocketManager.emitEvent("leaveQueue", {
+      condition: "",
+      socketId: matchSocketManager.getSocketId(),
+    });
+    console.log("leaving queue");
   };
 
   // Disclosure for Match Found
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {isOpen: isDialogOpen, onOpen: openDialog, onClose: closeDialog} = useDisclosure();
+  
 
   // Stopwatch when in queue
   useEffect(() => {
@@ -136,6 +143,7 @@ const profile = ({ colorMode, userMode, userEmail }) => {
 
     if (seconds >= 30) {
       handleLeaveQueue();
+      openDialog();
     }
 
     return () => {
@@ -253,7 +261,10 @@ const profile = ({ colorMode, userMode, userEmail }) => {
             my={2}
             ml={2}
           >
-            <MatchButton handleQuickStart={handleQuickStart} />
+            <MatchButton
+              handleQuickStart={handleQuickStart}
+              roomCreated={roomCreated}
+            />
           </GridItem>
           <GridItem
             colSpan={2}
@@ -262,15 +273,10 @@ const profile = ({ colorMode, userMode, userEmail }) => {
             my={2}
             justifyContent="center"
           >
-            {/* <Button
-							colorScheme="blue"
-							size={{ lg: "xs", xl: "sm", "2xl": "lg" }}
-							width="90%"
-							mx={2}
-						>
-							Custom Room
-						</Button> */}
-            <CustomRoomButton />
+            <CustomRoomButton
+              roomCreated={roomCreated}
+              setRoomCreated={setRoomCreated}
+            />
           </GridItem>
         </>
       )}
@@ -299,12 +305,12 @@ const profile = ({ colorMode, userMode, userEmail }) => {
                         ? "green.500"
                         : "green.300"
                       : countdown > 1
-                        ? colorMode == "light"
-                          ? "orange.500"
-                          : "orange.300"
-                        : colorMode == "light"
-                          ? "red.500"
-                          : "red.300"
+                      ? colorMode == "light"
+                        ? "orange.500"
+                        : "orange.300"
+                      : colorMode == "light"
+                      ? "red.500"
+                      : "red.300"
                   }
                   size="70px"
                 >
@@ -315,12 +321,12 @@ const profile = ({ colorMode, userMode, userEmail }) => {
                           ? "green.500"
                           : "green.300"
                         : countdown > 1
-                          ? colorMode == "light"
-                            ? "orange.500"
-                            : "orange.300"
-                          : colorMode == "light"
-                            ? "red.500"
-                            : "red.300"
+                        ? colorMode == "light"
+                          ? "orange.500"
+                          : "orange.300"
+                        : colorMode == "light"
+                        ? "red.500"
+                        : "red.300"
                     }
                     fontWeight="semibold"
                   >
@@ -346,8 +352,31 @@ const profile = ({ colorMode, userMode, userEmail }) => {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
+
+
+      {/* <AlertDialog isOpen={isOpen} leastDestructiveRef={leastDestructiveRef} onClose={onClose}> */}
+      <AlertDialog isOpen={isDialogOpen} leastDestructiveRef={leastDestructiveRef}  onClose={closeDialog}>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Matching Failed
+            </AlertDialogHeader>
+  
+            <AlertDialogBody>
+              There is currently no compatible user. Please kindly try again later.
+            </AlertDialogBody>
+  
+            <AlertDialogFooter>
+              <Button colorScheme="orange" onClick={closeDialog}>
+                Close
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Grid>
   );
 };
 
 export default profile;
+
