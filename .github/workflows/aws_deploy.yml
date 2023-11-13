@@ -71,19 +71,6 @@ jobs:
       id-token: write
       contents: read
     steps:
-      # AWS Authentication
-      - name: Configure AWS credentials
-        id: creds
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.ROLE_TO_ASSUME }}
-          aws-region: ${{ env.AWS_REGION }}
-          role-session-name: GitHub_to_AWS_via_FederatedOIDC
-          output-credentials: true
-      # Sanity Check
-      - name: Sts GetCallerIdentity (Sanity Check)
-        run: |
-          aws sts get-caller-identity
       # Initialisation
       - name: Check out code
         uses: actions/checkout@v4
@@ -95,7 +82,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ap-southeast-1
           cluster_name: PeerPrepK84
-          eks_role_arn: ${{ env.ROLE_TO_ASSUME}}
+          eks_role_arn: ${{ env.ROLE_TO_ASSUME }}
           args: apply -k ./kubernetes_deployment -n eks-peerprep
 
       - name: Build and push CONTAINER_NAME
@@ -105,7 +92,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ap-southeast-1
           cluster_name: PeerPrepK84
-          eks_role_arn: ${{ env.ROLE_TO_ASSUME}}
+          eks_role_arn: ${{ env.ROLE_TO_ASSUME }}
           args: rollout restart deployment -n eks-peerprep
   
   deploy-to-eb:
