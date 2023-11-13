@@ -97,10 +97,11 @@ userRouter.get('/getUserByEmail', async (request, response) => {
 });
 
 userRouter.get('/getUserById', async (request, response) => {
-    const userId = parseInt(request.params.id);
+    const userId = parseInt(request.query.id);
     const query = `SELECT id, username FROM ${userAccountTable} WHERE id = ${userId}`;
 
-    if (!request.params || !request.params.id || userId == NaN) {
+    // if (!request.params || !request.params.id || userId == NaN) {
+    if (!userId) {
         // Reject if 'userId' is empt or invalid.
         const msg = { 'msg': `ID cannot be empty nor invalid.`, 'user': null };
         return response.status(400).json(msg);

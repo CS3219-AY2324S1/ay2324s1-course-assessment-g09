@@ -25,6 +25,7 @@ import {
 import Editor from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { set } from "zod";
+import { Url } from "url";
 
 type history = {
   _id: string;
@@ -45,6 +46,20 @@ export default function History() {
   const [selectedItem, setSelectedItem] = useState(null);
   const { colorMode } = useColorMode();
 
+  const [pairedUser, setPairedUser] = useState("");
+
+  const handleHistoryOpen = async (record) => {
+    let pairedUserId = record.user2;
+
+    const res = await axios.get(`user_service/users/getUserById`, {
+      params: { id: pairedUserId },
+    });
+
+    setSelectedItem(record);
+
+    setPairedUser(res.data.user.username);
+    onOpen();
+  };
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -113,10 +128,7 @@ export default function History() {
                 <Box
                   key={index}
                   width="100%"
-                  onClick={() => {
-                    setSelectedItem(record);
-                    onOpen();
-                  }}
+                  onClick={() => handleHistoryOpen(record)}
                   overflowX="hidden"
                   py={1}
                   backgroundColor={
@@ -125,8 +137,8 @@ export default function History() {
                         ? "gray.300"
                         : "gray.700"
                       : colorMode == "light"
-                        ? "gray.400"
-                        : "gray.800"
+                      ? "gray.400"
+                      : "gray.800"
                   }
                 >
                   <HStack
@@ -151,9 +163,9 @@ export default function History() {
                 </Box>
               ))}
 
-            <Modal isOpen={isOpen} onClose={onClose} size="6xl">
+            <Modal isOpen={isOpen} onClose={onClose} size="2xl">
               <ModalOverlay />
-              <ModalContent maxW="80%" minH="80%">
+              <ModalContent maxW="80%">
                 {selectedItem && (
                   <Box>
                     <ModalHeader>
@@ -162,30 +174,67 @@ export default function History() {
                         <Badge
                           colorScheme={
                             String(selectedItem.difficulty).toLowerCase() ==
-                              "easy"
+                            "easy"
                               ? "green"
                               : String(selectedItem.difficulty).toLowerCase() ==
                                 "medium"
-                                ? "orange"
-                                : "red"
+                              ? "orange"
+                              : "red"
                           }
                         >
                           {selectedItem.difficulty}
                         </Badge>
                         <Text textDecoration="InfoText" fontStyle="italic">
-                          ft. {selectedItem.user2}
+                          ft. {pairedUser}
                         </Text>
                       </HStack>
                     </ModalHeader>
                     <ModalCloseButton />
-                    <ModalBody>
+                    <ModalBody height="100%">
                       <Grid
                         templateColumns="repeat(2, 1fr)"
                         gap={6}
-                        height="75vh"
+                        height="65vh"
                       >
-                        <GridItem colSpan={1}>
-                          <Text>{selectedItem.question}</Text>
+                        <GridItem
+                          colSpan={1}
+                          height="100%"
+                          overflowY="auto"
+                          css={{
+                            "&::-webkit-scrollbar": {
+                              width: "0.25em",
+                            },
+                            "&::-webkit-scrollbar-thumb": {
+                              backgroundColor:
+                                colorMode == "light"
+                                  ? "RGBA(0, 0, 0, 0.7)"
+                                  : "RGBA(255, 255, 255, 0.48)",
+                            },
+                          }}
+                        >
+                          <div
+                            style={{
+                              overflowWrap: "break-word",
+                            }}
+                          >
+                            <style>
+                              {`
+      div > pre {
+        white-space: pre-wrap;
+        white-space: -moz-pre-wrap;
+        white-space: -pre-wrap;
+        white-space: -o-pre-wrap;
+        word-wrap: break-word;
+      }
+    `}
+                            </style>
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: selectedItem.question,
+                              }}
+                            ></div>
+                          </div>
+                          {/* <Text>{selectedItem.question}</Text> */}
                         </GridItem>
                         <GridItem colSpan={1}>
                           <Editor
