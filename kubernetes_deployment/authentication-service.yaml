@@ -18,6 +18,7 @@ spec:
       containers:
         - name: auth-container
           image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/authentication-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 3004
           env:
