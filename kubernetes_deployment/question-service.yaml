@@ -51,9 +51,11 @@ metadata:
   labels:
     app: question-service
 spec:
+  type: NodePort
   selector:
     app: question-service
   ports:
     - protocol: TCP
       port: 3001
       targetPort: 3001
+      nodePort: 30501
