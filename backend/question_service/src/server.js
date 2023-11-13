@@ -22,9 +22,9 @@ app.use(cors()); // WARN: Accepts any source origin!
 app.use('/admin/questions', adminQuestionRouter);
 app.get('/questions', questionmanager.getQuestions);
 app.get('/questions/random', questionmanager.getRandomQuestion);
-app.post('/questions', questionmanager.createQuestion);
-app.put('/questions/:qn_num', questionmanager.updateQuestion);
-app.delete('/questions/:qn_num', questionmanager.deleteQuestion);
+// app.post('/questions', questionmanager.createQuestion);
+// app.put('/questions/:qn_num', questionmanager.updateQuestion);
+// app.delete('/questions/:qn_num', questionmanager.deleteQuestion);
 
 // Start Express App
 const log_success = () => console.log(`QuestionManager's RESTAPI running on port ${process.env.RESTAPI_PORT}.`);
