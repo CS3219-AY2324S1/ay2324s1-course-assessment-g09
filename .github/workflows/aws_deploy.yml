@@ -84,6 +84,20 @@ jobs:
           sudo mv kubectl /usr/local/bin/
           echo ${{ secrets.KUBECONFIG }} | base64 --decode > kubeconfig.yaml
 
+      # AWS Authentication
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          output-credentials: true
+      # Sanity Check
+      - name: Sts GetCallerIdentity (Sanity Check)
+        run: |
+          aws sts get-caller-identity
+
       - name: Preparing Kubeconfig
         run: |
           mkdir -p $HOME/.kube
