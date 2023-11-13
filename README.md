@@ -2,4 +2,4 @@
 
 [![Deployment to AWS Elastic Beanstalk](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g09/actions/workflows/deploy.yml/badge.svg)](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g09/actions/workflows/deploy.yml)
 
-# PeerPrep
+# PeerPrep: Assignment 3
