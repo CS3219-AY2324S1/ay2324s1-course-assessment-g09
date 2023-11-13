@@ -11,5 +11,5 @@ RUN npm ci # Install dependencies of CONSISTENT version to ensure reliability
 # Copy all source code
 COPY . /usr/src/app
 
-# EXPOSE 3002
+EXPOSE 3002
 CMD [ "npm", "run", "start"]
