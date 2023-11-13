@@ -43,6 +43,7 @@ const SignUp = () => {
                         )
                     })
                     router.push('/signin');
+                    return;
                 } else {
                     const result = await response.json();
                     result.message.map(err => {
@@ -64,9 +65,9 @@ const SignUp = () => {
                         </Box>
                     )
                 })
-            } finally {
-                setSubmitStatus(false);
             }
+            setSubmitStatus(false);
+
         } else {
 
             toast({

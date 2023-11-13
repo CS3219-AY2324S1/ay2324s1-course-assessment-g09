@@ -102,6 +102,7 @@ const SignUp = () => {
           ),
         });
         router.push("/");
+        return;
       } else {
         toast({
           position: "bottom-left",
@@ -128,9 +129,9 @@ const SignUp = () => {
           </Box>
         )
       })
-    } finally {
-      setSubmitStatus(false);
     }
+    setSubmitStatus(false);
+
 
   };
 
