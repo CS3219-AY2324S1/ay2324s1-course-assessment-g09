@@ -23,7 +23,6 @@ amqp.connect(process.env.RABBITMQ, (err, conn) => {
 			(msg) => {
 				const { condition, difficulty, user, videoSocket, socketId } =
 					JSON.parse(msg.content.toString());
-				console.log("Consuming user", user, "packet from 'matching' queue.")
 				if (condition == "") {
 					pairUserByDifficulty(difficulty, user, videoSocket, socketId);
 				} else {
@@ -43,11 +42,10 @@ amqp.connect(process.env.RABBITMQ, (err, conn) => {
 		ch.consume(
 			queueName,
 			(msg) => {
-				console.log("Consuming paired user packet from 'matched' queue.")
 				const { condition, difficulty, u1, u2, v1, v2, s1, s2 } = JSON.parse(
 					msg.content.toString()
 				);
-				console.log("Paired User", u1, "and User", u2,"\nVideo Socket for User", u1, ":", v1, "\nVideo Socket for User", u2, ":", v2,"\nWeb Socket for User", u1, ":", s1, "\nWeb Socket for User", u2, ":", s2);
+				console.log("matched", u1, u2, v1, v2, s1, s2);
 				let roomId = uuidv4().toString();
 				if (condition != "") {
 					roomId = condition;
@@ -74,7 +72,6 @@ amqp.connect(process.env.RABBITMQ, (err, conn) => {
 			ch.consume(
 				queueName,
 				(msg) => {
-					console.log("Consuming message from 'leave' queue.")
 					const { condition, socketId } = JSON.parse(msg.content.toString());
 					console.log(condition, socketId);
 					if (condition == "") {

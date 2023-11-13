@@ -23,7 +23,6 @@ io.on("connection", (socket) => {
 
 	socket.on("match", (data) => {
 		const { condition, difficulty, user, videoSocket } = data;
-		console.log("Pub user", data.user, "packet to 'matching' queue.")
 		console.log("match", data);
 		sendToQueue(
 			"matching_queue",
@@ -39,7 +38,6 @@ io.on("connection", (socket) => {
 	socket.on("leaveQueue", (data) => {
 		const { condition, socketId } = data;
 		console.log(socket.id);
-		console.log("Pub user packet to 'leave' queue")
 		sendToQueue("leave_queue", JSON.stringify({ condition, socketId }));
 	});
 });
