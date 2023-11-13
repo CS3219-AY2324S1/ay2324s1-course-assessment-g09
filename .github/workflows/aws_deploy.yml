@@ -71,19 +71,6 @@ jobs:
       id-token: write
       contents: read
     steps:
-      # Install and configure kubectl
-      - name: Install and configure kubectl
-        run: |
-          VERSION=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
-          #VERSION=v1.23.6 # https://github.com/aws/aws-cli/issues/6920#issuecomment-1117981158
-          curl https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
-            --progress-bar \
-            --location \
-            --remote-name
-          chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
-          echo ${{ secrets.KUBECONFIG }} | base64 --decode > kubeconfig.yaml
-
       # AWS Authentication
       - name: Configure AWS credentials
         id: creds
@@ -97,25 +84,30 @@ jobs:
       - name: Sts GetCallerIdentity (Sanity Check)
         run: |
           aws sts get-caller-identity
-
-      - name: Preparing Kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
-          sudo cp -i kubeconfig.yaml $HOME/.kube/config
-          sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
+      # Login to ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
       # Initialisation
       - name: Check out code
         uses: actions/checkout@v4
-      
-      # Deploy to EKS
-      - name: Deploy to EKS
-        run: |
-          echo "export ECR_REPOSITORY=${{ needs.build.outputs.ECR_REPOSITORY }}/${{ needs.build.outputs.ECR_REPOSITORY }}"
-          echo "export IMAGE_TAG=${{ env.SHORT_SHA }}"
-          echo "export KUBECONFIG=kubeconfig.yaml"
-          echo "envsubst < kubernetes_deployment/kustomization.tmpl.yaml > kubernetes_deployment/kustomization.yaml"
-          kubectl kustomize kubernetes_deployment | kubectl apply -f -
+
+      - name: deploy to cluster
+        uses: kodermax/kubectl-aws-eks@main
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
+          #ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          #ECR_REPOSITORY: my-app
+          #IMAGE_TAG: ${{ github.sha }}
+        with:
+          args: set image deployment/$ECR_REPOSITORY $ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          
+      - name: verify deployment
+        uses: kodermax/kubectl-aws-eks@main
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
+        with:
+          args: rollout status deployment/my-app
   
   deploy-to-eb:
     needs: build
