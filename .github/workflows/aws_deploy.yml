@@ -65,36 +65,36 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ${{ matrix.image_parameters.Path }}
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-  deploy-to-eks:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions: # These permissions are needed to interact with GitHub's OIDC Token endpoint.
-      id-token: write
-      contents: read
-    steps:
-      # Initialisation
-      - name: Check out code
-        uses: actions/checkout@v4
+  # deploy-to-eks:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   permissions: # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+  #     id-token: write
+  #     contents: read
+  #   steps:
+  #     # Initialisation
+  #     - name: Check out code
+  #       uses: actions/checkout@v4
 
-      - name: Build and push CONTAINER_NAME
-        uses: ianbelcher/eks-kubectl-action@master
-        with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: ap-southeast-1
-          cluster_name: PeerPrepK84
-          eks_role_arn: ${{ env.EKS_ROLE_TO_ASSUME }}
-          args: apply -k ./kubernetes_deployment -n eks-peerprep
+  #     - name: Build and push CONTAINER_NAME
+  #       uses: ianbelcher/eks-kubectl-action@master
+  #       with:
+  #         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws_region: ap-southeast-1
+  #         cluster_name: PeerPrepK84
+  #         eks_role_arn: ${{ env.EKS_ROLE_TO_ASSUME }}
+  #         args: apply -k ./kubernetes_deployment -n eks-peerprep
 
-      - name: Build and push CONTAINER_NAME
-        uses: ianbelcher/eks-kubectl-action@master
-        with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: ap-southeast-1
-          cluster_name: PeerPrepK84
-          eks_role_arn: ${{ env.EKS_ROLE_TO_ASSUME }}
-          args: rollout restart deployment -n eks-peerprep
+  #     - name: Build and push CONTAINER_NAME
+  #       uses: ianbelcher/eks-kubectl-action@master
+  #       with:
+  #         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws_region: ap-southeast-1
+  #         cluster_name: PeerPrepK84
+  #         eks_role_arn: ${{ env.EKS_ROLE_TO_ASSUME }}
+  #         args: rollout restart deployment -n eks-peerprep
   
   deploy-to-eb:
     needs: build
