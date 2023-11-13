@@ -37,10 +37,10 @@ async function pairUserByDifficulty(difficulty, user, videoSocket, socketId) {
 			s1: u1.socketId,
 			s2: u2.socketId,
 		};
+		console.log("Pub paired user packet with user", u1.user, "and", u2.user, "to 'matched' queue")
 		console.log("matchedInfo", matchedInfo);
 		await userModel.destroy({ where: { id: u1.id } });
 		await userModel.destroy({ where: { id: u2.id } });
-		console.log("Pub paired user packet to 'matched' queue")
 		sendToQueue("matched_queue", JSON.stringify(matchedInfo));
 	}
 }
