@@ -84,37 +84,23 @@ jobs:
       - name: Sts GetCallerIdentity (Sanity Check)
         run: |
           aws sts get-caller-identity
-      # Login to ECR
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
       # Initialisation
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Configure Kubectl
-        uses: azure/setup-kubectl@v2.0
+      - name: Build and push CONTAINER_NAME
+        uses: ianbelcher/eks-kubectl-action@master
         with:
-          version: 'v1.23.6'
-        id: install
+          cluster_name: PeerPrepK84
+          aws_region: ap-southeast-1
+          args: apply -k ./kubernetes_deployment -n eks-peerprep
 
-      # The following command will update the kube config file with our cluster information.
-      # It will use the credentials exported by the previous action.
-      - name: Update KubeConfig
-        shell: bash
-        run: aws eks update-kubeconfig --name PeerPrepK84 --region=ap-southeast-1
-
-      - name: Switch Context
-        shell: bash
-        run: kubectl config use-context arn:aws:eks:ap-southeast-1:920185736846:cluster/PeerPrepK84
-      
-      - name: Apply New Changes
-        shell: bash
-        run: kubectl apply -k ./kubernetes_deployment -n eks-peerprep
-
-      - name: Update Images in EKS from ECS by Rolling Update
-        shell: bash
-        run: kubectl rollout restart deployment -n eks-peerprep
+      - name: Build and push CONTAINER_NAME
+        uses: ianbelcher/eks-kubectl-action@master
+        with:
+          cluster_name: PeerPrepK84
+          aws_region: ap-southeast-1
+          args: rollout restart deployment -n eks-peerprep
   
   deploy-to-eb:
     needs: build
