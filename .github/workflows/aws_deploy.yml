@@ -92,22 +92,19 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: deploy to cluster
+      - name: Apply New Changes
         uses: kodermax/kubectl-aws-eks@main
         env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
-          #ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          #ECR_REPOSITORY: my-app
-          #IMAGE_TAG: ${{ github.sha }}
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: set image deployment/$ECR_REPOSITORY $ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          
-      - name: verify deployment
+          args: apply -k ./kubernetes_deployment
+
+      - name: Update Images in EKS from ECS by Rolling Update
         uses: kodermax/kubectl-aws-eks@main
         env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: rollout status deployment/my-app
+          args: rollout restart deployment -n eks-peerprep
   
   deploy-to-eb:
     needs: build
