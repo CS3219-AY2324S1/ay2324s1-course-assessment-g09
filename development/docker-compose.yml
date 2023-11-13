@@ -102,6 +102,16 @@ services:
       timeout: 10s
       retries: 5
       start_period: 40s
+    # FRONTEND
+  frontend:
+    container_name: frontend
+    image: frontend
+    restart: always
+    environment:
+      NEXT_PUBLIC_IP_ADDRESS: http://localhost
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
 volumes:
   # Persistent data
   postgres-db:
