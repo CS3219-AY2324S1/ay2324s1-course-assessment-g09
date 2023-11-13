@@ -35,14 +35,14 @@ const QuestionInputField = ({
   const [selectedComplexity, setSelectedComplexity] = useState("");
 
   const fetchQuestions = async () => {
-    const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
+    const res = await axios.get(`http://localhost:3001/questions/getall`);
     setQuestions(res.data.qns);
   };
 
   const handleSubmit = async () => {
     try {
       const res0 = await axios.get(
-        `${IP_ADDRESS}:3001/questions/get/${inputValues.qn_num}`
+        `http://localhost:3001/questions/get/${inputValues.qn_num}`
       );
 
       setError(true);
@@ -52,7 +52,7 @@ const QuestionInputField = ({
       });
     } catch (error) {
       const res = await axios.post(
-        `${IP_ADDRESS}:3001/questions/create`,
+        `http://localhost:3001/questions/create`,
         inputValues
       );
 
@@ -76,7 +76,7 @@ const QuestionInputField = ({
     setError(false);
     const { qn_num } = inputValues;
     await axios.post(
-      `${IP_ADDRESS}:3001/questions/update/${qn_num}`,
+      `http://localhost:3001/questions/update/${qn_num}`,
       inputValues
     );
 
@@ -128,10 +128,9 @@ const QuestionInputField = ({
   };
 
   const handleComplexityOption = (complexity) => {
-    console.log(complexity);
+    // console.log(complexity);
+    setInputValues({ ...inputValues, complexity: complexity });
     setSelectedComplexity(complexity);
-    console.log(selectedComplexity);
-    setInputValues({ ...inputValues, complexity: selectedComplexity });
   };
 
   return (

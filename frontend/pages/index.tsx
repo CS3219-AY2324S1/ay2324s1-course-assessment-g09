@@ -72,7 +72,30 @@ const IndexPage = () => {
 
   return (
     <Box height="100vh" display="flex" flexDirection="column">
-      <Tabs position="relative" variant="unstyled">
+      <Flex
+        width="95%"
+        alignItems="center"
+        justify="center"
+        mx="auto"
+        my={5}
+        flexDirection="column"
+      >
+        <QuestionInputField
+          inputValues={questionInputValues}
+          setInputValues={setQuestionInputValues}
+          isCreate={isCreate}
+          setIsCreate={setIsCreate}
+          colorMode={colorMode}
+        />
+        <Questions
+          inputValues={questionInputValues}
+          setInputValues={setQuestionInputValues}
+          isCreate={isCreate}
+          setIsCreate={setIsCreate}
+          colorMode={colorMode}
+        />
+      </Flex>
+      {/* <Tabs position="relative" variant="unstyled">
         <TabList>
           <Tab
             _selected={{
@@ -194,7 +217,7 @@ const IndexPage = () => {
             </Flex>
           </Flex>
         </Flex>
-      </Tabs>
+      </Tabs> */}
     </Box>
   );
 };

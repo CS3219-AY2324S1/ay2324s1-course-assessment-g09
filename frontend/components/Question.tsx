@@ -39,7 +39,7 @@ const Question = ({
 
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
+      const res = await axios.get(`http://localhost:3001/questions/getall`);
 
       setQuestions(res.data.qns);
     } catch (error) {
@@ -75,7 +75,7 @@ const Question = ({
     category,
     complexity,
   }) => {
-    await axios.post(`${IP_ADDRESS}:3001/questions/delete/${qn_num}`);
+    await axios.post(`http://localhost:3001/questions/delete/${qn_num}`);
     fetchQuestions();
   };
 
