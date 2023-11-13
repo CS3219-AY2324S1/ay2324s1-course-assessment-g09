@@ -31,7 +31,7 @@ const SignUp = () => {
                         name: formData.get("name"),
                         email: formData.get("email"),
                         password: formData.get("password"),
-                        role: formData.get("role")
+                        role: "user"
                     })
                 });
 
@@ -112,13 +112,6 @@ const SignUp = () => {
                     <FormControl>
                         <FormLabel> Confirm Password</FormLabel>
                         <Input name="confirm_password" type="password" />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>Role</FormLabel>
-                        <Select name="role" >
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
-                        </Select>
                     </FormControl>
                     {
                         !submitStatus
