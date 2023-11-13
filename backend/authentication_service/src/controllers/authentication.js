@@ -31,7 +31,7 @@ authRouter.post("/signup", async (request, response) => {
 				name: name,
 				username: username,
 				password: pwHash,
-				role: role,
+				role: "user",
 			}
 		);
 

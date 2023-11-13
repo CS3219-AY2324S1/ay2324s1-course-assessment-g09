@@ -5,10 +5,9 @@ const jwt = require('jsonwebtoken');
 const apiAuthRouter = express.Router();
 
 apiAuthRouter.get('/validate-user', async (request, response) => {
-    // console.log("request", request);
-    // console.log("testing", request.headers);
+
     if (!request.cookies || Object.getPrototypeOf(request.cookies) === null) {
-        // console.log("test");
+
         return response.status(401).send();
     }
 
@@ -20,13 +19,6 @@ apiAuthRouter.get('/validate-user', async (request, response) => {
         return response.status(201).send();
     });
 
-
-    // console.log("type", request.cookies === null)
-    // console.log("c????", request.cookies);
-    // if (request.headers.authorization) {
-    //     console.log(request.headers.authorization);
-    // }
-    // console.log("HUH? No error?");
 
 });
 
