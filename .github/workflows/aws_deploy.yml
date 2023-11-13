@@ -92,26 +92,25 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Apply New Changes
-        uses: kodermax/kubectl-aws-eks@main
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
+      - name: Configure Kubectl
+        uses: azure/setup-kubectl@v2.0
         with:
-          args: config use-context arn:aws:eks:ap-southeast-1:920185736846:cluster/PeerPrepK84
+          version: 'v1.23.6'
+        id: install
+
+      # The following command will update the kube config file with our cluster information.
+      # It will use the credentials exported by the previous action.
+      - name: Update KubeConfig
+        shell: bash
+        run: aws eks update-kubeconfig --name PeerPrepK84 --region=ap-southeast-1
 
       - name: Apply New Changes
-        uses: kodermax/kubectl-aws-eks@main
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
-        with:
-          args: apply -k ./kubernetes_deployment -n eks-peerprep
+        shell: bash
+        run: kubectl apply -k ./kubernetes_deployment -n eks-peerprep
 
       - name: Update Images in EKS from ECS by Rolling Update
-        uses: kodermax/kubectl-aws-eks@main
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
-        with:
-          args: rollout restart deployment -n eks-peerprep
+        shell: bash
+        run: kubectl rollout restart deployment -n eks-peerprep
   
   deploy-to-eb:
     needs: build
