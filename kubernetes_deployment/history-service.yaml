@@ -18,6 +18,7 @@ spec:
       containers:
         - name: history-container
           image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/history-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8003
           env:
