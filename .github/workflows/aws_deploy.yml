@@ -91,15 +91,21 @@ jobs:
       - name: Build and push CONTAINER_NAME
         uses: ianbelcher/eks-kubectl-action@master
         with:
-          cluster_name: PeerPrepK84
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ap-southeast-1
+          cluster_name: PeerPrepK84
+          eks_role_arn: ${{ env.ROLE_TO_ASSUME}}
           args: apply -k ./kubernetes_deployment -n eks-peerprep
 
       - name: Build and push CONTAINER_NAME
         uses: ianbelcher/eks-kubectl-action@master
         with:
-          cluster_name: PeerPrepK84
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ap-southeast-1
+          cluster_name: PeerPrepK84
+          eks_role_arn: ${{ env.ROLE_TO_ASSUME}}
           args: rollout restart deployment -n eks-peerprep
   
   deploy-to-eb:
