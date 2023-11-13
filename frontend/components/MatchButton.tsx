@@ -16,7 +16,7 @@ import MatchsocketManager from "./Sockets/MatchSocketManager";
 import { useRouter } from "next/router";
 import collabSocketManager from "./Sockets/CollabSocketManager";
 
-export default function MatchButton({ handleQuickStart }) {
+export default function MatchButton({ handleQuickStart, roomCreated }) {
   const { colorMode } = useColorMode();
 
   const complexityColor = {
@@ -44,7 +44,7 @@ export default function MatchButton({ handleQuickStart }) {
       const data = {
         condition: "",
         difficulty: difficulty,
-        user: JSON.parse(sessionStorage.getItem("login")).email,
+        user: JSON.parse(sessionStorage.getItem("login")).id,
         // user: "test",
         videoSocket: socketManager.getSocketId(),
       };
@@ -75,6 +75,7 @@ export default function MatchButton({ handleQuickStart }) {
             as={Button}
             rightIcon={<ChevronDownIcon />}
             colorScheme={complexityColor[difficulty]}
+            isDisabled={roomCreated}
           >
             {difficulty == "Easy"
               ? "Easy"
@@ -115,6 +116,7 @@ export default function MatchButton({ handleQuickStart }) {
           colorScheme="purple"
           size={{ lg: "sm", xl: "sm", "2xl": "lg" }}
           onClick={handleMatch}
+          isDisabled={roomCreated}
         >
           Match
         </Button>

@@ -32,6 +32,7 @@ import matchSocketManager from "../components/Sockets/MatchSocketManager";
 const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 
 const profile = ({ colorMode, userMode, userEmail }) => {
+  const [roomCreated, setRoomCreated] = useState(false);
   const cancelRef = React.useRef();
   const leastDestructiveRef = React.useRef();
 
@@ -80,8 +81,11 @@ const profile = ({ colorMode, userMode, userEmail }) => {
     setInQueue(false);
     setMinutes(0);
     setSeconds(0);
-    matchSocketManager.emitEvent("leaveQueue", { condition: "", socketId: matchSocketManager.getSocketId() });
-    console.log("leaving queue")
+    matchSocketManager.emitEvent("leaveQueue", {
+      condition: "",
+      socketId: matchSocketManager.getSocketId(),
+    });
+    console.log("leaving queue");
   };
 
   // Disclosure for Match Found
@@ -210,7 +214,9 @@ const profile = ({ colorMode, userMode, userEmail }) => {
           </Text>
           <Badge
             variant="outline"
-            colorScheme={userMode.toLowerCase() === "user" ? "green" : "red"}
+            colorScheme={
+              userMode && userMode.toLowerCase() === "user" ? "green" : "red"
+            }
             fontSize={{ lg: "sm", xl: "sm", "2xl": "md" }}
           >
             {userMode}
@@ -255,7 +261,10 @@ const profile = ({ colorMode, userMode, userEmail }) => {
             my={2}
             ml={2}
           >
-            <MatchButton handleQuickStart={handleQuickStart} />
+            <MatchButton
+              handleQuickStart={handleQuickStart}
+              roomCreated={roomCreated}
+            />
           </GridItem>
           <GridItem
             colSpan={2}
@@ -264,15 +273,10 @@ const profile = ({ colorMode, userMode, userEmail }) => {
             my={2}
             justifyContent="center"
           >
-            {/* <Button
-							colorScheme="blue"
-							size={{ lg: "xs", xl: "sm", "2xl": "lg" }}
-							width="90%"
-							mx={2}
-						>
-							Custom Room
-						</Button> */}
-            <CustomRoomButton />
+            <CustomRoomButton
+              roomCreated={roomCreated}
+              setRoomCreated={setRoomCreated}
+            />
           </GridItem>
         </>
       )}
@@ -301,12 +305,12 @@ const profile = ({ colorMode, userMode, userEmail }) => {
                         ? "green.500"
                         : "green.300"
                       : countdown > 1
-                        ? colorMode == "light"
-                          ? "orange.500"
-                          : "orange.300"
-                        : colorMode == "light"
-                          ? "red.500"
-                          : "red.300"
+                      ? colorMode == "light"
+                        ? "orange.500"
+                        : "orange.300"
+                      : colorMode == "light"
+                      ? "red.500"
+                      : "red.300"
                   }
                   size="70px"
                 >
@@ -317,12 +321,12 @@ const profile = ({ colorMode, userMode, userEmail }) => {
                           ? "green.500"
                           : "green.300"
                         : countdown > 1
-                          ? colorMode == "light"
-                            ? "orange.500"
-                            : "orange.300"
-                          : colorMode == "light"
-                            ? "red.500"
-                            : "red.300"
+                        ? colorMode == "light"
+                          ? "orange.500"
+                          : "orange.300"
+                        : colorMode == "light"
+                        ? "red.500"
+                        : "red.300"
                     }
                     fontWeight="semibold"
                   >
