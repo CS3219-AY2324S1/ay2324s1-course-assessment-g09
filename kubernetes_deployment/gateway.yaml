@@ -18,7 +18,6 @@ spec:
       containers:
         - name: gateway-deployment
           image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/gateway:latest
-          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           resources:

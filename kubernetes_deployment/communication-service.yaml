@@ -18,7 +18,6 @@ spec:
       containers:
         - name: communication-container
           image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/communication-service:latest
-          imagePullPolicy: Always
           ports:
             - containerPort: 8002
           env:

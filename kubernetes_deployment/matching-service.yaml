@@ -18,7 +18,6 @@ spec:
       containers:
         - name: matching-container
           image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/matching-service:latest
-          imagePullPolicy: Always
           ports:
             - containerPort: 8004
           env:
@@ -37,7 +36,6 @@ spec:
                 configMapKeyRef:
                   name: config
                   key: ORIGIN
-          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
