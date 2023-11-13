@@ -97,7 +97,14 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
         with:
-          args: apply -k ./kubernetes_deployment
+          args: config use-context arn:aws:eks:ap-southeast-1:920185736846:cluster/PeerPrepK84
+
+      - name: Apply New Changes
+        uses: kodermax/kubectl-aws-eks@main
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
+        with:
+          args: apply -k ./kubernetes_deployment -n eks-peerprep
 
       - name: Update Images in EKS from ECS by Rolling Update
         uses: kodermax/kubectl-aws-eks@main
