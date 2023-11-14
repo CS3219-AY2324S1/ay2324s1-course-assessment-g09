@@ -10,14 +10,10 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - postgres-db:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
+
     restart: always
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "postgres" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      test: pg_isready -U postgres
 
   user-service:
     container_name: user-service_auth_dev
@@ -34,28 +30,12 @@ services:
     build:
       context: ../backend/user_service/
       dockerfile: Dockerfile
-    ports:
-      - "3002:3002"
     depends_on:
       postgres:
         condition: service_healthy
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--no-verbose",
-          "--tries=1",
-          "--spider",
-          "http://localhost:3002/users/getall",
-          "||",
-          "exit",
-          "1"
-        ]
-      interval: 60s
-      retries: 5
-      start_period: 20s
-      timeout: 10s
+    healthcheck: # Check if healthcheck is working
+      test: curl --fail http://user-service:3002/users/getUser || exit 1
+
   gateway:
     container_name: apigateway_auth_dev
     image: apigateway-img
@@ -65,6 +45,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    depends_on:
+      user-service:
+        condition: service_started
   auth_service:
     container_name: auth_service_auth_dev
     image: auth-service-img
@@ -75,7 +58,7 @@ services:
     environment:
       # To hide
       RESTAPI_PORT: 3004
-      USER_SERVICE: host.docker.internal:3002
+      USER_SERVICE: user-service:3002
       SECRET_KEY: J7kPq2xRtVzLwY9fX6eG1sA4iB3oDmC8nU5hW0lZ
     # ports:
     #   - "3004:3004"
@@ -85,8 +68,7 @@ services:
     restart: always
     volumes:
       - mongo-db:/data/db
-    ports:
-      - 27017:27017
+
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh mongo:27017/test --quiet
       interval: 10s
@@ -105,8 +87,7 @@ services:
     build:
       context: ../backend/question_service/
       dockerfile: Dockerfile
-    ports:
-      - 3001:3001
+
     depends_on:
       - mongo
     healthcheck:
@@ -121,6 +102,16 @@ services:
       timeout: 10s
       retries: 5
       start_period: 40s
+    # FRONTEND
+  frontend:
+    container_name: frontend
+    image: frontend
+    restart: always
+    environment:
+      NEXT_PUBLIC_IP_ADDRESS: http://localhost
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
 volumes:
   # Persistent data
   postgres-db:
