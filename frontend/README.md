@@ -45,3 +45,21 @@ When we run `next dev` the next time, Next.js will start looking for any `.ts` o
 Next.js has built-in TypeScript declarations, so we'll get autocompletion for Next.js' modules straight away.
 
 A `type-check` script is also added to `package.json`, which runs TypeScript's `tsc` CLI in `noEmit` mode to run type-checking separately. You can then include this, for example, in your `test` scripts.
+
+# Local Kubernetes Setup
+Dependencies: Minikube, Docker, Kubectl
+- Relevant Links:
+	- Minikube (https://minikube.sigs.k8s.io/docs/start/)
+		- Use Docker Driver (https://minikube.sigs.k8s.io/docs/drivers/docker/)
+	- Kubectl (https://kubernetes.io/docs/tasks/tools/)
+Steps to Setup Project:
+1. Start Minikube in cmd
+	- Run `minikube start`
+2. Ensure Metrics-Server is enabled in Minikube
+	- Run ` minikube addons enable metrics-server`
+3. Change directory to: `/development/kube_developement`
+	- Ensure config.yaml and secret.yaml is in this directory
+4. Run `sh ../start.sh`
+5. Verify that all deployments are running 
+	- `kubectl get all -n eks-peerprep`
+6. Run `minikube service gateway-service -n eks-peerprep` 
