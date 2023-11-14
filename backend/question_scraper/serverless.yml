@@ -10,7 +10,7 @@ provider:
     cors: true
   region: ap-southeast-1
   environment:
-    SERVER: http://peerprep-g091.ap-southeast-1.elasticbeanstalk.com:3001/questions
+    SERVER: http://a34b5b20ab2724775b6deac2de10363b-f5e838cbca67e6d1.elb.ap-southeast-1.amazonaws.com/question_scraper/admin/questions
   timeout: 60
 
 functions:
