@@ -46,7 +46,7 @@ Steps to Setup Project:
       - Powershell: `& minikube -p minikube docker-env --shell powershell | Invoke-Expression`
       - CMD: `@FOR /f "tokens=*" %i IN ('minikube -p minikube docker-env --shell cmd') DO @%i`
    > switch Docker client's context to interact with Docker daemon within Minikube  
-5.  - `docker compose build` - build the images (available to minikube due to previous command)
+5. Run `docker compose build` - build the images (available to minikube due to previous command)
 6. Run `kubectl create namespace eks-peerprep` to create namespace
 7. `kubectl apply -f .` - Apply manifest in current directory to Kubernetes cluster
 8. Verify that all deployments are running 
