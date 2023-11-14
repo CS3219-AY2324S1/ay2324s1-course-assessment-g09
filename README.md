@@ -30,6 +30,8 @@ Dependencies: Minikube, Docker, Kubectl
 	- Minikube (https://minikube.sigs.k8s.io/docs/start/)
 		- Use Docker Driver (https://minikube.sigs.k8s.io/docs/drivers/docker/)
 	- Kubectl (https://kubernetes.io/docs/tasks/tools/)
+
+
 Steps to Setup Project:
 1. Start Minikube in cmd
 	- Run `minikube start`
@@ -37,7 +39,11 @@ Steps to Setup Project:
 	- Run ` minikube addons enable metrics-server`
 3. Change directory to: `/development/kube_developement`
 	- Ensure config.yaml and secret.yaml is in this directory
-4. Run `sh ../start.sh`
+4. Run `sh ../start.sh`, or run the following commands:
+   - `eval $(minikube docker-env)` - switch Docker client's context to interact with Docker daemon within Minikube
+   - `docker compose build` - build the images (available to minikube due to previous command)
+   - `kubectl apply -f .` - Apply manifest in current directory to Kubernetes cluster
+
 5. Verify that all deployments are running 
 	- `kubectl get all -n eks-peerprep`
 6. Run `minikube service gateway-service -n eks-peerprep` 
