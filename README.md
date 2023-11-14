@@ -4,10 +4,13 @@
 
 # PeerPrep
 
+PeerPrep is an online technical interview preparation platform where students can collaborate with their peers to practice coding interview questions together. 
+
 ## PeerPrep is deployed online
 You can access the website at this [link](https://a34b5b20ab2724775b6deac2de10363b-f5e838cbca67e6d1.elb.ap-southeast-1.amazonaws.com/).
 
 ## Set up process for local testing:
+Prerequisites: Docker
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g09.git
