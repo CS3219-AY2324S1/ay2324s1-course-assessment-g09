@@ -38,17 +38,15 @@ Steps to Setup Project:
 2. Ensure Metrics-Server is enabled in Minikube
 	- Run ` minikube addons enable metrics-server`
 3. Change directory to: `/development/kube_developement`
-	> [!WARNING] 
-   > Ensure `config.yaml`` and `secret.yaml`` is in this directory
+   > Ensure `config.yaml` and `secret.yaml` is in this directory
 4. Depending on your operating system run the following command: (https://minikube.sigs.k8s.io/docs/handbook/pushing/)
    - Linux / MacOS:
       - `eval $(minikube docker-env)`
    - Windows: 
       - Powershell: `& minikube -p minikube docker-env --shell powershell | Invoke-Expression`
       - CMD: `@FOR /f "tokens=*" %i IN ('minikube -p minikube docker-env --shell cmd') DO @%i`
-   >[!NOTE]
    > switch Docker client's context to interact with Docker daemon within Minikube  
-5.  - `docker compose build` - build the images (available to minikube due to previous command)
+5. Run `docker compose build` - build the images (available to minikube due to previous command)
 6. Run `kubectl create namespace eks-peerprep` to create namespace
 7. `kubectl apply -f .` - Apply manifest in current directory to Kubernetes cluster
 8. Verify that all deployments are running 
