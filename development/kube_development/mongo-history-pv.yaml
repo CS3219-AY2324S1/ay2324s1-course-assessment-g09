@@ -1,0 +1,31 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: mongo-history-pv
+  namespace: eks-peerprep
+  labels:
+    type: local
+    app: mongo-history
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data/mongohistory"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mongo-history-pvc
+  namespace: eks-peerprep
+  labels:
+    app: mongo-history
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

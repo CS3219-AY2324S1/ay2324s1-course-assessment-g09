@@ -11,9 +11,7 @@ async function connectToDB() {
 		useUnifiedTopology: true,
 	})
 		.then(() =>
-			console.log(
-				`MongoDB for history running on port ${process.env.DB_PORT}.`
-			)
+			console.log(`MongoDB for history running on port ${process.env.DB_PORT}.`)
 		)
 		.catch((err) => {
 			console.log("Error connecting to DB. Exiting.");
@@ -61,9 +59,48 @@ async function getAllHistory(req, res) {
 
 async function getHistoryByUser(req, res) {
 	const user = req.params.user;
+	console.log(user);
 	try {
 		const history = await History.find({ user1: user });
 		res.status(200).json(history);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+}
+
+async function getDistinctByUser(req, res) {
+	const user = req.params.user;
+	console.log(user);
+	try {
+		const history = await History.aggregate([
+			{
+				$match: {
+					user1: user,
+				},
+			},
+			{
+				$group: {
+					_id: "$difficulty",
+					entries: { $addToSet: "$questionName" },
+				},
+			},
+			{
+				$project: {
+					_id: 1,
+					distinctCount: { $size: "$entries" }, // Count the number of distinct values
+				},
+			},
+		]);
+		const distinctCountMap = {
+			Easy: 0,
+			Medium: 0,
+			Hard: 0,
+		};
+		history.forEach((element) => {
+			distinctCountMap[element._id] = element.distinctCount;
+		});
+		console.log(distinctCountMap);
+		res.status(200).json(distinctCountMap);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -73,4 +110,5 @@ module.exports = {
 	createHistory,
 	getAllHistory,
 	getHistoryByUser,
+	getDistinctByUser,
 };

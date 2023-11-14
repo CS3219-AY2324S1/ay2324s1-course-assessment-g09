@@ -1,6 +1,6 @@
 const express = require('express');
 const userSchema = require('../utility/ZSchema').userSchema;
-const bcrypt = require('bcrypt');
+const userNoPasswordSchema = require('../utility/ZSchema').userNoPasswordSchema;
 const { ZodError } = require('zod');
 
 const userRouter = express.Router();
@@ -60,6 +60,11 @@ userRouter.get('/getUser', async (request, response) => {
         const allUsers = results.rows;
         const numUsers = allUsers.length;
 
+        allUsers.forEach((user) => {
+            delete user.password; // Remove password 
+            return user;
+        })
+
         const msg = { 'users': allUsers };
         return response.status(200).json(msg);
     })
@@ -92,10 +97,11 @@ userRouter.get('/getUserByEmail', async (request, response) => {
 });
 
 userRouter.get('/getUserById', async (request, response) => {
-    const userId = parseInt(request.params.id);
+    const userId = parseInt(request.query.id);
     const query = `SELECT id, username FROM ${userAccountTable} WHERE id = ${userId}`;
 
-    if (!request.params || !request.params.id || userId == NaN) {
+    // if (!request.params || !request.params.id || userId == NaN) {
+    if (!userId) {
         // Reject if 'userId' is empt or invalid.
         const msg = { 'msg': `ID cannot be empty nor invalid.`, 'user': null };
         return response.status(400).json(msg);
@@ -123,16 +129,19 @@ userRouter.get('/getUserById', async (request, response) => {
 userRouter.put('/updateUser', async (request, response) => {
     try {
         const body = request.body;
-        const { id, email, name, username, password, role } = userSchema.parse(body);
-
-        const pwHash = await bcrypt.hash(password, 17);
-
-        const updateQuery = `UPDATE ${userAccountTable} SET email=$1, name=$2, username=$3, role=$4, password=$5 WHERE id=$6`;
-        const queryResult = await db.query(updateQuery, [email, name, username, role, pwHash, id]);
-        if (queryResult.rows.length != 1) {
+        const { email, name, username, role } = userNoPasswordSchema.parse(body);
+        const { id } = body;
+        console.log("Incoming ID", id);
+        console.log("ALL", [email, name, username, role, id]);
+        const updateQuery = `UPDATE ${userAccountTable} SET email=$1, name=$2, username=$3, role=$4 WHERE id=$5`;
+        const queryResult = await db.query(updateQuery, [email, name, username, role, id]);
+        console.log("result", queryResult);
+        if (queryResult.rowCount != 1) {
             throw new Error('Unsuccessful update into database');
         }
+        return response.status(200).json({ "msg": "user updated" });
     } catch (error) {
+        console.log("update err", error);
         return response.status(500).json({ message: ["something went wrong..."] });
     }
 });

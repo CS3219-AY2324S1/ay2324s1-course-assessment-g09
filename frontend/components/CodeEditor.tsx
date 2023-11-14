@@ -1,5 +1,12 @@
 "use client";
 import {
+	AlertDialog,
+	AlertDialogBody,
+	AlertDialogCloseButton,
+	AlertDialogContent,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogOverlay,
 	Box,
 	Button,
 	Grid,
@@ -8,13 +15,26 @@ import {
 	MenuButton,
 	MenuItem,
 	MenuList,
+	Modal,
+	ModalBody,
+	ModalCloseButton,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
 	Select,
+	useDisclosure,
 } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import SaveHistoryButton from "./SaveHistoryButton";
+import EndMatchButton from "./EndMatchButton";
+import { on } from "events";
+import matchSocketManager from "./Sockets/MatchSocketManager";
+import socketManager from "./Sockets/CommunicationSocketManager";
+import collabSocketManager from "./Sockets/CollabSocketManager";
+import axios from "axios";
 
 export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 	const editorRef = useRef(null);
@@ -24,24 +44,36 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 	const [language, setLanguage] = useState("javascript");
 	const [code, setCode] = useState("//some comments");
 	const [theme, setTheme] = useState("light");
+	const cancelRef = useRef();
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const {
+		isOpen: modalOpen,
+		onOpen: onModalOpen,
+		onClose: onModalClose,
+	} = useDisclosure();
 	const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor) => {
 		editorRef.current = editor;
 	};
 
+	const cancelButtonRef = useRef();
+
 	useEffect(() => {
 		handleThemeChange(colorMode);
 	}, [colorMode]);
+
 	const handleCodeChange = (
 		value = "",
 		event: editor.IModelContentChangedEvent
 	) => {
+		console.log(socket);
 		if (isIncomingCode.current) {
 			isIncomingCode.current = false;
-			return;
+			console.log("incoming code");
+		} else {
+			setCode(editorRef.current.getModel().getValue());
+			collabSocketManager.emitEvent("codeChange", event);
+			console.log(event);
 		}
-		console.log("sent");
-		setCode(editorRef.current.getModel().getValue());
-		socket?.emit("codeChange", event);
 	};
 
 	const handleThemeChange = (e: string) => {
@@ -58,22 +90,25 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 			e.target.value
 		);
 		setLanguage(e.target.value);
-		socket?.emit("languageChange", e.target.value);
+		collabSocketManager.emitEvent("languageChange", e.target.value);
 	};
 
 	useEffect(() => {
-		const socket = io({path: "/collaboration_service/socket.io/"});
-		setSocket(socket);
+		collabSocketManager.connect();
 
-		socket?.emit("joinRoom", socketRoom);
-
-		socket.on("codeChange", (event) => {
+		collabSocketManager.subscribeToEvent("codeChange", (event) => {
 			isIncomingCode.current = true;
-			console.log("received", event);
 			editorRef.current.getModel()?.applyEdits(event.changes);
+			console.log("code change", event.changes);
+			setCode(editorRef.current.getModel().getValue());
 		});
 
-		socket.on("languageChange", (event) => {
+		socketManager.subscribeToEvent("matchEnded", () => {
+			console.log("match ended");
+			onOpen();
+		});
+
+		collabSocketManager.subscribeToEvent("languageChange", (event) => {
 			console.log("received", event);
 			(window as any).monaco.editor.setModelLanguage(
 				editorRef.current?.getModel(),
@@ -82,7 +117,7 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 			setLanguage(event);
 		});
 		return () => {
-			socket.disconnect();
+			collabSocketManager.disconnect();
 		};
 	}, []);
 
@@ -106,68 +141,135 @@ export default function CodeEditor({ socketRoom, matchedUser, colorMode }) {
 		}
 	};
 
+	const handleHistory = async () => {
+		const user1 = JSON.parse(sessionStorage.getItem("login")).id;
+		const user2 = matchSocketManager.getMatchedUser();
+		// const questionName = "Test Question";
+		// const question = "Test Question";
+		const questionName = collabSocketManager.getQnsName();
+		const question = collabSocketManager.getQnsDesc();
+		const difficulty = collabSocketManager.getDifficulty();
+
+		const data = {
+			user1,
+			user2,
+			difficulty,
+			questionName,
+			question,
+			language,
+			theme,
+			code,
+		};
+		console.log(
+			socketManager.getSocketId(),
+			socketManager.getMatchedSocketId()
+		);
+		socketManager.emitEvent("endMatch", socketManager.getMatchedSocketId());
+		const res = await axios
+			.post("/history_service/create", data)
+			.then((res) => console.log(res.data))
+			.catch((err) => console.log(err));
+	};
+
 	return (
-		<Grid templateColumns="repeat(4, 1fr)" gap={5} height="100%" width="100%">
-			<GridItem>
-				<Menu>
-					<MenuButton as={Button} width="100%">
-						{language == "javascript"
-							? "Javascript"
-							: language == "python"
-							? "Python"
-							: language == "C++"
-							? "C++"
-							: "Java"}
-					</MenuButton>
-					<MenuList>
-						<MenuItem onClick={handleLanguageChange} value="javascript">
-							Javascript
-						</MenuItem>
-						<MenuItem onClick={handleLanguageChange} value="python">
-							Python
-						</MenuItem>
-						<MenuItem onClick={handleLanguageChange} value="C++">
-							C++
-						</MenuItem>
-						<MenuItem onClick={handleLanguageChange} value="Java">
-							Java
-						</MenuItem>
-					</MenuList>
-				</Menu>
-			</GridItem>
+		<>
+			<Grid templateColumns="repeat(4, 1fr)" gap={5} height="100%" width="100%">
+				<GridItem>
+					<Menu>
+						<MenuButton as={Button} width="100%">
+							{language == "javascript"
+								? "Javascript"
+								: language == "python"
+									? "Python"
+									: language == "C++"
+										? "C++"
+										: "Java"}
+						</MenuButton>
+						<MenuList>
+							<MenuItem onClick={handleLanguageChange} value="javascript">
+								Javascript
+							</MenuItem>
+							<MenuItem onClick={handleLanguageChange} value="python">
+								Python
+							</MenuItem>
+							<MenuItem onClick={handleLanguageChange} value="C++">
+								C++
+							</MenuItem>
+							<MenuItem onClick={handleLanguageChange} value="Java">
+								Java
+							</MenuItem>
+						</MenuList>
+					</Menu>
+				</GridItem>
 
-			<GridItem>
-				<SaveHistoryButton
-					code={code}
-					theme={theme}
-					language={language}
-					difficulty={"Easy"}
-				/>
-				{/* <Button
+				<GridItem>
+					<Button onClick={onModalOpen} colorScheme="red">
+						End Match
+					</Button>
+					<Modal isOpen={modalOpen} onClose={onModalClose}>
+						<ModalOverlay />
+						<ModalContent>
+							<ModalHeader>Modal Title</ModalHeader>
+							<ModalCloseButton />
+							<ModalBody>Are you sure you want to end the match?</ModalBody>
 
-						onClick={() =>
-							alert(editorRef.current.getModel().getValue())
-						}
-						width="100%"
-						colorScheme="green"
-					>
-						Save History
-					</Button> */}
-			</GridItem>
-			<GridItem>
-				<Button onClick={handleFormat} width="100%" colorScheme="blue">
-					Format Code
-				</Button>
-			</GridItem>
-			<GridItem colSpan={4}>
-				<Editor
-					onChange={handleCodeChange}
-					theme={colorMode == "light" ? "light" : "vs-dark"}
-					onMount={handleEditorDidMount}
-					defaultLanguage="javascript"
-					defaultValue="// some comment"
-				/>
-			</GridItem>
-		</Grid>
+							<ModalFooter>
+								<Button colorScheme="blue" mr={3} onClick={onClose}>
+									Close
+								</Button>
+								<EndMatchButton
+									code={code}
+									theme={theme}
+									language={language}
+									handleHistory={handleHistory}
+								/>
+							</ModalFooter>
+						</ModalContent>
+					</Modal>
+				</GridItem>
+				<GridItem>
+					<Button onClick={handleFormat} width="100%" colorScheme="blue">
+						Format Code
+					</Button>
+				</GridItem>
+				<GridItem colSpan={4}>
+					<Editor
+						onChange={handleCodeChange}
+						theme={colorMode == "light" ? "light" : "vs-dark"}
+						onMount={handleEditorDidMount}
+						defaultLanguage="javascript"
+						defaultValue="// some comment"
+					/>
+				</GridItem>
+			</Grid>
+			<AlertDialog
+				motionPreset="slideInBottom"
+				leastDestructiveRef={cancelRef}
+				onClose={() => {
+					handleHistory;
+					onClose;
+				}}
+				isOpen={isOpen}
+				isCentered
+				blockScrollOnMount={true}
+			>
+				<AlertDialogOverlay />
+				<AlertDialogContent>
+					<AlertDialogCloseButton />
+					<AlertDialogBody>
+						The other user has left the match, please exit.
+					</AlertDialogBody>
+					<AlertDialogFooter>
+						<EndMatchButton
+							code={code}
+							theme={theme}
+							language={language}
+							handleHistory={handleHistory}
+						/>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+		</>
 	);
+
 }

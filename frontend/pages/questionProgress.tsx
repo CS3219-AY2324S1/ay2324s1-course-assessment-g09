@@ -3,13 +3,46 @@ import {
   CircularProgress,
   CircularProgressLabel,
 } from "@chakra-ui/react";
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
-const questionProgress = ({ colorMode }) => {
+const questionProgress = ({ colorMode, questions }) => {
+  const [progress, setProgress] = useState({
+    Easy: 0,
+    Medium: 0,
+    Hard: 0,
+  });
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const authUser = JSON.parse(sessionStorage.getItem("login")).id;
+        const res = await axios.get(
+          `/history_service/getProgress/${authUser}`
+        );
+        const easyCount = questions.filter((q) => q.complexity === "Easy").length;
+        const mediumCount = questions.filter(
+          (q) => q.complexity === "Medium"
+        ).length;
+        const hardCount = questions.filter((q) => q.complexity === "Hard").length;
+        console.log("fetched from history", res.data);
+        setProgress({
+          Easy: res.data.Easy * 100 / easyCount,
+          Medium: res.data.Medium * 100 / mediumCount,
+          Hard: res.data.Hard * 100 / hardCount,
+        });
+        console.log("fetch from question", easyCount, mediumCount, hardCount, progress.Easy, progress.Medium, progress.Hard)
+      } catch (error) {
+        console.log("ERROR: ", error);
+      }
+    }
+    fetchProgress();
+  }, [questions])
+
   return (
     <HStack>
       <CircularProgress
-        value={65}
+        value={progress.Easy}
         size="85px"
         thickness="10px"
         my={2}
@@ -25,7 +58,7 @@ const questionProgress = ({ colorMode }) => {
         </CircularProgressLabel>
       </CircularProgress>
       <CircularProgress
-        value={35}
+        value={progress.Medium}
         size="85px"
         thickness="10px"
         my={2}
@@ -41,7 +74,7 @@ const questionProgress = ({ colorMode }) => {
         </CircularProgressLabel>
       </CircularProgress>
       <CircularProgress
-        value={20}
+        value={progress.Hard}
         size="85px"
         thickness="10px"
         my={2}

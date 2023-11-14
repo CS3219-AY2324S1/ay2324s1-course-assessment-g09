@@ -2,6 +2,8 @@
 import {
   Badge,
   Box,
+  Button,
+  Divider,
   Grid,
   GridItem,
   HStack,
@@ -19,6 +21,7 @@ import MatchsocketManager from "../components/Sockets/MatchSocketManager";
 import ToggleMode from "../components/ToggleMode";
 import VideoCall from "../components/VideoCall";
 import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
+import collabSocketManager from "../components/Sockets/CollabSocketManager";
 
 export default function Collaboration() {
   interface Question {
@@ -44,7 +47,8 @@ export default function Collaboration() {
 
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
-
+  const [started, setStarted] = useState(false);
+  const [paused, setPaused] = useState(false);
   const [qns, setQns] = useState<Question[]>([
     { category: "", description: "", qn_num: 0, title: "", complexity: "" },
     { category: "", description: "", qn_num: 0, title: "", complexity: "" },
@@ -63,65 +67,77 @@ export default function Collaboration() {
 
     setContent(desc);
   }, [qnsNum]);
+
   const fetchRandomQuestions = async () => {
     try {
-      const res = await axios.get(`question_service/questions/4`);
-      setQns(res.data.qns);
+      // const res = await axios.get(`question_service/questions/4`);
+      // setQns(qns);
+      collabSocketManager.emitEvent("getQns", "");
+      collabSocketManager.subscribeToEvent("qnsRes", (qns) => {
+        setQns(qns);
+        let desc = qns[qnsNum].description;
+        collabSocketManager.setQnsDesc(desc);
+        setTitle(qns[qnsNum].title);
+        collabSocketManager.setQnsName(qns[qnsNum].title);
+        setComplexity(qns[qnsNum].complexity);
+        collabSocketManager.setDifficulty(qns[qnsNum].complexity);
 
-      // console.log(res.data.qns[0]);
+        desc = desc.replace(/<code>/g, "");
+        desc = desc.replace(/<\/code>/g, "");
+
+        setContent(desc);
+        setTitle(qns[qnsNum].title);
+        setComplexity(qns[qnsNum].complexity);
+      });
+
+      // console.log(qns[0]);
 
       // console.log(res.data);
-      let desc = res.data.qns[qnsNum].description;
-      setTitle(res.data.qns[qnsNum].title);
-      setComplexity(res.data.qns[qnsNum].complexity);
-
-      desc = desc.replace(/<code>/g, "");
-      desc = desc.replace(/<\/code>/g, "");
-
-      setContent(desc);
-      setTitle(res.data.qns[qnsNum].title);
-      setComplexity(res.data.qns[qnsNum].complexity);
     } catch (error) {
       console.log("ERROR: ", error);
     }
   };
 
-  const handleNextQns = () => {
-    if (qnsNum != 3) {
-      setQnsNum(qnsNum + 1);
-    }
-  };
+  // const handleNextQns = () => {
+  //   if (qnsNum != 3) {
+  //     setQnsNum(qnsNum + 1);
+  //   }
+  // };
 
-  const handlePrevQns = () => {
-    if (qnsNum != 0) {
-      setQnsNum(qnsNum - 1);
-    }
-  };
+  // const handlePrevQns = () => {
+  //   if (qnsNum != 0) {
+  //     setQnsNum(qnsNum - 1);
+  //   }
+  // };
 
-  // Stopwatch when in queue
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
+  // // Stopwatch when in queue
+  // useEffect(() => {
+  //   let interval: NodeJS.Timeout;
 
-    // Ran once every second
-    interval = setInterval(() => {
-      // if the previous second is 59, set to 0, else add 1
-      setSeconds((prevSeconds) => {
-        if (prevSeconds === 59) {
-          setMinutes((prevMinutes) => prevMinutes + 1);
-          return 0;
-        } else {
-          return prevSeconds + 1;
-        }
-      });
-    }, 1000);
+  //   // Ran once every second
+  //   interval = setInterval(() => {
+  //     // if the previous second is 59, set to 0, else add 1
+  //     setSeconds((prevSeconds) => {
+  //       if (prevSeconds === 59) {
+  //         setMinutes((prevMinutes) => prevMinutes + 1);
+  //         return 0;
+  //       } else {
+  //         return prevSeconds + 1;
+  //       }
+  //     });
+  //   }, 1000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  });
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // });
 
   useEffect(() => {
     fetchRandomQuestions();
+    collabSocketManager.subscribeToEvent("setTimer", (data) => {
+      setMinutes(data.minutes);
+      setSeconds(data.seconds);
+    });
   }, []);
 
   return (
@@ -134,6 +150,24 @@ export default function Collaboration() {
         >
           {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
         </Text>
+        <Button
+          onClick={() => {
+            collabSocketManager.emitEvent("startTimer", "");
+            setStarted(true);
+          }}
+        >
+          Start
+        </Button>
+        <Button onClick={() => collabSocketManager.emitEvent("stopTimer", "")}>
+          Pause
+        </Button>
+        <Button
+          onClick={() => {
+            collabSocketManager.emitEvent("resetTimer", "");
+          }}
+        >
+          Reset
+        </Button>
         <ToggleMode colorMode={colorMode} toggleColorMode={toggleColorMode} />
       </HStack>
 
@@ -149,6 +183,7 @@ export default function Collaboration() {
         {/* Questions */}
         <GridItem
           height="100%"
+          width="100%"
           rowSpan={videoOn ? 5 : 9}
           overflowY="auto"
           css={{
@@ -185,7 +220,7 @@ export default function Collaboration() {
                       </Badge>
                     </Text>
                   </>
-                  <HStack mr={2}>
+                  {/* <HStack mr={2}>
                     <IconButton
                       icon={<AiFillCaretLeft />}
                       colorScheme="teal"
@@ -203,7 +238,7 @@ export default function Collaboration() {
                       isDisabled={qnsNum === 3}
                       onClick={handleNextQns}
                     />
-                  </HStack>
+                  </HStack> */}
                 </HStack>
                 <Box>
                   {/* <Icon as={GrPrevious} /> */}
@@ -229,18 +264,23 @@ export default function Collaboration() {
               </Box>
             )}
           </Box>
+          <Divider orientation="horizontal" width="100%" />
         </GridItem>
 
         {/* Editor */}
-        <GridItem height="90%" overflowY="hidden" rowSpan={10} my="auto">
+        <GridItem
+          height="90%"
+          width="100%"
+          overflowY="hidden"
+          rowSpan={10}
+          my="auto"
+        >
           <CodeEditor
-            socketRoom={room}
-            matchedUser={matchedUser}
             colorMode={colorMode}
           />
         </GridItem>
 
-        <GridItem rowSpan={videoOn ? 5 : 1}>
+        <GridItem rowSpan={videoOn ? 5 : 1} width="100%">
           <VideoCall videoOn={videoOn} setVideoOn={setVideoOn} />
         </GridItem>
       </Grid>

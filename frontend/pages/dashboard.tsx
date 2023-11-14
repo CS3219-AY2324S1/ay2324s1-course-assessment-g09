@@ -1,5 +1,6 @@
 import {
   Box,
+  Center,
   Flex,
   Grid,
   GridItem,
@@ -22,12 +23,19 @@ const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
 const dashboard = () => {
   const [questions, setQuestions] = useState(null);
   const [users, setUsers] = useState(null);
+  // const [difficultyCount, setDifficultyCount] = useState({
+  //   Easy: 0,
+  //   Medium: 0,
+  //   Hard: 0,
+  // });
+  const [easyCount, setEasyCount] = useState(0);
+  const [mediumCount, setMediumCount] = useState(0);
+  const [hardCount, setHardCount] = useState(0);
 
   const fetchQuestions = async () => {
     try {
       const res = await axios.get(`question_service/questions`);
       console.log(res);
-
       setQuestions(res.data.qns);
     } catch (error) {
       console.log("ERROR: ", error);
@@ -137,18 +145,26 @@ const dashboard = () => {
       >
         {user == "user" ? (
           <Box height="100%" width="100%" p={2}>
-            <Questions
-              inputValues={questionInputValues}
-              setInputValues={setQuestionInputValues}
-              isCreate={isCreateQuestion}
-              setIsCreate={setIsCreateQuestion}
-              colorMode={colorMode}
-              userMode={user}
-              questions={questions}
-              fetchQuestions={fetchQuestions}
-              setSelectedCategory={setSelectedCategory}
-              selectedCategory={selectedCategory}
-            />
+            {questions != null &&
+            Array.isArray(questions) &&
+            questions.length != 0 ? (
+              <Questions
+                inputValues={questionInputValues}
+                setInputValues={setQuestionInputValues}
+                isCreate={isCreateQuestion}
+                setIsCreate={setIsCreateQuestion}
+                colorMode={colorMode}
+                userMode={user}
+                questions={questions}
+                fetchQuestions={fetchQuestions}
+                setSelectedCategory={setSelectedCategory}
+                selectedCategory={selectedCategory}
+              />
+            ) : (
+              <Center height="100%" width="100%">
+                Questions is currently empty...
+              </Center>
+            )}
           </Box>
         ) : (
           <QuestionsComponent
@@ -179,7 +195,7 @@ const dashboard = () => {
         width="100%"
         rowSpan={1}
       >
-        <QuestionProgress colorMode={colorMode} />
+        <QuestionProgress colorMode={colorMode} questions={questions} />
       </GridItem>
 
       {/* User Portion/ History */}
@@ -194,13 +210,9 @@ const dashboard = () => {
         width="100%"
         height="100%"
       >
-        <Flex
-          marginTop={5}
-          alignItems="center"
-          justifyContent="flex-start"
-          flexDirection="column"
-          width="90%"
-        >
+        {user == "user" ? (
+          <History />
+        ) : (
           <UserComponent
             userInputValues={userInputValues}
             setUserInputValues={setUserInputValues}
@@ -209,8 +221,7 @@ const dashboard = () => {
             fetchUsers={fetchUsers}
             users={users}
           />
-          <History />
-        </Flex>
+        )}
       </GridItem>
     </Grid>
   );

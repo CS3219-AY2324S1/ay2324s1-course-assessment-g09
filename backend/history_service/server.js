@@ -4,6 +4,7 @@ const {
 	createHistory,
 	getAllHistory,
 	getHistoryByUser,
+	getDistinctByUser,
 } = require("./historyController");
 const bodyparser = require("body-parser"); // Middleware
 const cors = require("cors"); // Middleware
@@ -21,15 +22,14 @@ app.use(
 	})
 ); // WARN: Accepts any source origin!
 
-app.post("/history/create", createHistory); //CREATE
-app.get("/history/getall", getAllHistory); // READ
-app.get("/history/get/:user", getHistoryByUser); // READ
+app.post("/create", createHistory); //CREATE
+app.get("/getall", getAllHistory); // READ
+app.get("/get/:user", getHistoryByUser); // READ
+app.get("/getProgress/:user", getDistinctByUser);
 
 // Connect to MongoDB
 connectToDB();
 
 app.listen(process.env.RESTAPI_PORT, () => {
-	console.log(
-		"History service listening on port " + process.env.RESTAPI_PORT
-	);
+	console.log("History service listening on port " + process.env.RESTAPI_PORT);
 });

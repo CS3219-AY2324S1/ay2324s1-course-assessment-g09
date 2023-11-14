@@ -14,7 +14,7 @@ const Users = ({
   users,
 }) => {
   return (
-    <Box width="100%" marginX={12}>
+    <Box width="100%" height="80%">
       <UserHeader />
       <User
         userInputValues={userInputValues}

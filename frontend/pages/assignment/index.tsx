@@ -31,6 +31,10 @@ const IndexPage = () => {
   const router = useRouter();
 
   const { colorMode, toggleColorMode } = useColorMode();
+  const [questions, setQuestions] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [user, setUserRole] = useState("admin");
+  const [userSearchQuery, setUserSearchQuery] = useState("");
 
   const [questionInputValues, setQuestionInputValues] = useState({
     edit_id: "",
@@ -61,28 +65,58 @@ const IndexPage = () => {
     }
   }, []);
 
-  const toggleDisplayDB = () => {
-    displayDB == "questions"
-      ? setDisplayDB("users")
-      : setDisplayDB("questions");
+  const fetchQuestions = async () => {
+    try {
+      const res = await axios.get(`question_service/questions`);
+      console.log(res);
+
+      setQuestions(res.data.qns);
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
+  };
+  const fetchUsers = async () => {
+    try {
+      // const res = await axios.get(`${IP_ADDRESS}:3002/users/getall`);
+      const res = await axios.get(`user_service/users/getUser`);
+
+      setUsers(res.data.users);
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
   };
 
+  useEffect(() => {
+    fetchQuestions();
+    fetchUsers();
+  }, []);
+
+  const [users, setUsers] = useState(null);
+
   const handleSignOut = () => {
-    axios.post(`auth_service/userauth/signout`, {}, { withCredentials: true })
-      .then(response => {
-        if (response.statusText === 'OK') {
+    axios
+      .post(`auth_service/userauth/signout`, {}, { withCredentials: true })
+      .then((response) => {
+        if (response.statusText === "OK") {
           router.push("/signin");
           window.sessionStorage.removeItem("login");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log("signout", error);
-      })
+      });
+  };
 
+  const handleCheckboxChange = (changedCategory: any) => {
+    setSelectedCategory((previouslySelectedCategory) =>
+      previouslySelectedCategory.includes(changedCategory)
+        ? previouslySelectedCategory.filter((item) => item !== changedCategory)
+        : [...previouslySelectedCategory, changedCategory]
+    );
   };
 
   return (
-    <Box height="100vh" display="flex" flexDirection="column">
+    <Box height="100vh" width="100%" display="flex" flexDirection="column">
       <Tabs position="relative" variant="unstyled">
         <TabList>
           <Tab
@@ -180,6 +214,10 @@ const IndexPage = () => {
                       isCreate={isCreate}
                       setIsCreate={setIsCreate}
                       colorMode={colorMode}
+                      setQuestions={setQuestions}
+                      selectedCategory={selectedCategory}
+                      setSelectedCategory={setSelectedCategory}
+                      handleCheckboxChange={handleCheckboxChange}
                     />
                     <Questions
                       inputValues={questionInputValues}
@@ -187,6 +225,11 @@ const IndexPage = () => {
                       isCreate={isCreate}
                       setIsCreate={setIsCreate}
                       colorMode={colorMode}
+                      userMode={user}
+                      questions={questions}
+                      fetchQuestions={fetchQuestions}
+                      setSelectedCategory={setSelectedCategory}
+                      selectedCategory={selectedCategory}
                     />
                   </Flex>
                 </TabPanel>
@@ -203,6 +246,8 @@ const IndexPage = () => {
                       colorMode={colorMode}
                       isCreate={isCreate}
                       setIsCreate={setIsCreate}
+                      userSearchQuery={userSearchQuery}
+                      setUserSearchQuery={setUserSearchQuery}
                     />
 
                     <Users
@@ -211,6 +256,9 @@ const IndexPage = () => {
                       isCreate={isCreate}
                       setIsCreate={setIsCreate}
                       colorMode={colorMode}
+                      userSearchQuery={userSearchQuery}
+                      fetchUsers={fetchUsers}
+                      users={users}
                     />
                   </Flex>
                 </TabPanel>
