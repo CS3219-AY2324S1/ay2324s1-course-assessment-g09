@@ -50,7 +50,7 @@ A `type-check` script is also added to `package.json`, which runs TypeScript's `
 Dependencies: Minikube, Docker, Kubectl
 - Relevant Links:
 	- Minikube (https://minikube.sigs.k8s.io/docs/start/)
-		- User Docker Driver (https://minikube.sigs.k8s.io/docs/drivers/docker/)
+		- Use Docker Driver (https://minikube.sigs.k8s.io/docs/drivers/docker/)
 	- Kubectl (https://kubernetes.io/docs/tasks/tools/)
 Steps to Setup Project:
 1. Start Minikube in cmd
