@@ -10,6 +10,8 @@ const Questions = ({
   isCreate,
   setIsCreate,
   colorMode,
+  fetchQuestions,
+  questions
 }) => {
   return (
     <Box width="100%" marginX={12} h="full">
@@ -20,8 +22,7 @@ const Questions = ({
         setInputValues={setInputValues}
         isCreate={isCreate}
         setIsCreate={setIsCreate}
-        colorMode={colorMode}
-      />
+        colorMode={colorMode} fetchQuestions={fetchQuestions} questions={questions}      />
       {/* </div> */}
     </Box>
   );

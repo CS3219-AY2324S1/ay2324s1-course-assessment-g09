@@ -37,9 +37,9 @@ const UserInputField = ({
   };
 
   const handleUpdate = async () => {
-    const { _id } = userInputValues;
+    // const { user_id } = userInputValues;
     await axios.post(
-      `${IP_ADDRESS}:3002/users/update/${userInputValues.id}`,
+      `${IP_ADDRESS}:3002/users/update/${userInputValues.user_id}`,
       userInputValues
     );
 
@@ -54,7 +54,7 @@ const UserInputField = ({
 
   const handleSubmit = async () => {
     const res = await axios.post(`${IP_ADDRESS}:3002/users/create`, {
-      user_id: userInputValues.user_id,
+      id: userInputValues.user_id,
       name: userInputValues.name,
     });
 

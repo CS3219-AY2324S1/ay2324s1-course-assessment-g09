@@ -28,8 +28,10 @@ const Question = ({
   isCreate,
   setIsCreate,
   colorMode,
+  fetchQuestions,
+  questions,
 }) => {
-  const [questions, setQuestions] = useState(null);
+  // const [questions, setQuestions] = useState(null);
   const [description, setDescription] = useState(null);
   const [difficulty, setDifficulty] = useState(null);
 
@@ -37,19 +39,19 @@ const Question = ({
   const [openQuestion, setOpenQuestion] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const fetchQuestions = async () => {
-    try {
-      const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
+  // const fetchQuestions = async () => {
+  //   try {
+  //     const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
 
-      setQuestions(res.data.qns);
-    } catch (error) {
-      console.log("ERROR: ", error);
-    }
-  };
+  //     setQuestions(res.data.qns);
+  //   } catch (error) {
+  //     console.log("ERROR: ", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchQuestions();
-  });
+  // useEffect(() => {
+  //   fetchQuestions();
+  // });
 
   const handleEdit = async ({
     qn_num,

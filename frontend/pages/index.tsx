@@ -33,6 +33,7 @@ import { FaHandshake } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import Collaboration from "./collaboration";
+import axios from "axios";
 
 const IndexPage = () => {
   const router = useRouter();
@@ -47,6 +48,24 @@ const IndexPage = () => {
     category: "",
     complexity: "",
   });
+
+  const [questions, setQuestions] = useState(null);
+  const IP_ADDRESS = process.env.NEXT_PUBLIC_IP_ADDRESS;
+
+  const fetchQuestions = async () => {
+    try {
+      const res = await axios.get(`${IP_ADDRESS}:3001/questions/getall`);
+
+      setQuestions(res.data.qns);
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuestions();
+  },[]);
+
 
   const [userInputValues, setUserInputValues] = useState({
     user_id: "",
@@ -152,15 +171,13 @@ const IndexPage = () => {
                       setInputValues={setQuestionInputValues}
                       isCreate={isCreate}
                       setIsCreate={setIsCreate}
-                      colorMode={colorMode}
-                    />
+                      colorMode={colorMode} setQuestions={setQuestions}                    />
                     <Questions
                       inputValues={questionInputValues}
                       setInputValues={setQuestionInputValues}
                       isCreate={isCreate}
                       setIsCreate={setIsCreate}
-                      colorMode={colorMode}
-                    />
+                      colorMode={colorMode} fetchQuestions={fetchQuestions} questions={questions}                    />
                   </Flex>
                 </TabPanel>
                 <TabPanel>
