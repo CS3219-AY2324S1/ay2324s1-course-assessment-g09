@@ -1,0 +1,23 @@
+version: "3"
+services:
+    matching-service:
+        container_name: matching-service
+        image: matching-service-img
+        restart: always
+        build: .
+        ports:
+            - "${PORT}:${PORT}"
+        environment:
+            PORT: ${PORT}
+        depends_on:
+            - rabbitmq
+
+    rabbitmq:
+        container_name: rabbitmq
+        image: rabbitmq:3.12.6-management
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        environment:
+            RABBITMQ_DEFAULT_USER: guest
+            RABBITMQ_DEFAULT_PASS: guest

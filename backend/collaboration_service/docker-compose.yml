@@ -1,0 +1,11 @@
+version: "3"
+services:
+    collaboration-service:
+        container_name: collaboration-service
+        image: collaboration-service-img
+        restart: always
+        build: .
+        ports:
+            - "${PORT}:${PORT}"
+        environment:
+            PORT: ${PORT}

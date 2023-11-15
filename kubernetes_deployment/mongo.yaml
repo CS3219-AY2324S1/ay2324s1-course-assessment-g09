@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+  namespace: eks-peerprep
+  labels:
+    app: mongo-service
+spec:
+  replicas: 1 # Avoid replicated database
+  selector:
+    matchLabels:
+      app: mongo-service
+  template:
+    metadata:
+      labels:
+        app: mongo-service
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:latest
+          ports:
+            - name: restapi
+              containerPort: 27017
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongodb
+      volumes:
+        - name: mongodb
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+  namespace: eks-peerprep
+  labels:
+    app: mongo-service
+spec:
+  selector:
+    app: mongo-service
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017

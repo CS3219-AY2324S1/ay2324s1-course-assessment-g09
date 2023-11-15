@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+  namespace: eks-peerprep
+  labels:
+    app: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-container
+          image: 920185736846.dkr.ecr.ap-southeast-1.amazonaws.com/authentication-service:latest
+          ports:
+            - containerPort: 3004
+          env:
+            - name: RESTAPI_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: auth-RESTAPI_PORT
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: auth-SECRET_KEY
+            - name: USER_SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: auth-USER_SERVICE
+          resources:
+            limits:
+              cpu: "200m"
+            requests:
+              cpu: "100m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: eks-peerprep
+  labels:
+    app: auth-service
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - protocol: TCP
+      port: 3004
+      targetPort: 3004

@@ -1,0 +1,8 @@
+version: "3"
+services:
+  apigateway:
+    container_name: apigateway
+    image: apigateway-img
+    build: .
+    ports:
+      - "3000:3000"

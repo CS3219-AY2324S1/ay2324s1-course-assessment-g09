@@ -1,0 +1,39 @@
+version: "3"
+services:
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo-db:/data/db
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongo:${DB_PORT}/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  question-service:
+    container_name: question-service
+    image: question-service-img
+    environment:
+      RESTAPI_PORT: ${RESTAPI_PORT}
+      DB_SERVER: mongodb://mongo:${DB_PORT}
+      DB_PORT: ${DB_PORT} # Must be the same as the port in DB_SERVER. For logging only.
+    restart: always
+    build: .
+    ports:
+      - ${RESTAPI_PORT}:${RESTAPI_PORT}
+    depends_on:
+      - mongo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://question-service:${RESTAPI_PORT}/questions"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+volumes: # Persistent data
+  mongo-db:

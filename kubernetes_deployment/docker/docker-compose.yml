@@ -1,0 +1,204 @@
+# To expose a port to the public, add the port to the ports section of the service
+# ports:
+#   - ${SVC_PORT}:${SVC_PORT}
+
+version: "3"
+services:
+  # AUTHENTICATION SERVICE
+  auth-service:
+    container_name: auth_service_auth_dev
+    image: ${ECR}/authentication-service:latest
+    environment:
+      RESTAPI_PORT: ${AUTH_PORT}
+      USER_SERVICE: ${AUTH_USER_SERVICE}
+      SECRET_KEY: /run/secrets/secret_key
+    secrets:
+      - secret_key
+    restart: always
+    build:
+      context: ../backend/authentication_service/
+      dockerfile: Dockerfile
+
+  # COLLABORATION_SERVICE
+  collaboration-service:
+    container_name: collaboration-service
+    image: ${ECR}/collaboration-service:latest
+    environment:
+      PORT: ${COLLAB_PORT}
+      ORIGIN: "http://gateway:3000"
+    restart: always
+    build:
+      context: ../backend/collaboration_service
+      dockerfile: Dockerfile
+
+  # COMMUNICATION SERVICE
+  communication-service:
+    container_name: communication-service
+    image: ${ECR}/communication-service:latest
+    environment:
+      PORT: ${COMM_PORT}
+      ORIGIN: "http://gateway:3000"
+    restart: always
+    build:
+      context: ../backend/communication_service
+      dockerfile: Dockerfile
+
+  # HISTORY SERVICE
+  mongo-history:
+    container_name: mongo-history
+    image: mongo:latest
+    restart: always
+    command: mongod --port ${HIST_MG_PORT}
+    volumes:
+      - mongo-history-db:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongo-history:${HIST_DB_PORT}/test --quiet
+  history-service:
+    container_name: history-service
+    image: ${ECR}/history-service:latest
+    environment:
+      RESTAPI_PORT: ${HIST_PORT}
+      DB_SERVER: mongodb://mongo-history:${HIST_DB_PORT} # OR localhost if not possible
+      DB_PORT: ${HIST_DB_PORT} # Must be the same as the port in DB_SERVER. For logging only.
+    restart: always
+    build:
+      context: ../backend/history_service
+      dockerfile: Dockerfile
+    depends_on:
+      mongo-history:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://history-service:8003/getAllHistory || exit 1
+
+  # MATCHING SERVICE
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.12.6-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${MATCH_RMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${MATCH_RMQ_PASS}
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+  matching-service:
+    container_name: matching-service
+    image: ${ECR}/matching-service:latest
+    restart: always
+    environment:
+      PORT: ${MATCH_PORT}
+      RABBITMQ: "amqp://rabbitmq"
+      ORIGIN: "http://gateway:3000"
+    build:
+      context: ../backend/matching_service
+      dockerfile: Dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  # QUESTION_SERVICE
+  mongo-question:
+    container_name: mongo-question
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo-question-db:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongo-question:${QN_DB_PORT}/test --quiet
+  question-service:
+    container_name: question-service
+    image: ${ECR}/question-service:latest
+    environment:
+      RESTAPI_PORT: ${QN_PORT}
+      DB_SERVER: mongodb://mongo-question:${QN_DB_PORT}
+      DB_PORT: ${QN_DB_PORT} # Must be the same as the port in DB_SERVER. For logging only.
+    restart: always
+    build:
+      context: ../backend/question_service/
+      dockerfile: Dockerfile
+    depends_on:
+      mongo-question:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://question-service:${QN_PORT}/questions" || exit 1
+
+  # USER-SERVICE
+  postgres:
+    container_name: postgres_auth_dev
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${USER_PG_USER}
+      POSTGRES_PASSWORD: ${USER_PG_PASSWORD}
+      POSTGRES_DB: ${USER_PG_DB}
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U postgres
+  user-service:
+    container_name: user-service_auth_dev
+    image: ${ECR}/user-service:latest
+    environment:
+      RESTAPI_PORT: ${USER_PORT}
+      DB_SERVER: postgres
+      DB_DATABASE: ${USER_PG_DB}
+      DB_USERNAME: ${USER_PG_USER}
+      DB_PASSWORD: ${USER_PG_PASSWORD}
+      DB_PORT: ${USER_DB_PORT}
+    restart: always
+    build:
+      context: ../backend/user_service/
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck: # Check if healthcheck is working
+      test: curl --fail http://user-service:${USER_PORT}/users/getUser || exit 1
+
+  # FRONTEND
+  frontend:
+    container_name: frontend
+    image: ${ECR}/frontend:latest
+    restart: always
+    environment:
+      NEXT_PUBLIC_IP_ADDRESS: http://localhost
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    depends_on:
+      auth-service:
+        condition: service_started
+      collaboration-service:
+        condition: service_started
+      communication-service:
+        condition: service_started
+      history-service:
+        condition: service_started
+      matching-service:
+        condition: service_started
+      question-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+
+  # API-GATEWAY
+  gateway:
+    container_name: apigateway_auth_dev
+    image: ${ECR}/gateway:latest
+    restart: always
+    build:
+      context: ../gateway/
+      dockerfile: Dockerfile
+    ports: # EXPOSE PORT 3000 to public
+      - "3000:3000"
+    depends_on:
+      frontend:
+        condition: service_started
+
+volumes:
+  # Persistent data
+  postgres-db:
+  mongo-question-db:
+  mongo-history-db:
+
+secrets:
+  secret_key:
+    file: secret.txt

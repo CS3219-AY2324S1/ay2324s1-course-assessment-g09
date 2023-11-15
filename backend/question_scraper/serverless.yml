@@ -1,0 +1,26 @@
+service: question-scraper
+app: question-scraper
+org: sadlyharry
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x # Version compatible with puppeteer-aws-lambdaw
+  httpApi:
+    cors: true
+  region: ap-southeast-1
+  environment:
+    SERVER: http://a34b5b20ab2724775b6deac2de10363b-f5e838cbca67e6d1.elb.ap-southeast-1.amazonaws.com/question_scraper/admin/questions
+  timeout: 60
+
+functions:
+  scrapeQuestion:
+    package:
+      exclude:
+        - test/**
+        - node_modules/puppeteer/.local-chromium/**
+    handler: src/serverless.handler
+    events: # Http invocation
+      - httpApi:
+          method: post
+          path: /scrapeQuestion/{id}
