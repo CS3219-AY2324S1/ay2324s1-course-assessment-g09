@@ -3,6 +3,8 @@ services:
   frontend:
       container_name: frontend
       image: frontend-img
+      environment:
+        NEXT_PUBLIC_IP_ADDRESS: http://localhost
       restart: always
       build: .
       ports:

@@ -146,6 +146,7 @@ const updateUser = (request, response) => {
     }
 
     //Get old data
+    console.log(userId);
     const get_query = `SELECT id, name FROM users WHERE id = ${userId}`;
     const user = pool.query(get_query, (error, results) => {
         if (error) {
@@ -182,13 +183,13 @@ const updateUser = (request, response) => {
 const deleteUser = (request, response) => {
     const userId = parseInt(request.params.id);
     const query = `DELETE FROM users WHERE id = $1 RETURNING id`;
+    console.log(userId);
 
     if (!request.params || !request.params.id || userId == NaN) {
         // Reject if 'userId' is empt or invalid.
         const msg = {'msg': `ID cannot be empty nor invalid.`};
         return response.status(400).json(msg);
     }
-
     pool.query(query, [userId], (error, results) => {
         if (error) {
             const msg = {'msg': error.message};
