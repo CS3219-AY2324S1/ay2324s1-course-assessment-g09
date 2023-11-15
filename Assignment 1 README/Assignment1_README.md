@@ -29,7 +29,7 @@ When the docker compose is complete, you should see this:
 Step 5: After the build is completed, navigate to the folder: .\ay2324s1-course-assessment-g09-Assignment-1\ay2324s1-course-assessment-g09-Assignment-1\frontend
 ![Alt text](image-6.png)
 
-Step 6: Run the following command: `npm run dev`. Verify that frontend is running on port 3000
+Step 6: Run the following command: `npm install` and `npm run dev`. Verify that frontend is running on port 3000
 ![Alt text](image-7.png)
 
 Step 7: Go to: `http://localhost:3000`. You'll see a landing page with input field to enter the questions.
