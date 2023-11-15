@@ -7,10 +7,10 @@ const LogoutButton = () => {
     axios
       .post(`/auth_service/userauth/signout`, {}, { withCredentials: true })
       .then((response) => {
-        if (response.statusText === "OK") {
-          router.push("/signin");
-          window.sessionStorage.removeItem("login");
-        }
+        // if (response.statusText === "OK") {
+        router.push("/signin");
+        window.sessionStorage.removeItem("login");
+        // }
       })
       .catch((error) => {
         console.log("signout", error);
