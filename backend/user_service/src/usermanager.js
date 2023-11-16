@@ -146,20 +146,24 @@ const updateUser = (request, response) => {
     }
 
     //Get old data
+    console.log("USER ID", userId);
     const get_query = `SELECT id, name FROM users WHERE id = ${userId}`;
     const user = pool.query(get_query, (error, results) => {
         if (error) {
             const msg = {'msg': error.message};
             return response.status(500).json(msg);
         }
+        console.log(results.rows);
         return results.rows[0]; //In theory, if id is a PK, users should only have 1 row.
     });
+
+    console.log(user);
     if (!name) {
         name = user.name;
     }
-    if (!token) {
-        token = user.token;
-    }
+    // if (!token) {
+    //     token = user.token;
+    // }
 
     const query = `UPDATE users SET name = $1, token = $2 WHERE id = $3 RETURNING id`;
     pool.query(query, [name, token, userId], (error, results) => {
