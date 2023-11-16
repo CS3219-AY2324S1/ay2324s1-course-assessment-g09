@@ -51,7 +51,7 @@ const initialiseDB = () => {
 };
 
 const createUser = (request, response) => {
-    const {name, token} = request.body;
+    const {name, id, token} = request.body;
     const query = `INSERT INTO users VALUES (DEFAULT, $1, $2) RETURNING id`;
 
     if (!request.body || !name || name.length == 0) {
@@ -127,13 +127,15 @@ const getUserById = (request, response) => {
 
 const updateUser = (request, response) => {
 
-    const {name, token} = request.body;
+    const {id, name, token} = request.body;
+    // const token = "abc";
     const userId = parseInt(request.params.id);
-    if (!request.body || (!name || name.length == 0) && (!token || token.length == 0)) {
-        // Reject if all fields are empty;
-        const msg = {'msg': `At least one field must be filled.`};
-        return response.status(400).json(msg);
-    }
+    console.log(request.params);
+    // if (!request.body || (!name || name.length == 0) && (!token || token.length == 0)) {
+    //     // Reject if all fields are empty;
+    //     const msg = {'msg': `At least one field must be filled.`};
+    //     return response.status(400).json(msg);
+    // }
     if (name && name.length > 255) {
         // Reject if 'name' is too long.
         const msg = {'msg': `Name cannot be longer than 255 characters.`};
@@ -146,7 +148,7 @@ const updateUser = (request, response) => {
     }
 
     //Get old data
-    console.log("USER ID", userId);
+    
     const get_query = `SELECT id, name FROM users WHERE id = ${userId}`;
     const user = pool.query(get_query, (error, results) => {
         if (error) {
@@ -165,8 +167,8 @@ const updateUser = (request, response) => {
     //     token = user.token;
     // }
 
-    const query = `UPDATE users SET name = $1, token = $2 WHERE id = $3 RETURNING id`;
-    pool.query(query, [name, token, userId], (error, results) => {
+    const query = `UPDATE users SET name = $1 WHERE id = $2 RETURNING id`;
+    pool.query(query, [name, userId], (error, results) => {
         if (error) {
             const msg = {'msg': error.message};
             return response.status(500).json(msg);
@@ -186,13 +188,13 @@ const updateUser = (request, response) => {
 const deleteUser = (request, response) => {
     const userId = parseInt(request.params.id);
     const query = `DELETE FROM users WHERE id = $1 RETURNING id`;
+    console.log(userId);
 
     if (!request.params || !request.params.id || userId == NaN) {
         // Reject if 'userId' is empt or invalid.
         const msg = {'msg': `ID cannot be empty nor invalid.`};
         return response.status(400).json(msg);
     }
-
     pool.query(query, [userId], (error, results) => {
         if (error) {
             const msg = {'msg': error.message};

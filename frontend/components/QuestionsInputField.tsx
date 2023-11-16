@@ -28,8 +28,9 @@ const QuestionInputField = ({
   isCreate,
   setIsCreate,
   colorMode,
+  setQuestions,
 }) => {
-  const [question, setQuestions] = useState(null);
+  // const [question, setQuestions] = useState(null);
   const [error, setError] = useState(false);
 
   const [selectedComplexity, setSelectedComplexity] = useState("");
